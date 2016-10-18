@@ -90,10 +90,10 @@ module regs(/*autoarg*/
     always @(*)
     begin
         // when reset, get 0
-        if (!rst_n)  
+        if (!rst_n)
             read_val1 <= 32'b0;
         // when access reg0, get 0
-        else if (read_addr1 = 32'b0)
+        else if (read_addr1 == 32'b0)
             read_val1 <= 32'b0;
         // when access reg now is being written, get val for write
         else if (read_addr1 == write_addr && write_enable)
@@ -109,7 +109,7 @@ module regs(/*autoarg*/
         if (!rst_n)  
             read_val2 <= 32'b0;
         // when access reg0, get 0
-        else if (read_addr2 = 32'b0)
+        else if (read_addr2 == 32'b0)
             read_val2 <= 32'b0;
         // when access reg now is being written, get val for write
         else if (read_addr2 == write_addr && write_enable)
@@ -125,7 +125,7 @@ module regs(/*autoarg*/
         if (!rst_n)  
             read_val3 <= 32'b0;
         // when access reg0, get 0
-        else if (read_addr3 = 32'b0)
+        else if (read_addr3 == 32'b0)
             read_val3 <= 32'b0;
         // when access reg now is being written, get val for write
         else if (read_addr3 == write_addr && write_enable)

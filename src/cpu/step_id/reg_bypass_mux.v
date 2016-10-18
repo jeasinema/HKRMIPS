@@ -8,6 +8,8 @@
 `ifndef __REG_BYPASS_MUX_V__
 `define __REG_BYPASS_MUX_V__
 
+`include "..\defs.v"
+
 `timescale 1ns/1ps
 
 module reg_bypass_mux(/*autoarg*/
@@ -57,7 +59,7 @@ module reg_bypass_mux(/*autoarg*/
         else if (reg_addr == addr_from_mm && (access_type_from_mm == `ACCESS_TYPE_R2M || access_type_from_ex == `ACCESS_TYPE_M2R))
             val_output <= val_from_mm;
         else if(reg_addr == addr_from_wb)
-            val_output <= value_from_wb;
+            val_output <= val_from_wb;
         else
             val_output <= val_from_regs;
     end

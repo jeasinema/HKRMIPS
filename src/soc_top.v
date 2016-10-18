@@ -10,7 +10,7 @@
 
 `timescale 1ns/1ps
 
-module X(/*autoarg*/);
+module soc_top(/*autoarg*/);
 
     input wire clk;
     input wire rst_n;
@@ -24,7 +24,7 @@ module X(/*autoarg*/);
     begin
         if (!rst_n)
         begin
-
+            
         end
 
     end

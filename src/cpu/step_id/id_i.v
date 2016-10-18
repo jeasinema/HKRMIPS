@@ -10,7 +10,7 @@
 
 `timescale 1ns/1ps
 
-module X(/*autoarg*/);
+module id_i(/*autoarg*/);
 
     input wire clk;
     input wire rst_n;

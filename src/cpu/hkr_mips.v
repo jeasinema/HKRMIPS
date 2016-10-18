@@ -10,9 +10,7 @@
 
 `timescale 1ns/1ps
 
-module X(
-    clk, rst_n
-);
+module hkr_mips(/*autoarg*/);
 
     input wire clk;
     input wire rst_n;
