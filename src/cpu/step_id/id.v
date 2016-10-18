@@ -1,0 +1,120 @@
+/*-----------------------------------------------------
+ File Name : id.v
+ Purpose : top file of step_id
+ Creation Date : 18-10-2016
+ Modified : Tue Oct 18 17:56:55 2016
+ Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
+-----------------------------------------------------*/
+`ifndef __ID_V__
+`define __ID_V__
+
+`indclude "../defs.v"
+
+`timescale 1ns/1ps
+
+module ID(/*autoarg*/
+    //Inputs
+    clk, rst_n, inst_code, 
+
+    //Outputs
+    inst, inst_type, reg_s, reg_t, reg_d, 
+    immediate, shift, jump_address
+);
+
+    input wire clk;
+    input wire rst_n;
+    
+    // full 32bit inst
+    input wire[31:0] inst_code;
+
+    // inst mark at defs.v
+    output reg[7:0] inst;
+    // inst tpye in defs.v
+    output reg[1:0] inst_type;
+
+    // output operands
+    output reg[4:0] reg_s;
+    output reg[4:0] reg_t;
+    output reg[4:0] reg_d;
+    output reg[15:0] immediate;
+    output reg[4:0] shift;  // only for SLL SRA
+    output reg[25:0] jump_address;  // only for J JAL
+
+    // R-INST
+    wire[7:0] id_r_inst;
+    wire[4:0] id_r_reg_s;
+    wire[4:0] id_r_reg_t;
+    wire[4:0] id_r_reg_d;
+    wire[4:0] id_r_shift;
+    
+    // I_INST
+    wire[7:0] id_i_inst;
+    wire[4:0] id_i_reg_s;
+    wire[4:0] id_i_reg_t;
+    wire[15:0] id_i_immediate;
+
+    // J_INST
+    wire[7:0] id_j_inst;
+    wire[25:0] id_j_address;
+
+    always @(*)
+    begin
+        if (id_i_inst != `INST_INVALID)
+            inst_type <= `INST_TYPE_I;
+        else if (id_r_inst != `INST_INVALID)
+            inst_type <= `INST_TYPE_R;
+        else if (id_j_inst != `INST_INVALID)
+            inst_type <= `INST_TYPE_J;
+        else
+            inst_type <= `INST_TYPE_INVALID;
+    end
+    
+    always @(*)
+    begin
+        case (inst_type)
+        `INST_TYPE_R:
+        begin
+            inst <= id_r_inst;
+            reg_s <= id_r_reg_s;
+            reg_t <= id_r_reg_t;
+            reg_d <= id_r_reg_d;
+            shift <= id_r_shift;
+            immediate <= 16'b0;
+            jump_address <= 26'b0;
+        end
+        `INST_TYPE_I:
+        begin
+            inst <= id_i_inst;
+            reg_s <= id_i_reg_s;
+            reg_t <= id_i_reg_t;
+            reg_d <= 5'b0;
+            shift <= 5'b0;
+            immediate <= id_i_immediate;
+            jump_address <= 26'b0;
+        end
+        `INST_TYPE_J:
+        begin
+            inst <= id_j_inst;
+            reg_s <= 5'b0;
+            reg_t <= 5'b0;
+            reg_d <= 5'b0;
+            shift <= 5'b0;
+            immediate <= 16'b0;
+            jump_address <= id_j_address;
+        end
+        default:
+        begin
+            inst <= `INST_INVALID;
+            reg_s <= 5'b0;
+            reg_t <= 5'b0;
+            reg_d <= 5'b0;
+            shift <= 5'b0;
+            immediate <= 16'b0;
+            jump_address <= 26'b0;
+        end
+        endcase
+    end
+
+endmodule
+
+`endif
