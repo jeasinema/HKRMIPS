@@ -1,0 +1,16 @@
+####example
+write
+read
+enable
+stall
+output
+input
+addr
+reg
+mem
+val  
+- (data 一律使用val)
+inst	
+- (instruction)
+dev
+- (device)
