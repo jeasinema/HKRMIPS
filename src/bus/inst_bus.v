@@ -16,8 +16,7 @@ module inst_bus(/*autoarg*/);
     input wire rst_n;
 
     input wire[31:0] mmu_output_address;
-    input wire[31:0]  
-
+	 
     always @(*)
     begin
 

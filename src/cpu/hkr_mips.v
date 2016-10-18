@@ -10,11 +10,13 @@
 
 `timescale 1ns/1ps
 
-module X(/*autoarg*/);
+module X(
+    clk, rst_n
+);
 
     input wire clk;
     input wire rst_n;
-
+	 
     always @(*)
     begin
 
