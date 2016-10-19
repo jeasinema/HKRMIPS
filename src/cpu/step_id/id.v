@@ -46,16 +46,49 @@ module ID(/*autoarg*/
     wire[4:0] id_r_reg_t;
     wire[4:0] id_r_reg_d;
     wire[4:0] id_r_shift;
+    id_r id_r_decode(/*autoinst*/
+    .clk                        (clk                            ), // input
+    .rst_n                      (rst_n                          ), // input
     
+    .inst_code                  (inst_code[31:0]                ), // input
+    .inst                       (id_r_inst[7:0]                 ), // output
+    .reg_s                      (id_r_reg_s[4:0]                ), // output
+    .reg_t                      (id_r_reg_t[4:0]                ), // output
+    .reg_d                      (id_r_reg_d[4:0]                ), // output
+    .shift                      (id_r_shift[4:0]                )  // output
+    
+        // decode the 32-bit width inst code     
+    );
+
     // I_INST
     wire[7:0] id_i_inst;
     wire[4:0] id_i_reg_s;
     wire[4:0] id_i_reg_t;
     wire[15:0] id_i_immediate;
+    id_i id_i_decode(/*autoinst*/
+    .clk                        (clk                            ), // input
+    .rst_n                      (rst_n                          ), // input
 
+    .inst_code                  (inst_code[31:0]                ), // input
+    .inst                       (id_i_inst[7:0]                 ), // output
+    .reg_s                      (id_i_reg_s[4:0]                ), // output
+    .reg_t                      (id_i_reg_t[4:0]                ), // output
+    .immediate                  (id_i_immediate[15:0]           )  // output
+
+        // decode the 32bit width inst code
+    );
+    
     // J_INST
     wire[7:0] id_j_inst;
     wire[25:0] id_j_address;
+    id_j id_j_decode(/*autoinst*/
+    .clk                        (clk                            ), // input
+    .rst_n                      (rst_n                          ), // input
+
+    .inst_code                  (inst_code[31:0]                ), // input
+    .inst                       (id_j_inst[7:0]                 ), // output
+    .address                    (id_j_address[25:0]             )  // output
+    );  
 
     always @(*)
     begin

@@ -2,7 +2,7 @@
  File Name : id_r.v
  Purpose : decode R-type inst
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 10:56:38 2016
+ Last Modified : Wed Oct 19 14:26:47 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __ID_R_V__
@@ -10,7 +10,15 @@
 
 `timescale 1ns/1ps
 
-module id_r(/*autoarg*/);
+`include "../defs.v"
+
+module id_r(/*autoarg*/
+    //Inputs
+    clk, rst_n, inst_code, 
+
+    //Outputs
+    inst, reg_s, reg_t, reg_d, shift
+);
 
     input wire clk;
     input wire rst_n;
@@ -22,7 +30,7 @@ module id_r(/*autoarg*/);
     output wire[4:0] reg_d;
     output wire[4:0] shift;
     
-    // decode the inst code     
+    // decode the 32-bit width inst code     
     assign reg_s = inst_code[25:21];
     assign reg_t = inst_code[20:16];
     assign reg_d = inst_code[15:11];
@@ -34,43 +42,43 @@ module id_r(/*autoarg*/);
         if (inst_code[31:26] == 6'b000000) 
         begin
             case (inst_code[5:0])
-             
-            default: inst <= INST_INVALID; 
+            6'h00: inst <= `INST_SLL; 
+            6'h02: inst <= `INST_SRL; 
+            6'h03: inst <= `INST_SRA; 
+            6'h04: inst <= `INST_SLLV;
+            6'h06: inst <= `INST_SRLV;
+            6'h07: inst <= `INST_SRAV;
+            6'h08: inst <= `INST_JR;
+            6'h09: inst <= `INST_JALR;
+            6'h0c: inst <= `INST_SYSCALL;
+            6'h0d: inst <= `INST_BREAK;
+            6'h10: inst <= `INST_MFHI;
+            6'h11: inst <= `INST_MTHI;
+            6'h12: inst <= `INST_MFLO;
+            6'h13: inst <= `INST_MTLO;
+            6'h18: inst <= `INST_MULT;
+            6'h1b: inst <= `INST_DIVU;
+            6'h21: inst <= `INST_ADDU;
+            6'h23: inst <= `INST_SUBU;
+            6'h24: inst <= `INST_AND;
+            6'h25: inst <= `INST_OR;
+            6'h26: inst <= `INST_XOR;
+            6'h27: inst <= `INST_NOR;
+            6'h2a: inst <= `INST_SLT;
+            6'h2b: inst <= `INST_SLTU;  
+            default: inst <= `INST_INVALID; 
             endcase
         end
-          // R-Type:SPECIAL2
+        // R-Type:SPECIAL2
         else if (inst_code[31:26] = 6'b011100)  
         begin
             case (inst_code[5:0])
-            6'h00: inst <= INST_SLL; 
-            6'h02: inst <= INST_SRL; 
-            6'h03: inst <= INST_SRA; 
-            6'h04: inst <= INST_SLLV;
-            6'h06: inst <= INST_SRLV;
-            6'h07: inst <= INST_SRAV;
-            6'h08: inst <= INST_JR;
-            6'h09: inst <= INST_JALR;
-            6'h0c: inst <= INST_SYSCALL;
-            6'h0d: inst <= INST_BREAK;
-            6'h10: inst <= INST_MFHI;
-            6'h11: inst <= INST_MTHI;
-            6'h12: inst <= INST_MFLO;
-            6'h13: inst <= INST_MTLO;
-            6'h18: inst <= INST_MULT;
-            6'h1b: inst <= INST_DIVU;
-            6'h21: inst <= INST_ADDU;
-            6'h23: inst <= INST_SUBU;
-            6'h24: inst <= INST_AND;
-            6'h25: inst <= INST_OR;
-            6'h26: inst <= INST_XOR;
-            6'h27: inst <= INST_NOR;
-            6'h2a: inst <= INST_SLT;
-            6'h2b: inst <= INST_SLTU; 
-            default: inst <= INST_INVALID; 
+            // temporarily not
+            default: inst <= `INST_INVALID; 
             endcase
         end   
         else 
-            inst <= #0.1 INST_INVALID;
+            inst <= `INST_INVALID;
     end
 
 endmodule
