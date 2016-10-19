@@ -12,13 +12,13 @@
 
 `timescale 1ns/1ps
 
-module ID(/*autoarg*/
+module id(/*autoarg*/
     //Inputs
     clk, rst_n, inst_code, 
 
     //Outputs
     inst, inst_type, reg_s, reg_t, reg_d, 
-    immediate, shift, jump_address
+    immediate, shift, jump_addr
 );
 
     input wire clk;
@@ -38,7 +38,7 @@ module ID(/*autoarg*/
     output reg[4:0] reg_d;
     output reg[15:0] immediate;
     output reg[4:0] shift;  // only for SLL SRA
-    output reg[25:0] jump_address;  // only for J JAL
+    output reg[25:0] jump_addr;  // only for J JAL
 
     // R-INST
     wire[7:0] id_r_inst;

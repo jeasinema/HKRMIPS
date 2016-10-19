@@ -2,7 +2,7 @@
  File Name : defs.v
  Purpose : some basic macros for cpu
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 12:54:45 2016
+ Last Modified : Wed Oct 19 15:43:04 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __DEFS_V__
@@ -77,21 +77,30 @@
 `define INST_TLBWI 8'd55
 `define INST_XOR 8'd56
 `define INST_XORI 8'd57
+`define INST_TLBP 8'd58
+`define INST_WAIT 8'd59
+// cache related
+//`define INST_LL 
+//`define INST_SC 
+//`define INST_CACHE 
+
+
+
 
 `define INST_INVALID 8'hff
 
 // specify the type how an instruction accesses register and memory
 // used for mm and reg_bypass_mux
-`define ACCESS_TYPE_R2R 2'd0 // inst that set register value in EX 
-`define ACCESS_TYPE_R2M 2'd1 // inst that put register value to memory in MM 
-`define ACCESS_TYPE_M2R 2'd2 // inst that put memory value to register in MM  
+`define MEM_ACCESS_TYPE_R2R 2'd0 // inst that set register value in EX 
+`define MEM_ACCESS_TYPE_R2M 2'd1 // inst that put register value to memory in MM 
+`define MEM_ACCESS_TYPE_M2R 2'd2 // inst that put memory value to register in MM  
 
 // specify the type how an instruction accesses memory
 // used for mm
-`define MEM_ACCESS_WORD 3'd0
-`define MEM_ACCESS_HALF 3'd1
-`define MEM_ACCESS_BYTE 3'd2
-`define MEM_ACCESS_LEFT 3'd3
-`define MEM_ACCESS_RIGHT 3'd4
+`define MEM_ACCESS_LENGTH_WORD 3'd0
+`define MEM_ACCESS_LENGTH_HALF 3'd1
+`define MEM_ACCESS_LENGTH_BYTE 3'd2
+`define MEM_ACCESS_LENGTH_LEFT_WORD 3'd3  // most-significant word from an unaligned memory addr
+`define MEM_ACCESS_LENGTH_RIGHT_WORD 3'd4 // least-significant word from an unaligned memory addr
 
 `endif

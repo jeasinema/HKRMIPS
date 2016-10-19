@@ -14,3 +14,8 @@
   - (instruction)
 - dev
   - (device)
+- exception
+- flush
+- ext
+  - extension
+  - extended

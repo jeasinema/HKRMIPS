@@ -99,7 +99,7 @@ EX 从mux  读取 reg_s/reg_t
  (5) 出现 ibus_stall (事实上这个信号不会发生, 在top 中被固定为0) 对策同(4)
 
 4. 分支的实现
-
+在 `id` 阶段设置一 `branch_detector` 负责计算分支地址`branch_jump_addr`和返回地址`return_addr`, 输出分支信号`do_branch`
 5. 中断的实现
 
 6. 五级流水概览

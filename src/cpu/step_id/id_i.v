@@ -2,7 +2,7 @@
  File Name : id_i.v
  Purpose :  decode I-type instructions
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 14:39:56 2016
+ Last Modified : Wed Oct 19 16:39:37 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __ID_I_V__
@@ -69,7 +69,9 @@ module id_i(/*autoarg*/
             begin
                 case (inst_code[5:0])
                 6'h02: inst <= `INST_TLBWI;
+                6'h08: inst <= `INST_TLBP;
                 6'h18: inst <= `INST_ERET;
+                6'h20: inst <= `INST_WAIT;
                 default: inst <= `INST_INVALID;
                 endcase
             end
