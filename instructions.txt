@@ -2,7 +2,6 @@ addiu
 addu
 and
 andi
-b
 beq
 beqz
 bgez
@@ -22,7 +21,6 @@ lb
 lbu
 lh
 lhu
-li
 lui
 lw
 lwl
@@ -30,13 +28,11 @@ lwr
 mfc0
 mfhi
 mflo
-move
 mtc0
 mthi
 mtlo
 mult
 negu
-nop
 nor
 or
 ori
