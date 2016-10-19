@@ -8,7 +8,7 @@
 `ifndef __ID_V__
 `define __ID_V__
 
-`indclude "../defs.v"
+`include "..\defs.v"
 
 `timescale 1ns/1ps
 

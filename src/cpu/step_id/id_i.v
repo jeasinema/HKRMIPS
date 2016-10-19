@@ -2,7 +2,7 @@
  File Name : id_i.v
  Purpose :  decode I-type instructions
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 14:27:01 2016
+ Last Modified : Wed Oct 19 14:39:56 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __ID_I_V__
