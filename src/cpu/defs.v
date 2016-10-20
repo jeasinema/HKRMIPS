@@ -79,6 +79,14 @@
 `define INST_XORI 8'd57
 `define INST_TLBP 8'd58
 `define INST_WAIT 8'd59
+
+// Instructions added by jinzihao
+`define INST_ADD 8'd60
+`define INST_ADDI 8'd61
+`define INST_SUB 8'd62
+`define INST_MOVZ 8'd63
+`define INST_MOVN 8'd64
+
 // cache related
 //`define INST_LL 
 //`define INST_SC 
