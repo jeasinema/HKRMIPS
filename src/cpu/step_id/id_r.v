@@ -70,7 +70,7 @@ module id_r(/*autoarg*/
             endcase
         end
         // R-Type:SPECIAL2
-        else if (inst_code[31:26] = 6'b011100)  
+        else if (inst_code[31:26] == 6'b011100)  
         begin
             case (inst_code[5:0])
             // temporarily not

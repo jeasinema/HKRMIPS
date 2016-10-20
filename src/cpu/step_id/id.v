@@ -29,7 +29,7 @@ module id(/*autoarg*/
 
     // inst mark at defs.v
     output reg[7:0] inst;
-    // inst tpye in defs.v
+    // inst type in defs.v
     output reg[1:0] inst_type;
 
     // output operands
