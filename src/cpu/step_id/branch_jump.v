@@ -2,13 +2,15 @@
  File Name : branch_jump.v
  Purpose : ex jump/branch instructor in advance
  Creation Date : 20-10-2016
- Last Modified : Thu Oct 20 12:50:08 2016
+ Last Modified : Thu Oct 20 21:23:11 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __BRANCH_JUMP_V__
 `define __BRANCH_JUMP_V__
 
 `timescale 1ns/1ps
+
+`include "../defs.v"
 
 module branch_jump(/*autoarg*/
     //Inputs

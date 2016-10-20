@@ -2,7 +2,7 @@
  File Name : reg_bypass_mux.v
  Purpose : an mux interface for regs, used for bypass
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 09:47:32 2016
+ Last Modified : Thu Oct 20 21:16:41 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __REG_BYPASS_MUX_V__
@@ -17,7 +17,7 @@ module reg_bypass_mux(/*autoarg*/
     clk, rst_n, reg_addr, val_from_regs, 
     addr_from_ex, val_from_ex, access_type_from_ex, 
     addr_from_mm, val_from_mm, access_type_from_mm, 
-    addr_from_wb, val_from_wb, 
+    addr_from_wb, val_from_wb, write_enable_from_wb, 
 
     //Outputs
     val_output
@@ -45,6 +45,8 @@ module reg_bypass_mux(/*autoarg*/
     // reg addr info used for bypass from wb
     input wire[4:0] addr_from_wb;
     input wire[31:0] val_from_wb;
+    // we = 0 is equal with mem_access_type == R2M (reg_val is useless)
+    input wire write_enable_from_wb;
     //input wire write_enable_from_wb;
     
     // final output of reg val (from real regs heap or bypass)
@@ -56,9 +58,9 @@ module reg_bypass_mux(/*autoarg*/
             val_output <= 32'b0;
         else if (reg_addr == addr_from_ex && access_type_from_ex == `MEM_ACCESS_TYPE_R2R)
             val_output <= val_from_ex;
-        else if (reg_addr == addr_from_mm && (access_type_from_mm == `MEM_ACCESS_TYPE_R2M || access_type_from_ex == `MEM_ACCESS_TYPE_M2R))
+        else if (reg_addr == addr_from_mm && (access_type_from_mm == `MEM_ACCESS_TYPE_R2R || access_type_from_ex == `MEM_ACCESS_TYPE_M2R))
             val_output <= val_from_mm;
-        else if(reg_addr == addr_from_wb)
+        else if(reg_addr == addr_from_wb && write_enable_from_wb)
             val_output <= val_from_wb;
         else
             val_output <= val_from_regs;

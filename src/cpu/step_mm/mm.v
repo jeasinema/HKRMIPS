@@ -2,13 +2,15 @@
  File Name : mm.v
  Purpose :
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 20:55:09 2016
+ Last Modified : Thu Oct 20 21:22:40 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __X_V__
 `define __X_V__
 
 `timescale 1ns/1ps
+
+`include "../defs.v"
 
 module mm(/*autoarg*/
     //Inputs
