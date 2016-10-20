@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 12:44:02 2016
+ Last Modified : Thu Oct 20 13:34:44 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -13,15 +13,17 @@
 `include "../defs.v"
 
 module ex(/*autoarg*/
-    clk, rst_n, inst, inst_type,
-    reg_s, reg_t, reg_d,
-    reg_s_val, reg_t_val, immediate,
-    return_addr,
-    
-    mem_access_type, mem_access_size,
-    val_output, mem_access_addr, bypass_reg_addr,
-    overflow, stall_for_mul_cycle, is_priv_inst
-    );
+    //Inputs
+    clk, rst_n, inst, inst_type, reg_s, reg_t, 
+    reg_d, reg_s_val, reg_t_val, immediate, 
+    shift, jump_addr, return_addr, reg_hilo_value, 
+
+    //Outputs
+    mem_access_type, mem_access_size, val_output, 
+    mem_access_addr, bypass_reg_addr, overflow, 
+    stall_for_mul_cycle, is_priv_inst, reg_hilo_o, 
+    we_hilo
+);
 
     input wire clk;
     input wire rst_n;
@@ -48,7 +50,7 @@ module ex(/*autoarg*/
     // for reg bypass mux, defined in defs.v
     output reg[1:0] mem_access_type;
     // for mmu, defined in defs.v
-    output reg[1:0] mem_access_size;
+    output reg[2:0] mem_access_size;
     // ex result
     output reg[31:0] val_output;
     // mem access address in step_mm
