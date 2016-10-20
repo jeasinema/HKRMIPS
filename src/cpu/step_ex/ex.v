@@ -120,26 +120,18 @@ module ex(/*autoarg*/
             
         end
         `INST_AND:
-        begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
+        begin           
             val_output <= reg_s_val & reg_t_val;
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
-            stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
+            stall_for_mul_cycle <= 1'b0;  
         end
         `INST_ANDI:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= reg_s_val & zero_ext_immediate;
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_t;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_DIVU:
         begin
@@ -162,135 +154,87 @@ module ex(/*autoarg*/
         end
         `INST_OR:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
-            val_output <= reg_s_val | reg_t_val;
-            mem_access_addr <= 32'h0;
+            val_output <= reg_s_val | reg_t_val;    
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_ORI:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= reg_s_val ^ zero_ext_immediate;
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_t;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_XOR:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= reg_s_val ^ reg_t_val;
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_XORI:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= reg_s_val ^ zero_ext_immediate;
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_t;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_NOR:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= ~(reg_s_val | reg_t_val);
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_LUI:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= {immediate, 16'h0};
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_t;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_SLL:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= reg_t_val << shift;
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_SLLV:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= reg_t_val << reg_s_val[4:0];
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_SRA:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= ({32{reg_t_val[31]}} << (6'd32 - {1'b0, shift})) | (reg_t_val >> shift);
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_SRAV:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= ({32{reg_t_val[31]}} << (6'd32 - {1'b0, reg_s_val[4:0]})) | (reg_t_val >> reg_s_val[4:0]);
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_SRL:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= reg_t_val >> shift;
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_SRLV:
         begin
-            mem_access_type <= `MEM_ACCESS_TYPE_R2R;
-            mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             val_output <= reg_t_val >> reg_s_val[4:0];
-            mem_access_addr <= 32'h0;
             bypass_reg_addr <= reg_d;
             overflow <= 1'b0;
             stall_for_mul_cycle <= 1'b0;
-            is_priv_inst <= 1'b0;
         end
         `INST_MFHI:
         begin
@@ -401,20 +345,20 @@ module ex(/*autoarg*/
         `INST_LB,
         `INST_LBU,
         `INST_SB:
-                mem_access_sz <= `MEM_ACCESS_LENGTH_BYTE;
+                mem_access_size <= `MEM_ACCESS_LENGTH_BYTE;
         `INST_LH,
         `INST_LHU,
         `INST_SH:
-                mem_access_sz <= `MEM_ACCESS_LENGTH_HALF;
+                mem_access_size <= `MEM_ACCESS_LENGTH_HALF;
         `INST_LWL,
         `INST_SWL:
-                mem_access_sz <= `MEM_ACCESS_LENGTH_LEFT_WORD;
+                mem_access_size <= `MEM_ACCESS_LENGTH_LEFT_WORD;
         `INST_LWR,
         `INST_SWR:
-                mem_access_sz <= `MEM_ACCESS_LENGTH_RIGHT_WORD;
+                mem_access_size <= `MEM_ACCESS_LENGTH_RIGHT_WORD;
         // LW & SW
         default:
-                mem_access_sz <= `MEM_ACCESS_LENGTH_WORD;
+                mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
         endcase
     end
 
