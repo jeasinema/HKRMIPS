@@ -2,7 +2,7 @@
  File Name : mm.v
  Purpose :
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 20:51:51 2016
+ Last Modified : Thu Oct 20 20:55:09 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __X_V__
@@ -121,7 +121,7 @@ module mm(/*autoarg*/
             end
             `MEM_ACCESS_LENGTH_WORD: 
                 data_o <= mem_access_data_in;
-``          `MEM_ACCESS_LENGTH_LEFT_WORD: 
+            `MEM_ACCESS_LENGTH_LEFT_WORD: 
                 data_o <= (mem_access_data_in << left_shift) | data_i & ~left_mask;
             `MEM_ACCESS_LENGTH_RIGHT_WORD: 
                 data_o <= (mem_access_data_in >> right_shift) | data_i & ~right_mask
