@@ -1,33 +1,40 @@
 /*-----------------------------------------------------
  File Name : wb.v
- Purpose :
+ Purpose : step_wb 
  Creation Date : 18-10-2016
- Last Modified : Tue Oct 18 17:00:05 2016
+ Last Modified : Thu Oct 20 21:22:51 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
-`ifndef __X_V__
-`define __X_V__
+`ifndef __WB_V__
+`define __WB_V__
 
 `timescale 1ns/1ps
 
-module wb(/*autoarg*/);
+`include "../defs.v"
+
+module wb(/*autoarg*/
+    //Inputs
+    clk, rst_n, mem_access_type, data_i, 
+    bypass_reg_addr_wb, 
+
+    //Outputs
+    reg_write_enable
+);
 
     input wire clk;
     input wire rst_n;
+    
+    // mem_access_type in mm.v, but 1 clock late
+    input wire[1:0] mem_access_type;
+    // data_o in mm
+    input wire[31:0] data_i;
+    // bypass_reg_addr_mm in mm.v, but 1 clock late
+    input wire[4:0] bypass_reg_addr_wb;
 
-    always @(*)
-    begin
-
-    end
-
-    always @(posedge clk or negedge rst_n)
-    begin
-        if (!rst_n)
-        begin
-
-        end
-
-    end
+    // for regs
+    output wire reg_write_enable;
+    
+    assign reg_write_enable == (mem_access_type == `MEM_ACCESS_TYPE_M2R) || (mem_access_type == `MEM_ACCESS_TYPE_R2R);
 
 endmodule
 

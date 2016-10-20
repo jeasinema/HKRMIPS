@@ -2,7 +2,7 @@
  File Name : branch_jump.v
  Purpose : ex jump/branch instructor in advance
  Creation Date : 20-10-2016
- Last Modified : Thu Oct 20 12:03:35 2016
+ Last Modified : Thu Oct 20 21:23:11 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __BRANCH_JUMP_V__
@@ -10,7 +10,16 @@
 
 `timescale 1ns/1ps
 
-module branch_jump(/*autoarg*/);
+`include "../defs.v"
+
+module branch_jump(/*autoarg*/
+    //Inputs
+    clk, rst_n, pc_addr, inst_code, reg_s_value, 
+    reg_t_value, 
+
+    //Outputs
+    do_branch, branch_addr, return_addr
+);
 
     input wire clk;
     input wire rst_n;
