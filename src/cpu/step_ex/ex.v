@@ -71,9 +71,9 @@ module ex(/*autoarg*/
     //output wire we_tlb;
     //output wire probe_tlb;
     //input wire[31:0] reg_cp0_value;
-    //input wire[63:0] reg_hilo_value;
-    //output reg[63:0] reg_hilo_o;
-    //output reg we_hilo;
+    input wire[63:0] reg_hilo_value;
+    output reg[63:0] reg_hilo_o;
+    output reg we_hilo;
 
     // essential signals for exec:
     // sign-extended 32bit width immediate
