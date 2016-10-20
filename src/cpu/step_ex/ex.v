@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 16:49:58 2016
+ Last Modified : Thu Oct 20 11:20:06 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -28,8 +28,8 @@ module ex(/*autoarg*/);
     input wire[4:0] reg_d;
     input wire[31:0] reg_s_val;
     input wire[31:0] reg_t_val;
-    input wire[31:0] immediate;;  
-    // output by branch.v, maybe need to put in reg_31 under some circumstances
+    input wire[31:0] immediate;  
+    // output by branch_jump.v, maybe need to put in reg_31 under some circumstances
     input wire[31:0] return_addr;
     //others
     //input wire[31:0] reg_cp0_value;
