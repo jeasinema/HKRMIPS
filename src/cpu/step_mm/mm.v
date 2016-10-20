@@ -115,18 +115,18 @@ module mm(/*autoarg*/
             case (mem_access_size)
             `MEM_ACCESS_LENGTH_BYTE:
             begin
-                data_o <= mem_access_signed ? {24{sign_byte}, val_byte} : {24'b0, val_byte};
+                data_o <= mem_access_signed ? {{24{sign_byte}}, val_byte} : {24'b0, val_byte};
             end
             `MEM_ACCESS_LENGTH_HALF: 
             begin
-                data_o <= mem_access_signed ? {16{sign_half}, val_half} : {16'b0, val_half};
+                data_o <= mem_access_signed ? {{16{sign_half}}, val_half} : {16'b0, val_half};
             end
             `MEM_ACCESS_LENGTH_WORD: 
                 data_o <= mem_access_data_in;
             `MEM_ACCESS_LENGTH_LEFT_WORD: 
                 data_o <= (mem_access_data_in << left_shift) | data_i & ~left_mask;
             `MEM_ACCESS_LENGTH_RIGHT_WORD: 
-                data_o <= (mem_access_data_in >> right_shift) | data_i & ~right_mask
+                data_o <= (mem_access_data_in >> right_shift) | data_i & ~right_mask;
             default: 
                 data_o <= 32'b0;
             endcase
