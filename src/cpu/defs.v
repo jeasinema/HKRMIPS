@@ -86,6 +86,11 @@
 `define INST_SUB 8'd62
 `define INST_MOVZ 8'd63
 `define INST_MOVN 8'd64
+`define INST_MULTU 8'd65
+`define INST_MUL 8'd66
+`define INST_CLZ 8'd67
+`define INST_CLO 8'd68
+`define INST_DIV 8'd69
 
 // cache related
 //`define INST_LL 
