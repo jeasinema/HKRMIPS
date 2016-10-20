@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 13:34:44 2016
+ Last Modified : Thu Oct 20 20:50:55 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -19,10 +19,10 @@ module ex(/*autoarg*/
     shift, jump_addr, return_addr, reg_hilo_value, 
 
     //Outputs
-    mem_access_type, mem_access_size, val_output, 
-    mem_access_addr, bypass_reg_addr, overflow, 
-    stall_for_mul_cycle, is_priv_inst, reg_hilo_o, 
-    we_hilo
+    mem_access_type, mem_access_size, mem_access_signed, 
+    val_output, mem_access_addr, bypass_reg_addr, 
+    overflow, stall_for_mul_cycle, is_priv_inst, 
+    reg_hilo_o, we_hilo
 );
 
     input wire clk;
@@ -51,11 +51,13 @@ module ex(/*autoarg*/
     output reg[1:0] mem_access_type;
     // for mmu, defined in defs.v
     output reg[2:0] mem_access_size;
+    // for mm, decide if we get signed/unsigned data
+    output reg[2:0] mem_access_signed;
     // ex result
     output reg[31:0] val_output;
     // mem access address in step_mm
     output reg[31:0] mem_access_addr;
-    // address of the reg(store the val of result in ex), which should be bypass to mux
+    // address of the reg(store the val of result in ex), which should be bypass to mux and mm
     output reg[4:0] bypass_reg_addr; 
     output reg overflow;
     // stall the pipeline when ex do multi-cycle jobs like div
@@ -355,6 +357,21 @@ module ex(/*autoarg*/
                 val_output  <= reg_t_val;
                 reg_addr <= reg_t; 
             end
+            `INST_BREAK:
+            begin
+    
+            end
+            // need to put mem target register 
+           `INST_LB, `INST_LH, `INST_LWL, `INST_LW, `INST_LBU, `INST_LHU, `INST_LWR:   // `INST_LL
+            begin
+                val_output  <= reg_t_val;
+                bypass_reg_addr <= reg_t; 
+            end
+           `INST_SB, `INST_SH, `INST_SWL, `INST_SW, `INST_SWR:                         // `INST_SC
+            begin
+                val_output  <= reg_t_val;
+                bypass_reg_addr <= reg_t; 
+            end
             default:
             begin
                 val_output <= 32'h0;
@@ -444,6 +461,28 @@ module ex(/*autoarg*/
         // LW & SW
         default:
                 mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
+        endcase
+    end
+    
+    // set mem access signed/unsigned (whether need to do signed-extension)
+    always @(*)
+    begin
+        case(inst)
+        `INST_LB:
+        `INST_LH:
+        `INST_LW:
+        `INST_LWL:
+        `INST_LWR:        
+        `INST_SB:
+        `INST_SH:
+        `INST_SW:
+        `INST_SWL:
+        `INST_SWR: 
+            mem_access_signed <= 1'b1;
+        `INST_LBU:
+        `INST_LHU: 
+            mem_access_signed <= 1'b0;
+        default: mem_access_signed <= 1'b1;
         endcase
     end
 
