@@ -25,6 +25,13 @@ module hilo(
     input [63:0] hilo_i, // hilo_i = {hi_i, lo_i}
     output [63:0] hilo_o // hilo_o = {hi_o, lo_o}
     );
-
-
+    
+    always @ (posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            hilo_o <= 64'h0;
+        end else if (we) begin
+            hilo_o <= hilo_i;
+        end
+    end
+    
 endmodule

@@ -114,171 +114,179 @@ module ex(/*autoarg*/
     begin
         overflow <= 1'b0;  // just set it to correct val later
         stall_for_mul_cycle <= 1'b0;
-        case(inst)
-        `INST_ADD,
-        `INST_ADDU,
-        `INST_ADDI,
-        `INST_ADDIU:
-        begin
-            
-        end
-        `INST_AND:
-        begin           
-            val_output <= reg_s_val & reg_t_val;
-            bypass_reg_addr <= reg_d; 
-        end
-        `INST_ANDI:
-        begin
-            val_output <= reg_s_val & zero_ext_immediate;
-            bypass_reg_addr <= reg_t;
-        end
-        `INST_DIVU:
-        begin
-
-        end
-        `INST_MULT:
-        begin
-            
-        end
-        `INST_SUB,
-        `INST_SUBU:
-        begin
-
-        end
-        `INST_SLT,
-        `INST_SLTU,
-        `INST_SLTI,
-        `INST_SLTIU:
-        begin
-
-        end
-        `INST_OR:
-        begin
-            val_output <= reg_s_val | reg_t_val;    
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_ORI:
-        begin
-            val_output <= reg_s_val ^ zero_ext_immediate;
-            bypass_reg_addr <= reg_t;
-        end
-        `INST_XOR:
-        begin
-            val_output <= reg_s_val ^ reg_t_val;
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_XORI:
-        begin
-            val_output <= reg_s_val ^ zero_ext_immediate;
-            bypass_reg_addr <= reg_t;
-        end
-        `INST_NOR:
-        begin
-            val_output <= ~(reg_s_val | reg_t_val);
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_LUI:
-        begin
-            val_output <= {immediate, 16'h0};
-            bypass_reg_addr <= reg_t;
-        end
-        `INST_SLL:
-        begin
-            val_output <= reg_t_val << shift;
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_SLLV:
-        begin
-            val_output <= reg_t_val << reg_s_val[4:0];
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_SRA:
-        begin
-            val_output <= ({32{reg_t_val[31]}} << (6'd32 - {1'b0, shift})) | (reg_t_val >> shift);
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_SRAV:
-        begin
-            val_output <= ({32{reg_t_val[31]}} << (6'd32 - {1'b0, reg_s_val[4:0]})) | (reg_t_val >> reg_s_val[4:0]);
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_SRL:
-        begin
-            val_output <= reg_t_val >> shift;
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_SRLV:
-        begin
-            val_output <= reg_t_val >> reg_s_val[4:0];
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_MFHI:
-        begin
-            val_output <= reg_hilo_value[63:32];
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_MTHI:
-        begin
-            reg_hilo_o[31:0] <= reg_s_val;
-            bypass_reg_addr <= 5'h0;
-        end
-        `INST_MFLO:
-        begin
-            val_output <= reg_hilo_value[31:0];
-            bypass_reg_addr <= reg_d;
-        end
-        `INST_MTLO:
-        begin
-            reg_hilo_o[63:32] <= reg_s_val;
-            bypass_reg_addr <= 5'h0;
-        end
-        `INST_MOVZ:
-        begin
-            val_output <= reg_s_value;
-            if (reg_t_val == 0)
-            begin
-                bypass_reg_addr <= reg_d;
-            end
-            else begin
-                bypass_reg_addr <= 5'h0;
-            end
-        end
-        `INST_MOVN:
-        begin
-            val_output <= reg_s_value;
-            if (reg_t_val != 0)
-            begin
-                bypass_reg_addr <= reg_d;
-            end
-            else begin
-                bypass_reg_addr <= 5'h0;
-            end
-        end
-        `INST_SYSCALL:
-        begin
-
-        end
-        `INST_BREAK:
-        begin
-
-        end
-        // need to put mem target register 
-       `INST_LB, `INST_LH, `INST_LWL, `INST_LW, `INST_LBU, `INST_LHU, `INST_LWR:   // `INST_LL
-        begin
-            val_output  <= reg_t_val;
-            reg_addr <= reg_t; 
-        end
-       `INST_SB, `INST_SH, `INST_SWL, `INST_SW, `INST_SWR:                         // `INST_SC
-        begin
-            val_output  <= reg_t_val;
-            reg_addr <= reg_t; 
-        end
-        default:
+        if (!res_n)
         begin
             val_output <= 32'h0;
             bypass_reg_addr <= 5'h0;
         end
-        endcase
+        else
+        begin
+            case(inst)
+            `INST_ADD,
+            `INST_ADDU,
+            `INST_ADDI,
+            `INST_ADDIU:
+            begin
+                
+            end
+            `INST_AND:
+            begin           
+                val_output <= reg_s_val & reg_t_val;
+                bypass_reg_addr <= reg_d; 
+            end
+            `INST_ANDI:
+            begin
+                val_output <= reg_s_val & zero_ext_immediate;
+                bypass_reg_addr <= reg_t;
+            end
+            `INST_DIVU:
+            begin
+
+            end
+            `INST_MULT:
+            begin
+                
+            end
+            `INST_SUB,
+            `INST_SUBU:
+            begin
+
+            end
+            `INST_SLT,
+            `INST_SLTU,
+            `INST_SLTI,
+            `INST_SLTIU:
+            begin
+
+            end
+            `INST_OR:
+            begin
+                val_output <= reg_s_val | reg_t_val;    
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_ORI:
+            begin
+                val_output <= reg_s_val ^ zero_ext_immediate;
+                bypass_reg_addr <= reg_t;
+            end
+            `INST_XOR:
+            begin
+                val_output <= reg_s_val ^ reg_t_val;
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_XORI:
+            begin
+                val_output <= reg_s_val ^ zero_ext_immediate;
+                bypass_reg_addr <= reg_t;
+            end
+            `INST_NOR:
+            begin
+                val_output <= ~(reg_s_val | reg_t_val);
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_LUI:
+            begin
+                val_output <= {immediate, 16'h0};
+                bypass_reg_addr <= reg_t;
+            end
+            `INST_SLL:
+            begin
+                val_output <= reg_t_val << shift;
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_SLLV:
+            begin
+                val_output <= reg_t_val << reg_s_val[4:0];
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_SRA:
+            begin
+                val_output <= ({32{reg_t_val[31]}} << (6'd32 - {1'b0, shift})) | (reg_t_val >> shift);
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_SRAV:
+            begin
+                val_output <= ({32{reg_t_val[31]}} << (6'd32 - {1'b0, reg_s_val[4:0]})) | (reg_t_val >> reg_s_val[4:0]);
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_SRL:
+            begin
+                val_output <= reg_t_val >> shift;
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_SRLV:
+            begin
+                val_output <= reg_t_val >> reg_s_val[4:0];
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_MFHI:
+            begin
+                val_output <= reg_hilo_value[63:32];
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_MTHI:
+            begin
+                reg_hilo_o[31:0] <= reg_s_val;
+                bypass_reg_addr <= 5'h0;
+            end
+            `INST_MFLO:
+            begin
+                val_output <= reg_hilo_value[31:0];
+                bypass_reg_addr <= reg_d;
+            end
+            `INST_MTLO:
+            begin
+                reg_hilo_o[63:32] <= reg_s_val;
+                bypass_reg_addr <= 5'h0;
+            end
+            `INST_MOVZ:
+            begin
+                val_output <= reg_s_value;
+                if (reg_t_val == 0)
+                begin
+                    bypass_reg_addr <= reg_d;
+                end
+                else begin
+                    bypass_reg_addr <= 5'h0;
+                end
+            end
+            `INST_MOVN:
+            begin
+                val_output <= reg_s_value;
+                if (reg_t_val != 0)
+                begin
+                    bypass_reg_addr <= reg_d;
+                end
+                else begin
+                    bypass_reg_addr <= 5'h0;
+                end
+            end
+            `INST_SYSCALL:
+            begin
+
+            end
+            `INST_BREAK:
+            begin
+
+            end
+            // need to put mem target register 
+           `INST_LB, `INST_LH, `INST_LWL, `INST_LW, `INST_LBU, `INST_LHU, `INST_LWR:   // `INST_LL
+            begin
+                val_output  <= reg_t_val;
+                reg_addr <= reg_t; 
+            end
+           `INST_SB, `INST_SH, `INST_SWL, `INST_SW, `INST_SWR:                         // `INST_SC
+            begin
+                val_output  <= reg_t_val;
+                reg_addr <= reg_t; 
+            end
+            default:
+            begin
+                val_output <= 32'h0;
+                bypass_reg_addr <= 5'h0;
+            end
+            endcase
+        end
     end
 
     // instruction that need to put return address to specific reg, branch or jump works are done in step_id/branch_jump.v
