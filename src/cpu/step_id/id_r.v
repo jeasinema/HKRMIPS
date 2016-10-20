@@ -58,6 +58,7 @@ module id_r(/*autoarg*/
             6'h13: inst <= `INST_MTLO;
             6'h18: inst <= `INST_MULT;
             6'h1b: inst <= `INST_DIVU;
+            6'h20: inst <= `INST_ADD;
             6'h21: inst <= `INST_ADDU;
             6'h23: inst <= `INST_SUBU;
             6'h24: inst <= `INST_AND;

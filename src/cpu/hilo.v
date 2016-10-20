@@ -22,8 +22,8 @@ module hilo(
     input clk,
     input rst_n,
     input we,
-    input [63:0] hilo_i,
-    output [63:0] hilo_o
+    input [63:0] hilo_i, // hilo_i = {hi_i, lo_i}
+    output [63:0] hilo_o // hilo_o = {hi_o, lo_o}
     );
 
 
