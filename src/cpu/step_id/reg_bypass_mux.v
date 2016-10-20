@@ -54,9 +54,9 @@ module reg_bypass_mux(/*autoarg*/
     begin
         if (reg_addr == 5'b0)
             val_output <= 32'b0;
-        else if (reg_addr == addr_from_ex && access_type_from_ex == `ACCESS_TYPE_R2R)
+        else if (reg_addr == addr_from_ex && access_type_from_ex == `MEM_ACCESS_TYPE_R2R)
             val_output <= val_from_ex;
-        else if (reg_addr == addr_from_mm && (access_type_from_mm == `ACCESS_TYPE_R2M || access_type_from_ex == `ACCESS_TYPE_M2R))
+        else if (reg_addr == addr_from_mm && (access_type_from_mm == `MEM_ACCESS_TYPE_R2M || access_type_from_ex == `MEM_ACCESS_TYPE_M2R))
             val_output <= val_from_mm;
         else if(reg_addr == addr_from_wb)
             val_output <= val_from_wb;
