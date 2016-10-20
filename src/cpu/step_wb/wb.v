@@ -34,7 +34,7 @@ module wb(/*autoarg*/
     // for regs
     output wire reg_write_enable;
     
-    assign reg_write_enable == (mem_access_type == `MEM_ACCESS_TYPE_M2R) || (mem_access_type == `MEM_ACCESS_TYPE_R2R);
+    assign reg_write_enable = (mem_access_type == `MEM_ACCESS_TYPE_M2R) || (mem_access_type == `MEM_ACCESS_TYPE_R2R);
 
 endmodule
 

@@ -393,7 +393,7 @@ module ex(/*autoarg*/
         `INST_JAL:
         begin
             val_output <= return_addr;
-            bypass_reg_addr <= 5'b31; // need to put return address into reg_31 
+            bypass_reg_addr <= 5'h31; // need to put return address into reg_31 
         end
         `INST_JALR:
         begin
@@ -468,18 +468,18 @@ module ex(/*autoarg*/
     always @(*)
     begin
         case(inst)
-        `INST_LB:
-        `INST_LH:
-        `INST_LW:
-        `INST_LWL:
-        `INST_LWR:        
-        `INST_SB:
-        `INST_SH:
-        `INST_SW:
-        `INST_SWL:
+        `INST_LB,
+        `INST_LH,
+        `INST_LW,
+        `INST_LWL,
+        `INST_LWR,        
+        `INST_SB,
+        `INST_SH,
+        `INST_SW,
+        `INST_SWL,
         `INST_SWR: 
             mem_access_signed <= 1'b1;
-        `INST_LBU:
+        `INST_LBU,
         `INST_LHU: 
             mem_access_signed <= 1'b0;
         default: mem_access_signed <= 1'b1;
