@@ -2,7 +2,7 @@
  File Name : id_j.v
  Purpose :
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 14:40:07 2016
+ Last Modified : Thu Oct 20 10:49:06 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __ID_J_V__
@@ -17,7 +17,7 @@ module id_j(/*autoarg*/
     clk, rst_n, inst_code, 
 
     //Outputs
-    inst, address
+    inst, addr
 );
 
     input wire clk;
@@ -25,9 +25,9 @@ module id_j(/*autoarg*/
 
     input wire[31:0] inst_code;
     output reg[7:0] inst;
-    output wire[25:0] address;
+    output wire[25:0] addr;
 
-    assign address = inst_code[25:0];
+    assign addr = inst_code[25:0];
 
     always @(*)
     begin

@@ -2,7 +2,7 @@
  File Name : defs.v
  Purpose : some basic macros for cpu
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 15:43:04 2016
+ Last Modified : Thu Oct 20 11:08:16 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __DEFS_V__
@@ -35,9 +35,9 @@
 `define INST_DIVU 8'd13
 `define INST_ERET 8'd14
 `define INST_J 8'd15
-`define INST_JAL 8'd16
-`define INST_JALR 8'd17
-`define INST_JR 8'd18
+`define INST_JR 8'd16
+`define INST_JAL 8'd17
+`define INST_JALR 8'd18
 `define INST_LB 8'd19
 `define INST_LBU 8'd20
 `define INST_LH 8'd21

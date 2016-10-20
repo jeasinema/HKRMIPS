@@ -80,14 +80,14 @@ module id(/*autoarg*/
     
     // J_INST
     wire[7:0] id_j_inst;
-    wire[25:0] id_j_address;
+    wire[25:0] id_j_addr;
     id_j id_j_decode(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
 
     .inst_code                  (inst_code[31:0]                ), // input
     .inst                       (id_j_inst[7:0]                 ), // output
-    .address                    (id_j_address[25:0]             )  // output
+    .addr                    (id_j_addr[25:0]             )  // output
     );  
 
     always @(*)
@@ -113,7 +113,7 @@ module id(/*autoarg*/
             reg_d <= id_r_reg_d;
             shift <= id_r_shift;
             immediate <= 16'b0;
-            jump_address <= 26'b0;
+            jump_addr <= 26'b0;
         end
         `INST_TYPE_I:
         begin
@@ -123,7 +123,7 @@ module id(/*autoarg*/
             reg_d <= 5'b0;
             shift <= 5'b0;
             immediate <= id_i_immediate;
-            jump_address <= 26'b0;
+            jump_addr <= 26'b0;
         end
         `INST_TYPE_J:
         begin
@@ -133,7 +133,7 @@ module id(/*autoarg*/
             reg_d <= 5'b0;
             shift <= 5'b0;
             immediate <= 16'b0;
-            jump_address <= id_j_address;
+            jump_addr <= id_j_addr;
         end
         default:
         begin
@@ -143,7 +143,7 @@ module id(/*autoarg*/
             reg_d <= 5'b0;
             shift <= 5'b0;
             immediate <= 16'b0;
-            jump_address <= 26'b0;
+            jump_addr <= 26'b0;
         end
         endcase
     end
