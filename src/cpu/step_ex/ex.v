@@ -92,7 +92,7 @@ module ex(/*autoarg*/
     wire sign_bit_immediate;
     // zero-extended 32bit width immediate
     wire[31:0] zero_ext_immediate;
-    // for mulyi_cycle_calc 
+    // for multi_cycle_calc 
     wire multi_cycle_done;
     wire[63:0] multi_cycle_result;
 
@@ -104,7 +104,11 @@ module ex(/*autoarg*/
     wire[31:0] result_sum;
     wire ov_sum;
     wire op1_lt_op2;
-    reg[31:0] arithmeticres;
+    // intermediate variables for mul/mult/multu
+    wire[31:0] opdata1_mult;
+    wire[31:0] opdata2_mult;
+    wire[63:0] hilo_temp;
+    reg[63:0] mulres;
 
     // assign area
     assign inst_syscall = (inst == `INST_SYSCALL);
@@ -132,6 +136,8 @@ module ex(/*autoarg*/
                                 immediate
                                 };
     assign zero_ext_immediate = { 16'b0, immediate};
+    
+    // assign variables for add/sub/slt 
     assign op1_i = reg_s_val;
     assign op2_i = ((inst == `INST_SLT) ||
                     (inst == `INST_SLTU) ||
@@ -159,6 +165,38 @@ module ex(/*autoarg*/
                          (op1_i[31] && op2_i[31] && result_sum[31])) :
                         (op1_i < op2_i);
     assign op1_i_not = ~op1_i;
+
+    // assign variables for mul/mult/multu
+    assign opdata1_mult = ((inst == `INST_MUL) || (inst == `INST_MULT)) && (op1_i[31] == 1'b1) ? (~op1_i + 1) : op1_i;
+    assign opdata2_mult = ((inst == `INST_MUL) || (inst == `INST_MULT)) && (op2_i[31] == 1'b1) ? (~op2_i + 1) : op2_i;
+    assign hilo_temp = opdata1_mult * opdata2_mult;
+    
+    // get MUL/MULT/MULTU result from hilo_temp;
+    always @ (*) begin
+  		if(!rst_n) begin
+  			mulres <= 64'h0;
+  		end else if ((inst == `INST_MUL) || (inst == `INST_MULT)) begin
+  			if(op1_i[31] ^ op2_i[31] == 1'b1) begin
+  				mulres <= ~hilo_temp + 1;
+  			end else begin
+  			    mulres <= hilo_temp;
+  			end
+  		end else begin
+              mulres <= hilo_temp;
+  		end
+  	end
+    
+    // update HILO registers from MULT/MULTU result
+    always @ (*) begin
+  		if(!rst_n) begin
+  			write_enable_hilo <= 1'b0;
+  			reg_hilo_o <= 64'h0;	
+  		end else if((inst == `INST_MULT) || (inst == `INST_MULTU)) begin
+  			write_enable_hilo <= 1'b1;
+  			reg_hilo_o <= mulres;
+  		end				
+  	end
+
     // stall for multi_cycle calc
     assign stall_for_mul_cycle = !multi_cycle_done;
 
@@ -194,19 +232,37 @@ module ex(/*autoarg*/
             bypass_reg_addr <= 5'h0;
         end else begin
             case(inst)
-            `INST_ADD,
             `INST_ADDU,
-            `INST_SUB,
             `INST_SUBU:
             begin
                 val_output <= result_sum;
                 bypass_reg_addr <= reg_d;
             end
-            `INST_ADDI,
+            `INST_ADD,
+            `INST_SUB:
+            begin
+                if (ov_sum == 1'b1) begin
+                    bypass_reg_addr <= 5'h0;
+                end
+                else begin
+                    val_output <= result_sum;
+                    bypass_reg_addr <= reg_d;
+                end
+            end
             `INST_ADDIU:
             begin
                 val_output <= result_sum;
                 bypass_reg_addr <= reg_t;
+            end
+            `INST_ADDI:
+            begin
+                if (ov_sum == 1'b1) begin
+                    bypass_reg_addr <= 5'h0;
+                end
+                else begin
+                    val_output <= result_sum;
+                    bypass_reg_addr <= reg_t;
+                end
             end
             `INST_AND:
             begin           
@@ -218,8 +274,6 @@ module ex(/*autoarg*/
                 val_output <= reg_s_val & zero_ext_immediate;
                 bypass_reg_addr <= reg_t;
             end
-            `INST_MULT,
-            `INST_MULTU:
             `INST_DIV,
             `INST_DIVU:
             begin
@@ -230,8 +284,7 @@ module ex(/*autoarg*/
             end
             `INST_MUL:
             begin
-                val_output <=  multi_cycle_result[31:0];
-                bypass_reg_addr <= multi_cycle_done ? reg_d : 5'h0;
+                val_output <= mulres[31:0];
             end
             `INST_SLT,
             `INST_SLTU:
@@ -342,7 +395,7 @@ module ex(/*autoarg*/
             end
             `INST_MTHI:
             begin
-                reg_hilo_o <= {reg_s_val, reg_hilo_val[31:0]}
+                reg_hilo_o <= {reg_s_val, reg_hilo_val[31:0]};
                 write_enable_hilo <= 1'b1;
                 val_output <= 32'h0;
                 bypass_reg_addr <= 5'b0;
@@ -354,7 +407,7 @@ module ex(/*autoarg*/
             end
             `INST_MTLO:
             begin
-                reg_hilo_o <= {reg_hilo_val[63:32], reg_s_val}
+                reg_hilo_o <= {reg_hilo_val[63:32], reg_s_val};
                 write_enable_hilo <= 1'b1;
                 val_output <= 32'h0;
                 bypass_reg_addr <= 5'b0;
@@ -415,14 +468,14 @@ module ex(/*autoarg*/
                 val_output  <= reg_t_val;
                 bypass_reg_addr <= reg_t; 
             end
-            `OP_MFC0: 
+            `INST_MFC0: 
             begin
                 cp0_read_addr <= reg_d;
                 cp0_sel <= immediate[2:0];   
                 val_output <= reg_cp0_val;
                 bypass_reg_addr <= reg_t;
             end
-            `OP_MTC0: 
+            `INST_MTC0: 
             begin
                 cp0_write_enable <= 1'b1;
                 cp0_write_addr <= reg_d;

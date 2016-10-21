@@ -40,15 +40,12 @@ module multi_cycle(/*autoarg*/
     // for DIV/DIVU
     wire[31:0] raw_quotient, raw_remainder;
     wire[31:0] quotient, remainder;
-    // for MUL MULT MULTU
-    wire[31:0] raw_mul_result;
-    wire[31:0] mul_result;
 
     reg[DIV_CYCLES:0] div_stage;
     wire div_done;
 
     // get operands
-    assign flag_unsigned = (inst == `INST_DIVU || inst == `INST_MULTU);
+    assign flag_unsigned = (inst == `INST_DIVU);
     assign abs_op1 = (flag_unsigned ||!op1[31]) ? op1 : -op1;
     assign abs_op2 = (flag_unsigned ||!op2[31]) ? op2 : -op2;
     // do multiply
@@ -73,11 +70,7 @@ module multi_cycle(/*autoarg*/
 
     always @(*)
     begin
-        multi_cycle_done <= 1'b1;
         case (inst)
-        `INST_MUL,
-        `INST_MULT:
-            result <= mul_result;
         `INST_DIV,
         `INST_DIVU:
         begin

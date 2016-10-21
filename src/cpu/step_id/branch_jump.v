@@ -52,7 +52,7 @@ module branch_jump(/*autoarg*/
         sign_bit, sign_bit, sign_bit, sign_bit,
         sign_bit, sign_bit, sign_bit, sign_bit,
         sign_bit, sign_bit, inst[15:0], 2'b00
-    }
+    };
 
     always @(*)
     begin
@@ -124,13 +124,13 @@ module branch_jump(/*autoarg*/
                 do_branch <= 1'b1;
             end
         end
-        `INST_J:
+        `INST_J,
         `INST_JAL:
         begin
             branch_addr <= {current_pc_addr[31:28], inst_code[25:0], 2'b00};
             do_branch <= 1'b1;
         end
-        `INST_JR:
+        `INST_JR,
         `INST_JALR:
         begin
             branch_addr <= reg_s_val ;

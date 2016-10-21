@@ -10,7 +10,7 @@
 
 `timescale 1ns/1ps
 
-`include "../defs.v"
+`include "defs.v"
 
 module hkr_mips(/*autoarg*/);
 

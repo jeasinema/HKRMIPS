@@ -35,8 +35,8 @@ module tlb_top(/*autoarg*/
     input wire asid;
 
     // tlb-converted address output 
-    output wire[31:0] data_addr_physic,
-    output wire[31:0] inst_addr_physic,
+    output wire[31:0] data_addr_physic;
+    output wire[31:0] inst_addr_physic;
    
     // query result for TLBP
     output wire[31:0] tlbp_result;

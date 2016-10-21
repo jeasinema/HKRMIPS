@@ -22,8 +22,8 @@ module hilo(
     input clk,
     input rst_n,
     input we,
-    input [63:0] hilo_i, // hilo_i = {hi_i, lo_i}
-    output [63:0] hilo_o // hilo_o = {hi_o, lo_o}
+    input wire [63:0] hilo_i, // hilo_i = {hi_i, lo_i}
+    output reg [63:0] hilo_o // hilo_o = {hi_o, lo_o}
     );
     
     always @ (posedge clk or negedge rst_n) begin

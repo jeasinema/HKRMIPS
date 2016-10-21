@@ -72,7 +72,7 @@ module mm(/*autoarg*/
     assign bypass_reg_addr_mm = reg_addr_from_ex;
     assign alignment_err = (mem_access_type == `MEM_ACCESS_TYPE_M2R || mem_access_type == `MEM_ACCESS_TYPE_R2M) && 
                            ((mem_access_size == `MEM_ACCESS_LENGTH_HALF && addr_i[0] != 1'b0) ||
-                            (mem_access_size == `MEM_ACCESS_LENGTH_WORD && addr_i[1:0] != 2'b0))
+                            (mem_access_size == `MEM_ACCESS_LENGTH_WORD && addr_i[1:0] != 2'b0));
     assign sign_byte = val_byte[7];
     assign sign_half = val_half[15];
     // for SWL
