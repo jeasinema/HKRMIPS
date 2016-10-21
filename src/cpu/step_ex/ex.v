@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Fri Oct 21 20:30:07 2016
+ Last Modified : Fri Oct 21 21:11:37 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -16,14 +16,16 @@ module ex(/*autoarg*/
     //Inputs
     clk, rst_n, inst, inst_type, reg_s, reg_t, 
     reg_d, reg_s_val, reg_t_val, immediate, 
-    shift, jump_addr, return_addr, reg_hilo_value, 
+    shift, jump_addr, return_addr, reg_cp0_val, 
+    reg_hilo_val, 
 
     //Outputs
     mem_access_type, mem_access_size, mem_access_signed, 
     val_output, mem_access_addr, bypass_reg_addr, 
     overflow, stall_for_mul_cycle, is_priv_inst, 
     inst_syscall, inst_eret, inst_tlbwi, 
-    inst_tlbp, reg_hilo_o, we_hilo
+    inst_tlbp, cp0_write_enable, cp0_write_addr, 
+    cp0_read_addr, cp0_sel, reg_hilo_o, write_enable_hilo
 );
 
     input wire clk;
@@ -79,7 +81,7 @@ module ex(/*autoarg*/
     output reg[2:0] cp0_sel;    
     // MFC0: reg read result, passed in ex(combinantial logic)
     input wire[31:0] reg_cp0_val;
-    // for DIV/MLT(U) 
+    // for DIV/MLT(U) MF/TLO/HI 
     input wire[63:0] reg_hilo_val;
     output reg[63:0] reg_hilo_o;
     output reg write_enable_hilo;
@@ -90,6 +92,10 @@ module ex(/*autoarg*/
     wire sign_bit_immediate;
     // zero-extended 32bit width immediate
     wire[31:0] zero_ext_immediate;
+    // for mulyi_cycle_calc 
+    wire multi_cycle_done;
+    wire[63:0] multi_cycle_result;
+
     // intermediate variables for add/sub/slt
     wire[31:0] op1_i;
     wire[31:0] op2_i;
@@ -153,7 +159,22 @@ module ex(/*autoarg*/
                          (op1_i[31] && op2_i[31] && result_sum[31])) :
                         (op1_i < op2_i);
     assign op1_i_not = ~op1_i;
+    // stall for multi_cycle calc
+    assign stall_for_mul_cycle = !multi_cycle_done;
 
+    multi_cycle multi_cycle_calc(/*autoinst*/
+    .clk                        (clk                            ), // input
+    .rst_n                      (rst_n                          ), // input
+        //input wire exception_flush;
+    
+    .inst                       (inst[7:0]                      ), // input
+    .op1                        (reg_s_val[31:0]                ), // input
+    .op2                        (reg_t_val[31:0]                ), // input
+    .hilo_i                     (reg_hilo_val[63:0]             ), // input
+
+    .result                     (multi_cycle_result[63:0]       ), // output
+    .multi_cycle_done           (multi_cycle_done               )  // output
+    );
 
     // normal instructions, without mem access, branch, jump
     always @(*)
@@ -197,19 +218,20 @@ module ex(/*autoarg*/
                 val_output <= reg_s_val & zero_ext_immediate;
                 bypass_reg_addr <= reg_t;
             end
+            `INST_MULT,
+            `INST_MULTU:
             `INST_DIV,
             `INST_DIVU:
             begin
-
-            end
-            `INST_MULT,
-            `INST_MULTU:
-            begin
-            
+                reg_hilo_o <= multi_cycle_result;
+                write_enable_hilo <= multi_cycle_done;
+                val_output <= 32'h0;
+                bypass_reg_addr <= 5'h0;
             end
             `INST_MUL:
             begin
-            
+                val_output <=  multi_cycle_result[31:0];
+                bypass_reg_addr <= multi_cycle_done ? reg_d : 5'h0;
             end
             `INST_SLT,
             `INST_SLTU:
