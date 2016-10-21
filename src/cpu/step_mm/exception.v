@@ -1,8 +1,8 @@
 /*-----------------------------------------------------
- File Name : mul_cycle.v
+ File Name : exception.v
  Purpose :
- Creation Date : 18-10-2016
- Last Modified : Tue Oct 18 16:59:43 2016
+ Creation Date : 21-10-2016
+ Last Modified : Fri Oct 21 17:01:25 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __X_V__
@@ -10,7 +10,7 @@
 
 `timescale 1ns/1ps
 
-module mul_cycle(/*autoarg*/);
+module X(/*autoarg*/);
 
     input wire clk;
     input wire rst_n;
