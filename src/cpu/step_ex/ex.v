@@ -197,9 +197,6 @@ module ex(/*autoarg*/
   		end				
   	end
 
-    // stall for multi_cycle calc
-    assign stall_for_mul_cycle = !multi_cycle_done;
-
     multi_cycle multi_cycle_calc(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
@@ -220,14 +217,14 @@ module ex(/*autoarg*/
         val_output <= 32'b0;
         bypass_reg_addr <= 5'h0;
         overflow <= 1'b0;  // just set it to correct val later
-        stall_for_mul_cycle <= 1'b0;
         cp0_write_enable <= 1'b0;
         cp0_write_addr <= 5'b0; 
         cp0_read_addr <= 5'b0;
         cp0_sel <= 3'b0;
         reg_hilo_o <= 64'b0;
         write_enable_hilo <= 1'b0;
-        if (!res_n) begin
+        stall_for_mul_cycle <= !multi_cycle_done;
+        if (!rst_n) begin
             val_output <= 32'h0;
             bypass_reg_addr <= 5'h0;
         end else begin
@@ -390,7 +387,7 @@ module ex(/*autoarg*/
             end
             `INST_MFHI:
             begin
-                val_output <= reg_hilo_value[63:32];
+                val_output <= reg_hilo_val[63:32];
                 bypass_reg_addr <= reg_d;
             end
             `INST_MTHI:
@@ -414,7 +411,7 @@ module ex(/*autoarg*/
             end
             `INST_MOVZ:
             begin
-                val_output <= reg_s_value;
+                val_output <= reg_s_val;
                 if (reg_t_val == 0)
                 begin
                     bypass_reg_addr <= reg_d;
@@ -425,7 +422,7 @@ module ex(/*autoarg*/
             end
             `INST_MOVN:
             begin
-                val_output <= reg_s_value;
+                val_output <= reg_s_val;
                 if (reg_t_val != 0)
                 begin
                     bypass_reg_addr <= reg_d;
@@ -446,12 +443,12 @@ module ex(/*autoarg*/
            `INST_LB, `INST_LH, `INST_LWL, `INST_LW, `INST_LBU, `INST_LHU, `INST_LWR:   // `INST_LL
             begin
                 val_output  <= reg_t_val;
-                reg_addr <= reg_t; 
+                bypass_reg_addr <= reg_t; 
             end
            `INST_SB, `INST_SH, `INST_SWL, `INST_SW, `INST_SWR:                         // `INST_SC
             begin
                 val_output  <= reg_t_val;
-                reg_addr <= reg_t; 
+                bypass_reg_addr <= reg_t; 
             end
             `INST_BREAK:
             begin
