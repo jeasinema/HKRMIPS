@@ -2,7 +2,7 @@
  File Name : hkr_mips.v
  Purpose : top file for cpu
  Creation Date : 18-10-2016
- Last Modified : Fri Oct 21 11:15:43 2016
+ Last Modified : Fri Oct 21 16:47:05 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __HKR_MIPS_V__
@@ -19,6 +19,8 @@ module hkr_mips(/*autoarg*/);
 
 
     regs main_regs(/*autoinst*/);
+
+    mmu_top main_mmu(/*autoinst*/);
 
     pc unique_pc(/*autoinst*/);
     
