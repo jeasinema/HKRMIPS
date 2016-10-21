@@ -19,3 +19,9 @@
 - ext
   - extension
   - extended
+- err
+  - error
+- data
+  - 仅限于与 dbus 相关的信号
+- exp
+ - exception

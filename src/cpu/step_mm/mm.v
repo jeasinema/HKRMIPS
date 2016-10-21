@@ -1,12 +1,12 @@
 /*-----------------------------------------------------
  File Name : mm.v
- Purpose :
+ Purpose : step_mm  
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 21:22:40 2016
+ Last Modified : Fri Oct 21 11:03:37 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
-`ifndef __X_V__
-`define __X_V__
+`ifndef __MM_V__
+`define __MM_V__
 
 `timescale 1ns/1ps
 
@@ -54,8 +54,11 @@ module mm(/*autoarg*/
     output reg mem_access_read;
     output reg mem_access_write;
     //output reg[3:0] mem_byte_en;
-    //output wire alignment_err;
+    // LH/SH:addr[0] != 0 LW/SW:addr[1:0] != 2'b0 
+    output wire alignment_err;
 
+    // some instruction need alignment
+    reg[31:0] aligned_addr;
     // used by LB/LH LBU/LHU
     wire val_byte, sign_byte; 
     wire[15:0] val_half, sign_half;
@@ -65,8 +68,11 @@ module mm(/*autoarg*/
     wire[31:0] left_mask;
     wire[31:0] right_mask;
 
-    assign mem_access_addr = addr_i;
+    assign mem_access_addr = aligned_addr;
     assign bypass_reg_addr_mm = reg_addr_from_ex;
+    assign alignment_err = (mem_access_type == `MEM_ACCESS_TYPE_M2R || mem_access_type == `MEM_ACCESS_TYPE_R2M) && 
+                           ((mem_access_size == `MEM_ACCESS_LENGTH_HALF && addr_i[0] != 1'b0) ||
+                            (mem_access_size == `MEM_ACCESS_LENGTH_WORD && addr_i[1:0] != 2'b0))
     assign sign_byte = val_byte[7];
     assign sign_half = val_half[15];
     // for SWL
@@ -74,9 +80,9 @@ module mm(/*autoarg*/
     // for SWR
     assign right_shift = (addr_i[1:0]) << 3; 
     // for LWL
-    assign left_mask = {32{1'b1}}<<left_shift;
+    assign left_mask = {32{1'b1}} << left_shift;
     // for LWR
-    assign right_mask = {32{1'b1}}>>right_shift;
+    assign right_mask = {32{1'b1}} >> right_shift;
 
     // get val_byte/val_half
     always @(*)
@@ -105,22 +111,21 @@ module mm(/*autoarg*/
         endcase
     end
 
+    // value&address alignment
     always @(*)
     begin
+        aligned_addr <= addr_i;
         case (mem_access_type)
         `MEM_ACCESS_TYPE_M2R:
         begin
             mem_access_read <= 1'b1;
             mem_access_write <= 1'b0;
+            aligned_addr <= addr_i & 32'hfffffffc;  // M2R, must aligned with word
             case (mem_access_size)
             `MEM_ACCESS_LENGTH_BYTE:
-            begin
                 data_o <= mem_access_signed ? {{24{sign_byte}}, val_byte} : {24'b0, val_byte};
-            end
             `MEM_ACCESS_LENGTH_HALF: 
-            begin
                 data_o <= mem_access_signed ? {{16{sign_half}}, val_half} : {16'b0, val_half};
-            end
             `MEM_ACCESS_LENGTH_WORD: 
                 data_o <= mem_access_data_in;
             `MEM_ACCESS_LENGTH_LEFT_WORD: 
@@ -136,6 +141,8 @@ module mm(/*autoarg*/
         begin
             mem_access_read <= 1'b0;
             mem_access_write <= 1'b1;
+            aligned_addr <= addr_i & 32'hfffffffc;  
+            // TODO: first stall and read then write
             // need to keep memory word alignment
             case (mem_access_size)
             `MEM_ACCESS_LENGTH_BYTE: 

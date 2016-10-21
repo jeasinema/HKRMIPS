@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 20:50:55 2016
+ Last Modified : Fri Oct 21 13:56:10 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -22,7 +22,8 @@ module ex(/*autoarg*/
     mem_access_type, mem_access_size, mem_access_signed, 
     val_output, mem_access_addr, bypass_reg_addr, 
     overflow, stall_for_mul_cycle, is_priv_inst, 
-    reg_hilo_o, we_hilo
+    inst_syscall, inst_eret, inst_tlbwi, 
+    inst_tlbp, reg_hilo_o, we_hilo
 );
 
     input wire clk;
@@ -64,16 +65,18 @@ module ex(/*autoarg*/
     output reg stall_for_mul_cycle;
     // set if inst is a priority instruction(should be handle by cp0)
     output reg is_priv_inst;
+    // for SYSCALL ERET TLBWI TLBP
+    output wire inst_syscall;
+    output wire inst_eret;
+    output wire inst_tlbwi;
+    output wire inst_tlbp;
     
+
     // @jzh14, signals following are your jobs now.
     //output reg we_cp0;
     //output reg[4:0] cp0_wr_addr;
     //output reg[4:0] cp0_rd_addr;
-    //output reg[2:0] cp0_sel;
-    //output wire syscall;
-    //output wire eret;
-    //output wire we_tlb;
-    //output wire probe_tlb;
+    //output reg[2:0] cp0_sel;    
     //input wire[31:0] reg_cp0_value;
     input wire[63:0] reg_hilo_value;
     output reg[63:0] reg_hilo_o;
@@ -96,6 +99,10 @@ module ex(/*autoarg*/
     reg[31:0] arithmeticres;
 
     // assign area
+    assign inst_syscall = (inst == `INST_SYSCALL);
+    assign inst_eret = (inst == `INST_ERET);
+    assign inst_tlbwi = (inst == `INST_TLBWI);
+    assign inst_tlbp = (inst == `INST_TLBP);
     assign sign_bit_immediate = immediate[15];
     assign sign_ext_immediate = { 
                                 sign_bit_immediate,
