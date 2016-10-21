@@ -94,6 +94,11 @@ module ex(/*autoarg*/
     wire ov_sum;
     wire op1_lt_op2;
     reg[31:0] arithmeticres;
+    // intermediate variables for mul/mult/multu
+    wire[31:0] opdata1_mult;
+    wire[31:0] opdata2_mult;
+    wire[63:0] hilo_temp;
+    reg[63:0] mulres;
 
     // assign area
     assign sign_bit_immediate = immediate[15];
@@ -117,6 +122,8 @@ module ex(/*autoarg*/
                                 immediate
                                 };
     assign zero_ext_immediate = { 16'b0, immediate};
+    
+    // assign variables for add/sub/slt 
     assign op1_i = reg_s_val;
     assign op2_i = ((inst == `INST_SLT) ||
                     (inst == `INST_SLTU) ||
@@ -144,7 +151,37 @@ module ex(/*autoarg*/
                          (op1_i[31] && op2_i[31] && result_sum[31])) :
                         (op1_i < op2_i);
     assign op1_i_not = ~op1_i;
-
+    
+    // assign variables for mul/mult/multu
+    assign opdata1_mult = ((inst == `INST_MUL) || (inst == `INST_MULT)) && (op1_i[31] == 1'b1) ? (~op1_i + 1) : op1_i;
+    assign opdata2_mult = ((inst == `INST_MUL) || (inst == `INST_MULT)) && (op2_i[31] == 1'b1) ? (~op2_i + 1) : op2_i;
+    assign hilo_temp = opdata1_mult * opdata2_mult;
+    
+    // get MUL/MULT/MULTU result from hilo_temp;
+    always @ (*) begin
+		if(!rst_n) begin
+			mulres <= 64'h0;
+		end else if ((inst == `INST_MUL) || (inst == `INST_MULT)) begin
+			if(op1_i[31] ^ op2_i[31] == 1'b1) begin
+				mulres <= ~hilo_temp + 1;
+			end else begin
+			    mulres <= hilo_temp;
+			end
+		end else begin
+            mulres <= hilo_temp;
+		end
+	end
+    
+    // update HILO registers from MULT/MULTU result
+    always @ (*) begin
+		if(!rst_n) begin
+			we_hilo <= 1'b0;
+			reg_hilo_o <= 64'h0;	
+		end else if((inst == `INST_MULT) || (inst == `INST_MULTU)) begin
+			we_hilo <= 1'b1;
+			reg_hilo_o <= mulres;
+		end				
+	end
 
     // normal instructions, without mem access, branch, jump
     always @(*)
@@ -156,19 +193,37 @@ module ex(/*autoarg*/
             bypass_reg_addr <= 5'h0;
         end else begin
             case(inst)
-            `INST_ADD,
             `INST_ADDU,
-            `INST_SUB,
             `INST_SUBU:
             begin
                 val_output <= result_sum;
                 bypass_reg_addr <= reg_d;
             end
-            `INST_ADDI,
+            `INST_ADD,
+            `INST_SUB:
+            begin
+                if (ov_sum == 1'b1) begin
+                    bypass_reg_addr <= 5'h0;
+                end
+                else begin
+                    val_output <= result_sum;
+                    bypass_reg_addr <= reg_d;
+                end
+            end
             `INST_ADDIU:
             begin
                 val_output <= result_sum;
                 bypass_reg_addr <= reg_t;
+            end
+            `INST_ADDI:
+            begin
+                if (ov_sum == 1'b1) begin
+                    bypass_reg_addr <= 5'h0;
+                end
+                else begin
+                    val_output <= result_sum;
+                    bypass_reg_addr <= reg_t;
+                end
             end
             `INST_AND:
             begin           
@@ -192,7 +247,7 @@ module ex(/*autoarg*/
             end
             `INST_MUL:
             begin
-            
+                val_output <= mulres[31:0];
             end
             `INST_SLT,
             `INST_SLTU:
