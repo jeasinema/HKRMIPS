@@ -479,10 +479,6 @@ module ex(/*autoarg*/
                 val_output  <= reg_t_val;
                 bypass_reg_addr <= reg_t; 
             end
-            `INST_BREAK:
-            begin
-    
-            end
             // need to put mem target register 
            `INST_LB, `INST_LH, `INST_LWL, `INST_LW, `INST_LBU, `INST_LHU, `INST_LWR:   // `INST_LL
             begin
