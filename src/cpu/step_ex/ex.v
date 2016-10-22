@@ -479,17 +479,6 @@ module ex(/*autoarg*/
                 val_output  <= reg_t_val;
                 bypass_reg_addr <= reg_t; 
             end
-            // need to put mem target register 
-           `INST_LB, `INST_LH, `INST_LWL, `INST_LW, `INST_LBU, `INST_LHU, `INST_LWR:   // `INST_LL
-            begin
-                val_output  <= reg_t_val;
-                bypass_reg_addr <= reg_t; 
-            end
-           `INST_SB, `INST_SH, `INST_SWL, `INST_SW, `INST_SWR:                         // `INST_SC
-            begin
-                val_output  <= reg_t_val;
-                bypass_reg_addr <= reg_t; 
-            end
             `INST_MFC0: 
             begin
                 cp0_read_addr <= reg_d;
