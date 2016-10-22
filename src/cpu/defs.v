@@ -91,6 +91,10 @@
 `define INST_CLZ 8'd67
 `define INST_CLO 8'd68
 `define INST_DIV 8'd69
+`define INST_MADD 8'd70
+`define INST_MADDU 8'd71
+`define INST_MSUB 8'd72
+`define INST_MSUBU 8'd73
 
 // cache related
 //`define INST_LL 

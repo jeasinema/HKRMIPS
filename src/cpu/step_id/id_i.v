@@ -50,6 +50,7 @@ module id_i(/*autoarg*/
         6'h05: inst <= `INST_BNE;
         6'h06: inst <= `INST_BLEZ;
         6'h07: inst <= `INST_BGTZ;
+        6'h08: inst <= `INST_ADDI;
         6'h09: inst <= `INST_ADDIU;
         6'h0a: inst <= `INST_SLTI;
         6'h0b: inst <= `INST_SLTIU;

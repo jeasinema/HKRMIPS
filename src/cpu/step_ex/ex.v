@@ -81,7 +81,7 @@ module ex(/*autoarg*/
     output reg[2:0] cp0_sel;    
     // MFC0: reg read result, passed in ex(combinantial logic)
     input wire[31:0] reg_cp0_val;
-    // for DIV/MLT(U) MF/TLO/HI 
+    // for DIV/MULT(U) MF/TLO/HI 
     input wire[63:0] reg_hilo_val;
     output reg[63:0] reg_hilo_o;
     output reg write_enable_hilo;
@@ -109,6 +109,8 @@ module ex(/*autoarg*/
     wire[31:0] opdata2_mult;
     wire[63:0] hilo_temp;
     reg[63:0] mulres;
+    // intermediate variables for madd/maddu/msub/msubu
+    reg[63:0] hilo_temp_for_madd_msub;
 
     // assign area
     assign inst_syscall = (inst == `INST_SYSCALL);
@@ -167,15 +169,18 @@ module ex(/*autoarg*/
     assign op1_i_not = ~op1_i;
 
     // assign variables for mul/mult/multu
-    assign opdata1_mult = ((inst == `INST_MUL) || (inst == `INST_MULT)) && (op1_i[31] == 1'b1) ? (~op1_i + 1) : op1_i;
-    assign opdata2_mult = ((inst == `INST_MUL) || (inst == `INST_MULT)) && (op2_i[31] == 1'b1) ? (~op2_i + 1) : op2_i;
+    assign opdata1_mult = ((inst == `INST_MUL) || (inst == `INST_MULT) || 
+                           (inst == `INST_MADD) || (inst == `INST_MSUB)) && (op1_i[31] == 1'b1) ? (~op1_i + 1) : op1_i;
+    assign opdata2_mult = ((inst == `INST_MUL) || (inst == `INST_MULT) || 
+                           (inst == `INST_MADD) || (inst == `INST_MSUB)) && (op2_i[31] == 1'b1) ? (~op2_i + 1) : op2_i;
     assign hilo_temp = opdata1_mult * opdata2_mult;
     
     // get MUL/MULT/MULTU result from hilo_temp;
     always @ (*) begin
   		if(!rst_n) begin
   			mulres <= 64'h0;
-  		end else if ((inst == `INST_MUL) || (inst == `INST_MULT)) begin
+  		end else if ((inst == `INST_MUL) || (inst == `INST_MULT) || 
+                     (inst == `INST_MADD) || (inst == `INST_MSUB)) begin
   			if(op1_i[31] ^ op2_i[31] == 1'b1) begin
   				mulres <= ~hilo_temp + 1;
   			end else begin
@@ -429,6 +434,30 @@ module ex(/*autoarg*/
                 end
                 else begin
                     bypass_reg_addr <= 5'h0;
+                end
+            end
+            `INST_MADD,
+            `INST_MADDU:
+            begin
+                write_enable_hilo <= multi_cycle_done; // only write to hilo in the second cycle
+                val_output <= 32'h0;
+                bypass_reg_addr <= 5'h0;
+                if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
+                    hilo_temp_for_madd_msub <= mulres;
+                end else begin // second cycle, add hilo_temp_for_madd_msub to actual hilo
+                    reg_hilo_o <= reg_hilo_val + hilo_temp_for_madd_msub;
+                end
+            end
+            `INST_MSUB,
+            `INST_MSUBU:
+            begin
+                write_enable_hilo <= multi_cycle_done; // only write to hilo in the second cycle
+                val_output <= 32'h0;
+                bypass_reg_addr <= 5'h0;
+                if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
+                    hilo_temp_for_madd_msub <= mulres;
+                end else begin // second cycle, subtract hilo_temp_for_madd_msub to actual hilo
+                    reg_hilo_o <= reg_hilo_val - hilo_temp_for_madd_msub;
                 end
             end
             `INST_SYSCALL:

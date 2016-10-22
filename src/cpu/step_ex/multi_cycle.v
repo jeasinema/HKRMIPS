@@ -43,6 +43,9 @@ module multi_cycle(/*autoarg*/
 
     reg[DIV_CYCLES:0] div_stage;
     wire div_done;
+    
+    // for MADD/MADDU/MSUB/MSUBU
+    reg cycle_count;
 
     // get operands
     assign flag_unsigned = (inst == `INST_DIVU);
@@ -77,6 +80,13 @@ module multi_cycle(/*autoarg*/
             multi_cycle_done <= div_done;
             result <= {remainder, quotient};
         end
+        `INST_MADD,
+        `INST_MADDU,
+        `INST_MSUB,
+        `INST_MSUBU:
+        begin
+            multi_cycle_done <= ~cycle_count;
+        end
         //`INST_MSUB:
         //    result <= hilo_i - mul_result;
         //`INST_MADD:
@@ -91,6 +101,17 @@ module multi_cycle(/*autoarg*/
         if (!rst_n)
         begin
             div_stage <= 'b0;
+        end
+        // start counting 
+        else if (cycle_count != 1'b0) begin
+            cycle_count <= 1'b0;
+        end
+        // counter init
+        else if ((inst == `INST_MADD) ||
+                 (inst == `INST_MADDU) ||
+                 (inst == `INST_MSUB) ||
+                 (inst == `INST_MSUBU)) begin
+            cycle_count <= 1'b1;
         end
         // start counting 
         else if (div_stage != 'b0)
