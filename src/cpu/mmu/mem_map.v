@@ -2,7 +2,7 @@
  File Name : mem_map.v
  Purpose : virtual memory map convert (vol3.p11-16)
  Creation Date : 21-10-2016
- Last Modified : Fri Oct 21 15:54:07 2016
+ Last Modified : Sat Oct 22 18:20:43 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __MEM_MAP_V__
@@ -28,9 +28,9 @@ module mem_map(/*autoarg*/
     input wire user_mode;
 
     // 0 when using tlb, convert when using kseg0/kseg1
-    output wire[31:0] addr_o;
+    output reg[31:0] addr_o;
     output wire is_invalid;
-    output wire using_tlb;
+    output reg using_tlb;
     output wire is_uncached;
     
     // is invalid when access kernel memory area(vol3.p22)
