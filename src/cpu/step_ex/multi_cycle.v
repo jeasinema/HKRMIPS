@@ -2,7 +2,7 @@
  File Name : mul_cycle.v
  Purpose : for multi_cycle inst: MUL/DIV
  Creation Date : 18-10-2016
- Last Modified : Fri Oct 21 23:33:36 2016
+ Last Modified : Sat Oct 22 13:36:41 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __MUL_CYCLE_V__
@@ -77,10 +77,10 @@ module multi_cycle(/*autoarg*/
             multi_cycle_done <= div_done;
             result <= {remainder, quotient};
         end
-        `INST_MSUB:
-            reslult <= hilo_i - mul_result;
-        `INST_MADD:
-            reslult <= hilo_i + mul_result;
+        //`INST_MSUB:
+        //    result <= hilo_i - mul_result;
+        //`INST_MADD:
+        //    result <= hilo_i + mul_result;
         default:
             result <= 64'b0;
         endcase
