@@ -58,7 +58,7 @@ module mem_map(/*autoarg*/
             // keseg0
             3'b100,
             // kseg1
-            2'b101:
+            3'b101:
                 // clear most 3 significant bits vol3.p16
                 addr_o <= {3'b0, addr_i[28:0]};
             endcase
