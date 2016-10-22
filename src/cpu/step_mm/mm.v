@@ -21,7 +21,7 @@ module mm(/*autoarg*/
     //Outputs
     data_o, bypass_reg_addr_mm, mem_access_addr, 
     mem_access_data_out, mem_access_read, 
-    mem_access_write
+    mem_access_write, alignment_err
 );
 
     input wire clk;
@@ -60,7 +60,7 @@ module mm(/*autoarg*/
     // some instruction need alignment
     reg[31:0] aligned_addr;
     // used by LB/LH LBU/LHU
-    wire val_byte, sign_byte; 
+    wire[7:0] val_byte, sign_byte; 
     wire[15:0] val_half, sign_half;
     // used by MEM_ACCESS_LENGTH_LEFT/RIGHT_WORD(LWL LWR SWL SWR)
     wire[4:0] left_shift;

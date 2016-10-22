@@ -34,7 +34,7 @@ module mem_map(/*autoarg*/
     output wire is_uncached;
     
     // is invalid when access kernel memory area(vol3.p22)
-    assign is_invalid = (mem_access_en & user_mode & addr_i[31]);  
+    assign is_invalid = (mem_access_enable & user_mode & addr_i[31]);
     // kseg1 uncached, vol3.p16
     assign is_uncached = (addr_i[31:29] == 3'b101);
 

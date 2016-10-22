@@ -79,7 +79,11 @@ module id_r(/*autoarg*/
         else if (inst_code[31:26] == 6'b011100)  
         begin
             case (inst_code[5:0])
+            6'h00: inst <= `INST_MADD;
+            6'h01: inst <= `INST_MADDU;
             6'h02: inst <= `INST_MUL;
+            6'h04: inst <= `INST_MSUB;
+            6'h05: inst <= `INST_MSUBU;
             6'h20: inst <= `INST_CLZ;
             6'h21: inst <= `INST_CLO;
             default: inst <= `INST_INVALID; 
