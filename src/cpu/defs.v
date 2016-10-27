@@ -2,7 +2,7 @@
  File Name : defs.v
  Purpose : some basic macros for cpu
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 13:45:32 2016
+ Last Modified : Sat Oct 22 18:53:51 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __DEFS_V__

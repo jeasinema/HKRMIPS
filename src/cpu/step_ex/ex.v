@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Sat Oct 22 18:51:47 2016
+ Last Modified : Wed Oct 26 21:37:02 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -54,12 +54,15 @@ module ex(/*autoarg*/
     output reg[2:0] mem_access_size;
     // for mm, decide if we get signed/unsigned data
     output reg[2:0] mem_access_signed;
-    // ex result
-    output reg[31:0] val_output;
     // mem access address in step_mm
     output reg[31:0] mem_access_addr;
+
+    // ex result
+    output reg[31:0] val_output;
     // address of the reg(store the val of result in ex), which should be bypass to mux and mm
     output reg[4:0] bypass_reg_addr; 
+
+    // for spec instructions
     output reg overflow;
     // stall the pipeline when ex do multi-cycle jobs like div
     output reg stall_for_mul_cycle;
@@ -68,9 +71,12 @@ module ex(/*autoarg*/
     // for SYSCALL ERET TLBWI TLBP
     output wire inst_syscall;
     output wire inst_eret;
+    // we_tlb
     output wire inst_tlbwi;
+    // probe_tlb
     output wire inst_tlbp;
-     // for CP0 access instructions: MTC0 MFC0
+
+    // for CP0 access instructions: MTC0 MFC0
     // MTC0: need to enable that, pass to cp0 in *step_wb*
     output reg cp0_write_enable;
     // MTC0: write reg addr in CP0, passed in wb
@@ -81,7 +87,8 @@ module ex(/*autoarg*/
     output reg[2:0] cp0_sel;    
     // MFC0: reg read result, passed in ex(combinantial logic)
     input wire[31:0] reg_cp0_val;
-    // for DIV/MULT(U) MF/TLO/HI 
+    
+    // for DIV/MULT(U) MF/TLO/HI, can get from mm/wb/reg, decided by we
     input wire[63:0] reg_hilo_val;
     output reg[63:0] reg_hilo_o;
     output reg write_enable_hilo;
