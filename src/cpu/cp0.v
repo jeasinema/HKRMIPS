@@ -2,7 +2,7 @@
  File Name : cp0.v
  Purpose : top file of cp0
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 27 10:23:24 2016
+ Last Modified : Thu Oct 27 13:51:01 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __CP0_V__
@@ -62,25 +62,26 @@ module cp0(/*autoarg*/
 
     // for exception and mmu
     output wire user_mode;  // 2mmu
-    output wire[19:0] ebase;  // 2exp
-    output wire[31:0] epc;  // 2exp
+    output wire[19:0] ebase;  // 2exp, for exp pc addr(different in MIPS32R1/R2)
+    output wire[31:0] epc;  // 2exp, ouput the return addr store in reg_epc 
     output wire[83:0] tlb_config;  // 2mmu
-    output wire allow_int; // 2exp
-    output wire[1:0] software_int_o; // 2exp
-    output wire[7:0] interrupt_mask; // 2exp
-    output wire special_int_vec; // 2exp
-    output wire boot_exp_vec; // 2exp
+    output wire allow_int; // 2exp, reg_status
+    output wire[1:0] software_int_o; // 2exp, 2 software interrupts
+    output wire[7:0] interrupt_mask; // 2exp, about the diablling 
+    output wire special_int_vec; // CAUSE_IV 2exp, for exp pc_addr
+    output wire boot_exp_vec; // STATUS_BEV 2exp, for exp_pc_addr
     // gnenrate@if, pass to exp@mm, directly pass to mmu
-    output wire[7:0] asid;   
-    output wire in_exl;  // 2exp
+    output wire[7:0] asid; // 2exp  
+    output wire in_exl;  // STATUS_EXL 2exp, exp occurs or not
        
     // about exp
-    input wire clean_exl; // from exp
-    input wire en_exp_i; // from exp
-    input wire[31:0] exp_epc; // from exp
-    input wire exp_bd;  // whether in delayslot, pass@mm
-    input wire[4:0] exp_code; // from exp 
-    input wire[31:0] exp_bad_vaddr;
+    input wire clean_exl; // from exp, clean in_exl when exp end
+    input wire en_exp_i; // from exp, decided if exp occurs(need to set some bits in reg status)
+    input wire[31:0] exp_epc; // from exp, store the return addr when exp/interrupt occurs, write into reg_epc
+    input wire exp_bd;  // whether exp occurs in delayslot, pass@mm, pass to exp at the same time
+    input wire[4:0] exp_code; // from exp, need to set in reg status
+    // about mem access exp
+    input wire[31:0] exp_bad_vaddr; // from exp
     input wire exp_badv_we;  // from exp 
     input wire[7:0] exp_asid;  // frome exp
     input wire exp_asid_we;  // frome exp
@@ -248,7 +249,7 @@ module cp0(/*autoarg*/
                     cp0_regs_Status[22] <= data_i[22]; //BEV
                     cp0_regs_Status[15:8] <= data_i[15:8]; //IM(interrupt mask)
                     cp0_regs_Status[4] <= data_i[4]; //UM(user/kernel mode) 
-                    cp0_regs_Status[2:0] <= data_i[2:0]; //ERL(error), EXL(exp), IE(enable interrupts)
+                    cp0_regs_Status[2:0] <= data_i[2:0]; //ERL(if error), EXL(if exp), IE(enable interrupts)
                 end
                 `CP0_EntryHi: begin
                     cp0_regs_EntryHi[31:13] <= data_i[31:13];
@@ -277,21 +278,22 @@ module cp0(/*autoarg*/
             // for TLBP, wrire in result from mmu
             if(we_probe)
                 cp0_regs_Index <= probe_result;
-            if(en_exp_i) begin
+            // exp occurs
+			if(en_exp_i) begin  
                 if(exp_badv_we)
                     cp0_regs_BadVAddr <= exp_bad_vaddr;
                 cp0_regs_Context[22:4] <= exp_bad_vaddr[31:13];
                 cp0_regs_EntryHi[31:13] <= exp_bad_vaddr[31:13];
                 if(exp_asid_we)
                     cp0_regs_EntryHi[7:0] <= exp_asid;
-                cp0_regs_Status[1] <= 1'b1;
-                cp0_regs_Cause[31] <= exp_bd;
-                cp0_regs_Cause[6:2] <= exp_code;
-                cp0_regs_EPC <= exp_epc;
+                cp0_regs_Status[1] <= 1'b1;  // set STATUS_EXL
+                cp0_regs_Cause[31] <= exp_bd; // set whether exp occurs in deleyslot
+                cp0_regs_Cause[6:2] <= exp_code;  // set exp code 
+                cp0_regs_EPC <= exp_epc;  // store return addr
             end
             // for ERET, back from exp
             if(clean_exl) begin
-                cp0_regs_Status[1] <= 1'b0;
+                cp0_regs_Status[1] <= 1'b0;  // clean STATUS_EXL
             end
         end
     end

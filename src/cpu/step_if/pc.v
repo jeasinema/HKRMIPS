@@ -2,7 +2,7 @@
  File Name : pc.v
  Purpose : program counter in step_if
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 10:55:30 2016
+ Last Modified : Thu Oct 27 12:27:50 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __PC_V__
@@ -21,9 +21,9 @@ module pc(/*autoarg*/
 );
 
 
-    parameter PC_INITIAL_VAL = 32'hbfc00000;
-    parameter PC_EXCEPTION_BASE = 32'hfffffffc;
-    parameter PC_BRANCH_BASE = 32'hfffffffc;
+    parameter PC_INITIAL_VAL = 32'hbfc00000;    // reset interrupt vector is 32'hBFC00000, ref to vol3P30
+    parameter PC_EXCEPTION_BASE = 32'hfffffffc;  // need to be aligned with word
+    parameter PC_BRANCH_BASE = 32'hfffffffc;  // need to be aligned with word
 
     input wire clk;
     input wire rst_n;
