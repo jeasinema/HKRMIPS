@@ -2,7 +2,7 @@
  File Name : exception.v
  Purpose : exception detector and handler
  Creation Date : 21-10-2016
- Last Modified : Thu Oct 27 14:48:38 2016
+ Last Modified : Fri Oct 28 20:15:42 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EXCEPTION_V__
@@ -16,14 +16,14 @@ module exception(/*autoarg*/
     iaddr_exp_illegal, daddr_exp_miss, daddr_exp_invalid, 
     daddr_exp_illegal, daddr_exp_dirty, data_we, 
     invalid_inst, syscall, eret, overflow, 
-    restrict_priv_inst, hardware_int, software_int, 
-    pc_value, in_delayslot, allow_int, is_real_inst, 
-    mem_access_vaddr, if_asid, mm_asid, ebase_in, 
-    epc_in, special_int_vec, boot_exp_vec, 
-    if_exl, mm_exl, 
+    restrict_priv_inst, interrupt_mask, hardware_int, 
+    software_int, pc_value, in_delayslot, 
+    allow_int, is_real_inst, mem_access_vaddr, 
+    if_asid, mm_asid, ebase_in, epc_in, special_int_vec, 
+    boot_exp_vec, if_exl, mm_exl, 
 
     //Outputs
-    flush, cp0_wr_exp, cp0_clean_exl, exp_epc, 
+    flush, cp0_in_exp, cp0_clean_exl, exp_epc, 
     exp_code, exp_bad_vaddr, cp0_badv_we, 
     exp_asid, cp0_exp_asid_we, exception_new_pc
 );
@@ -53,6 +53,7 @@ module exception(/*autoarg*/
     input wire overflow;  // overflow exp
     input wire restrict_priv_inst;
     // interrupts 
+    input wire[7:0] interrupt_mask;
 	input wire[5:0] hardware_int;
     input wire[1:0] software_int;
  	
@@ -77,7 +78,7 @@ module exception(/*autoarg*/
     input wire mm_exl;
 
     output reg flush;  // when into exp, flush pipeline 
-    output reg cp0_wr_exp; // 2cp0, whether now is in exp 
+    output reg cp0_in_exp; // 2cp0, whether now is in exp 
     output reg cp0_clean_exl;  // 2cp0, quit exp, clean the status_exl bit
     output reg[31:0] exp_epc;  // 2cp0, store exp return addr
     output reg[4:0] exp_code;  // 2cp0, exp_code
@@ -96,7 +97,7 @@ module exception(/*autoarg*/
 
     always @(*) begin
         exp_asid <= 8'b0;
-        cp0_wr_exp <= 1'b1;
+        cp0_in_exp <= 1'b1;
         cp0_clean_exl <= 1'b0;
         cp0_badv_we <= 1'b0;
         cp0_exp_asid_we <= 1'b0;
@@ -199,13 +200,13 @@ module exception(/*autoarg*/
         // return from exps
         else if(eret) begin    
             exp_code <= 5'h00;
-            cp0_wr_exp <= 1'b0;
+            cp0_in_exp <= 1'b0;
             cp0_clean_exl <= 1'b1;
             exception_new_pc <= epc_in;
             $display("Pseudo Exception: ERET");
         end
         else begin
-            cp0_wr_exp <= 1'b0;
+            cp0_in_exp <= 1'b0;
             flush <= 1'b0;
             exp_code <= 5'h00;
         end

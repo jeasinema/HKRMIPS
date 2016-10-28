@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 26 21:37:02 2016
+ Last Modified : Fri Oct 28 15:16:02 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -14,14 +14,14 @@
 
 module ex(/*autoarg*/
     //Inputs
-    clk, rst_n, inst, inst_type, reg_s, reg_t, 
-    reg_d, reg_s_val, reg_t_val, immediate, 
-    shift, jump_addr, return_addr, reg_cp0_val, 
-    reg_hilo_val, 
+    clk, rst_n, exception_flush, inst, inst_type, 
+    reg_s, reg_t, reg_d, reg_s_val, reg_t_val, 
+    immediate, shift, jump_addr, return_addr, 
+    reg_cp0_val, reg_hilo_val, 
 
     //Outputs
     mem_access_type, mem_access_size, mem_access_signed, 
-    val_output, mem_access_addr, bypass_reg_addr, 
+    mem_access_addr, val_output, bypass_reg_addr, 
     overflow, stall_for_mul_cycle, is_priv_inst, 
     inst_syscall, inst_eret, inst_tlbwi, 
     inst_tlbp, cp0_write_enable, cp0_write_addr, 
@@ -30,7 +30,7 @@ module ex(/*autoarg*/
 
     input wire clk;
     input wire rst_n;
-    // input wire exception_flush;
+    input wire exception_flush;
 
     // decoded instruction
     // inst 
@@ -212,8 +212,8 @@ module ex(/*autoarg*/
     multi_cycle multi_cycle_calc(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
-        //input wire exception_flush;
-    
+
+    .exception_flush            (exception_flush                ), // input
     .inst                       (inst[7:0]                      ), // input
     .op1                        (reg_s_val[31:0]                ), // input
     .op2                        (reg_t_val[31:0]                ), // input
