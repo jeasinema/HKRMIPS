@@ -2,7 +2,7 @@
  File Name : defs.v
  Purpose : some basic macros for cpu
  Creation Date : 18-10-2016
- Last Modified : Sat Oct 22 18:53:51 2016
+ Last Modified : Sat Oct 29 14:26:55 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __DEFS_V__
@@ -95,6 +95,7 @@
 `define INST_MADDU 8'd71
 `define INST_MSUB 8'd72
 `define INST_MSUBU 8'd73
+`define INST_NOP 8'd74
 
 // cache related
 //`define INST_LL 

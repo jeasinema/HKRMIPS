@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Fri Oct 28 15:16:02 2016
+ Last Modified : Sun Oct 30 01:18:45 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -25,7 +25,7 @@ module ex(/*autoarg*/
     overflow, stall_for_mul_cycle, is_priv_inst, 
     inst_syscall, inst_eret, inst_tlbwi, 
     inst_tlbp, cp0_write_enable, cp0_write_addr, 
-    cp0_read_addr, cp0_sel, reg_hilo_o, write_enable_hilo
+    cp0_read_addr, cp0_sel, reg_hilo_o, hilo_write_enable
 );
 
     input wire clk;
@@ -91,7 +91,7 @@ module ex(/*autoarg*/
     // for DIV/MULT(U) MF/TLO/HI, can get from mm/wb/reg, decided by we
     input wire[63:0] reg_hilo_val;
     output reg[63:0] reg_hilo_o;
-    output reg write_enable_hilo;
+    output reg hilo_write_enable;
 
     // essential signals for exec:
     // sign-extended 32bit width immediate
@@ -201,10 +201,10 @@ module ex(/*autoarg*/
     // update HILO registers from MULT/MULTU result
     always @ (*) begin
   		if(!rst_n) begin
-  			write_enable_hilo <= 1'b0;
+  			hilo_write_enable <= 1'b0;
   			reg_hilo_o <= 64'h0;	
   		end else if((inst == `INST_MULT) || (inst == `INST_MULTU)) begin
-  			write_enable_hilo <= 1'b1;
+  			hilo_write_enable <= 1'b1;
   			reg_hilo_o <= mulres;
   		end				
   	end
@@ -234,7 +234,7 @@ module ex(/*autoarg*/
         cp0_read_addr <= 5'b0;
         cp0_sel <= 3'b0;
         reg_hilo_o <= 64'b0;
-        write_enable_hilo <= 1'b0;
+        hilo_write_enable <= 1'b0;
         stall_for_mul_cycle <= !multi_cycle_done;
         if (!rst_n) begin
             val_output <= 32'h0;
@@ -287,7 +287,7 @@ module ex(/*autoarg*/
             `INST_DIVU:
             begin
                 reg_hilo_o <= multi_cycle_result;
-                write_enable_hilo <= multi_cycle_done;
+                hilo_write_enable <= multi_cycle_done;
                 val_output <= 32'h0;
                 bypass_reg_addr <= 5'h0;
             end
@@ -405,7 +405,7 @@ module ex(/*autoarg*/
             `INST_MTHI:
             begin
                 reg_hilo_o <= {reg_s_val, reg_hilo_val[31:0]};
-                write_enable_hilo <= 1'b1;
+                hilo_write_enable <= 1'b1;
                 val_output <= 32'h0;
                 bypass_reg_addr <= 5'b0;
             end
@@ -417,7 +417,7 @@ module ex(/*autoarg*/
             `INST_MTLO:
             begin
                 reg_hilo_o <= {reg_hilo_val[63:32], reg_s_val};
-                write_enable_hilo <= 1'b1;
+                hilo_write_enable <= 1'b1;
                 val_output <= 32'h0;
                 bypass_reg_addr <= 5'b0;
             end
@@ -446,7 +446,7 @@ module ex(/*autoarg*/
             `INST_MADD,
             `INST_MADDU:
             begin
-                write_enable_hilo <= multi_cycle_done; // only write to hilo in the second cycle
+                hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
                 val_output <= 32'h0;
                 bypass_reg_addr <= 5'h0;
                 if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
@@ -458,7 +458,7 @@ module ex(/*autoarg*/
             `INST_MSUB,
             `INST_MSUBU:
             begin
-                write_enable_hilo <= multi_cycle_done; // only write to hilo in the second cycle
+                hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
                 val_output <= 32'h0;
                 bypass_reg_addr <= 5'h0;
                 if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub

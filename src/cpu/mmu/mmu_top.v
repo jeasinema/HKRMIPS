@@ -2,7 +2,7 @@
  File Name : mmu_top.v
  Purpose : top file of mmu
  Creation Date : 21-10-2016
- Last Modified : Sat Oct 22 18:51:36 2016
+ Last Modified : Sun Oct 30 00:39:30 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __MMU_TOP_V__
@@ -17,10 +17,10 @@ module mmu_top(/*autoarg*/
     tlb_config, tlbwi, tlbp, asid, 
 
     //Outputs
-    data_addr_o, inst_addr_o, data_uncached, 
-    inst_uncached, data_exp_miss, inst_exp_miss, 
-    data_exp_illegal, inst_exp_illegal, data_exp_dirty, 
-    data_exp_invalid, inst_exp_invalid
+    data_addr_o, inst_addr_o, tlbp_result, 
+    data_uncached, inst_uncached, data_exp_miss, 
+    inst_exp_miss, data_exp_illegal, inst_exp_illegal, 
+    data_exp_dirty, data_exp_invalid, inst_exp_invalid
 );
 
     input wire clk;
@@ -46,6 +46,9 @@ module mmu_top(/*autoarg*/
     // converted address data/inst bus
 	output wire[31:0] data_addr_o;
 	output wire[31:0] inst_addr_o;
+
+    // for tlbp
+    output wire[31:0] tlbp_result;
 
     // exception related
 	output wire data_uncached;
