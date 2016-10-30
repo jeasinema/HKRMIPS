@@ -2,7 +2,7 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Sun Oct 30 01:18:45 2016
+ Last Modified : Sun Oct 30 23:18:11 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
@@ -42,7 +42,7 @@ module ex(/*autoarg*/
     input wire[4:0] reg_d;
     input wire[31:0] reg_s_val;
     input wire[31:0] reg_t_val;
-    input wire[31:0] immediate;  
+    input wire[15:0] immediate;  
     input wire[4:0] shift;
     input wire[25:0] jump_addr;
     // output by branch_jump.v, maybe need to put in reg_31 under some circumstances
@@ -53,7 +53,7 @@ module ex(/*autoarg*/
     // for mmu, defined in defs.v
     output reg[2:0] mem_access_size;
     // for mm, decide if we get signed/unsigned data
-    output reg[2:0] mem_access_signed;
+    output reg mem_access_signed;
     // mem access address in step_mm
     output reg[31:0] mem_access_addr;
 
