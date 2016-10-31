@@ -2,7 +2,7 @@
  File Name : inst_bus.v
  Purpose : device (only sram) bus for instructions
  Creation Date : 18-10-2016
- Last Modified : Tue Oct 18 14:27:17 2016
+ Last Modified : Mon Oct 31 16:39:54 2016
  Created By :  Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __INST_BUS_V__
@@ -10,25 +10,62 @@
 
 `timescale 1ns/1ps
 
-module inst_bus(/*autoarg*/);
+module inst_bus(/*autoarg*/
+    //Inputs
+    clk, rst_n, dev_access_addr, dev_access_read, 
+    dev_access_write, dev_access_write_data, 
+    ram_stall, 
+
+    //Outputs
+    dev_access_read_data, inst_bus_stall, 
+    bootrom_addr, data_from_bootrom, ram_addr, 
+    read_data_from_ram, write_data_to_ram, 
+    ram_enable, ram_read_enable, ram_write_enable
+);
+
+    parameter BOOT_ADDR_PREFIX = 12'h1fc;
 
     input wire clk;
     input wire rst_n;
+    
+    // dev access interface
+    input wire[31:0] dev_access_addr;
+    input wire dev_access_read;
+    input wire dev_access_write;
+    input wire dev_access_write_data;
+    output wire dev_access_read_data;
+    output wire inst_bus_stall;
 
-    input wire[31:0] mmu_output_address;
-	 
+    // bootrom
+    output wire[12:0] bootrom_addr;
+    output wire[31:0] data_from_bootrom;
+
+    // sram
+    output wire[23:0] ram_addr;
+    output wire[31:0] read_data_from_ram;
+    output wire[31:0] write_data_to_ram;
+    output wire[3:0] ram_enable;
+    output wire ram_read_enable;
+    output wire ram_write_enable;
+    input wire ram_stall;
+
+    assign bootrom_addr = mem_access_addr[12:0];
+    assign ram_enable = 4'b1111;
+    assign write_data_to_ram = dev_access_write_data;
+    assign ram_addr = dev_access_addr[23:0];
+    assign inst_bus_stall = ram_stall;
+
     always @(*)
     begin
-
-    end
-
-    always @(posedge clk or negedge rst_n)
-    begin
-        if (!rst_n)
-        begin
-
+        ram_read_enable <= 1'b0;
+        ram_write_enable <= 1'b0;
+        if (mem_access_addr[31:24] == 8'h00) begin
+            ram_read_enable <= dev_access_read;
+            ram_write_enable <= dev_access_write;
+            dev_access_read_data <= read_data_from_ram;
+        end else if (mem_access_addr[31:20] == BOOT_ADDR_PREFIX) begin
+            dev_access_read_data <= data_from_bootrom;
         end
-
     end
 
 endmodule

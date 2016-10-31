@@ -2,7 +2,7 @@
  File Name : hkr_mips.v
  Purpose : top file for cpu
  Creation Date : 18-10-2016
- Last Modified : Sun Oct 30 23:52:51 2016
+ Last Modified : Mon Oct 31 15:23:02 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __HKR_MIPS_V__
@@ -302,7 +302,7 @@ module hkr_mips(/*autoarg*/
     wire debugger_host_cmd_en;
 
     regs main_regs(/*autoinst*/
-    .clk                        (clk                            ), // input
+    .clk                        (clk                                            ), // input
     .rst_n                      (rst_n                          ), // input
 
         // infos of writing reg operation
