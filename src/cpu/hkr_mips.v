@@ -2,7 +2,7 @@
  File Name : hkr_mips.v
  Purpose : top file for cpu
  Creation Date : 18-10-2016
- Last Modified : Mon Oct 31 15:23:02 2016
+ Last Modified : Mon Oct 31 23:34:46 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __HKR_MIPS_V__
@@ -19,8 +19,9 @@ module hkr_mips(/*autoarg*/
 
     //Outputs
     ibus_addr, ibus_read, ibus_write, ibus_write_data, 
-    ibus_uncached, dbus_addr, dbus_read, dbus_write, 
-    dbus_write_data, dbus_uncached
+    ibus_uncached, ibus_byte_en, dbus_addr, 
+    dbus_read, dbus_write, dbus_write_data, 
+    dbus_uncached, dbus_byte_en
 );
 
     input wire clk;
@@ -34,6 +35,7 @@ module hkr_mips(/*autoarg*/
     output wire ibus_read, ibus_write;
     output wire[31:0] ibus_write_data; 
     output wire ibus_uncached;          
+    output wire[3:0] ibus_byte_en;
     input wire[31:0] ibus_read_data;
     input wire ibus_stall;
 
@@ -42,6 +44,7 @@ module hkr_mips(/*autoarg*/
     output wire dbus_read, dbus_write;
     output wire[31:0] dbus_write_data;
     output wire dbus_uncached;           
+    output wire[3:0] dbus_byte_en;
     input wire[31:0] dbus_read_data;
     input wire[31:0] dbus_stall;
     
@@ -49,6 +52,7 @@ module hkr_mips(/*autoarg*/
     assign ibus_read = ~(if_iaddr_exp_miss | if_iaddr_exp_illegal | if_iaddr_exp_invalid);
     assign ibus_write = 1'b0;
     assign ibus_write_data = 32'b0;
+    assign ibus_byte_en = 4'b1111;
     assign if_inst_code = ibus_read ? ibus_read_data : 32'b0;
     assign debugger_mem_data <= if_inst_code;
 
@@ -56,6 +60,7 @@ module hkr_mips(/*autoarg*/
     assign dbus_read = mm_mem_access_read && !flush;
     assign dbus_write = mm_mem_access_write && !flush;
     assign dbus_write_data = mm_mem_access_data_o;
+    assign dbus_byte_en = mm_mem_byte_en;
     assign mm_mem_access_data_i = dbus_read_data;
 
     // for interrupts
@@ -172,6 +177,7 @@ module hkr_mips(/*autoarg*/
     wire[31:0] mm_mem_access_addr_i;  // virtual address from ex
     wire[31:0] mm_mem_access_data_i;  // data read from sram 
     // step_mm mem access output
+    wire[3:0] mm_mem_byte_en;
     wire mm_mem_access_read;        
     wire mm_mem_access_write;       
     wire[31:0] mm_mem_access_addr_o;  //aligned virtual address to mmu
@@ -822,6 +828,7 @@ module hkr_mips(/*autoarg*/
         // mem access: read or write, enable write/read operation
     .mem_access_read            (mm_mem_access_read                ), // output
     .mem_access_write           (mm_mem_access_write               ), // output
+    .mem_access_byte_en         (mm_mem_access_byte_en[3:0]              ), // output
         //output reg[3:0] mem_byte_en;
         // LH/SH:addr[0] != 0 LW/SW:addr[1:0] != 2'b0 
     .alignment_err              (mm_alignment_err                  )  // output

@@ -2,7 +2,7 @@
  File Name : mm.v
  Purpose : step_mm  
  Creation Date : 18-10-2016
- Last Modified : Fri Oct 28 22:03:32 2016
+ Last Modified : Mon Oct 31 23:30:44 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __MM_V__
@@ -21,7 +21,7 @@ module mm(/*autoarg*/
     //Outputs
     data_o, bypass_reg_addr_mm, mem_access_addr_o, 
     mem_access_data_o, mem_access_read, mem_access_write, 
-    alignment_err
+    mem_access_byte_en, alignment_err
 );
 
     input wire clk;
@@ -49,10 +49,10 @@ module mm(/*autoarg*/
     output wire[31:0] mem_access_addr_o;
     // output data wirtten to sram
     output wire[31:0] mem_access_data_o;  
-    // mem access: read or write, enable write/read operation
+    // enable write/read operation / enable specific byte in word
     output reg mem_access_read;
     output reg mem_access_write;
-    //output reg[3:0] mem_byte_en;
+    output reg[3:0] mem_access_byte_en;
     // LH/SH:addr[0] != 0 LW/SW:addr[1:0] != 2'b0 
     output wire alignment_err;
 
@@ -92,20 +92,38 @@ module mm(/*autoarg*/
         `MEM_ACCESS_LENGTH_BYTE:
         begin
             case (mem_access_addr_i[1:0])
-            2'b00: val_byte <= mem_access_data_i[7:0];
-            2'b01: val_byte <= mem_access_data_i[15:8];
-            2'b10: val_byte <= mem_access_data_i[23:16];
-            2'b11: val_byte <= mem_access_data_i[31:24];
+            2'b00: val_byte <= mem_access_data_i[7:0]; mem_access_byte_en <= 4'b0001;
+            2'b01: val_byte <= mem_access_data_i[15:8]; mem_access_byte_en <= 4'b0010;
+            2'b10: val_byte <= mem_access_data_i[23:16]; mem_access_byte_en <= 4'b0100;
+            2'b11: val_byte <= mem_access_data_i[31:24]; mem_access_byte_en <= 4'b1000;
             endcase
         end
         `MEM_ACCESS_LENGTH_HALF:
         begin
             val_half <= (mem_access_addr_i[1] == 1'b0 ? mem_access_data_i[15:0] : mem_access_data_i[31:16]);
+            mem_access_byte_en <= mem_access_addr_i[1] == 1'b0 ? 4'b0011 : 4'b1100;
+        end
+        `MEM_ACCESS_LENGTH_LEFT_WORD: 
+        begin
+            mem_access_byte_en <= {mem_access_addr_i[1]&mem_access_addr_i[0],
+                                   mem_access_addr_i[1],
+                                   mem_access_addr_i[1]|mem_access_addr_i[0],
+                                   1'b1 
+            };
+        end
+        `MEM_ACCESS_LENGTH_RIGHT_WORD:
+        begin
+            mem_access_byte_en <= {1'b1,
+                                   ~(mem_access_addr_i[1]&mem_access_addr_i[0]),
+                                   ~mem_access_addr_i[1],
+                                   ~(mem_access_addr_i[1]|mem_access_addr_i[0])
+            };
         end
         default:
         begin
             val_byte <= 8'b0;
             val_half <= 16'b0;
+            mem_access_byte_en <= 4'b1111;
         end
         endcase
     end
@@ -141,7 +159,6 @@ module mm(/*autoarg*/
             mem_access_read <= 1'b0;
             mem_access_write <= 1'b1;
             aligned_addr <= mem_access_addr_i & 32'hfffffffc;  
-            // TODO: first stall and read then write
             // need to keep memory word alignment
             case (mem_access_size)
             `MEM_ACCESS_LENGTH_BYTE: 

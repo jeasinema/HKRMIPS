@@ -2,7 +2,7 @@
  File Name : fake_soc_hkrmips.v
  Purpose : top file of HKRMIPS, only using fake ram/rom
  Creation Date : 31-10-2016
- Last Modified : Mon Oct 31 16:58:41 2016
+ Last Modified : Mon Oct 31 23:36:54 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __FAKE_SOC_HKRMIPS_V__
@@ -24,12 +24,14 @@ module fake_soc_hkrmips(/*autoarg*/
     wire ibus_read;             
     wire[31:0] ibus_write_data;
     wire ibus_uncached;         
+    wire[3:0] ibus_byte_en;
     wire[31:0] ibus_read_data;
     wire ibus_stall;            
     wire[31:0] dbus_addr;
     wire dbus_read;             
     wire[31:0] dbus_write_data;
     wire dbus_uncached;         
+    wire[3:0] dbus_byte_en;
     wire[31:0] dbus_read_data;
     wire[31:0] dbus_stall;
 
@@ -184,6 +186,7 @@ module fake_soc_hkrmips(/*autoarg*/
     .ibus_read                  (ibus_read                      ), // output
     .ibus_write_data            (ibus_write_data[31:0]          ), // output
     .ibus_uncached              (ibus_uncached                  ), // output
+    .ibus_byte_en               (ibus_byte_en[3:0]                  ), // output
     .ibus_read_data             (ibus_read_data[31:0]           ), // input
     .ibus_stall                 (ibus_stall                     ), // input
 
@@ -192,6 +195,7 @@ module fake_soc_hkrmips(/*autoarg*/
     .dbus_read                  (dbus_read                      ), // output
     .dbus_write_data            (dbus_write_data[31:0]          ), // output
     .dbus_uncached              (dbus_uncached                  ), // output
+    .dbus_byte_en               (dbus_byte_en[3:0]                  ), // output
     .dbus_read_data             (dbus_read_data[31:0]           ), // input
     .dbus_stall                 (dbus_stall[31:0]               )  // input
 );
@@ -205,7 +209,7 @@ module fake_soc_hkrmips(/*autoarg*/
     .data_o                     (read_data_from_inst_ram[31:0]                   ), // output
     .rd                         (inst_ram_read_enable                             ), // input
     .wr                         (inst_ram_write_enable                             ), // input
-    .byte_enable                (4'b1111               )  // input
+    .byte_enable                (ibus_byte_en[3:0]               )  // input
 );
 
     fake_ram ram1(/*autoinst*/
@@ -217,7 +221,7 @@ module fake_soc_hkrmips(/*autoarg*/
     .data_o                     (read_data_from_data_ram[31:0]                   ), // output
     .rd                         (data_ram_read_enable                             ), // input
     .wr                         (data_ram_write_enable                             ), // input
-    .byte_enable                (4'b1111               )  // input
+    .byte_enable                (dbus_byte_en[3:0]              )  // input
 );
 
     fake_rom disk0(/*autoinst*/
