@@ -48,7 +48,7 @@ module mm(/*autoarg*/
     // output address written to sram, equals with mem_access_addr_i, but 1 clock late;
     output wire[31:0] mem_access_addr_o;
     // output data wirtten to sram
-    output wire[31:0] mem_access_data_o;  
+    output reg[31:0] mem_access_data_o;  
     // enable write/read operation / enable specific byte in word
     output reg mem_access_read;
     output reg mem_access_write;
@@ -59,8 +59,10 @@ module mm(/*autoarg*/
     // some instruction need alignment
     reg[31:0] aligned_addr;
     // used by LB/LH LBU/LHU
-    wire[7:0] val_byte, sign_byte; 
-    wire[15:0] val_half, sign_half;
+    wire[7:0] sign_byte;
+    wire[7:0] sign_half;
+    reg[7:0] val_byte; 
+    reg[15:0] val_half;
     // used by MEM_ACCESS_LENGTH_LEFT/RIGHT_WORD(LWL LWR SWL SWR)
     wire[4:0] left_shift;
     wire[4:0] right_shift;
@@ -88,14 +90,31 @@ module mm(/*autoarg*/
     begin
         val_byte <= 8'b0;
         val_half <= 16'b0;
+        mem_access_byte_en <= 4'b1111;
         case (mem_access_size)
         `MEM_ACCESS_LENGTH_BYTE:
         begin
             case (mem_access_addr_i[1:0])
-            2'b00: val_byte <= mem_access_data_i[7:0]; mem_access_byte_en <= 4'b0001;
-            2'b01: val_byte <= mem_access_data_i[15:8]; mem_access_byte_en <= 4'b0010;
-            2'b10: val_byte <= mem_access_data_i[23:16]; mem_access_byte_en <= 4'b0100;
-            2'b11: val_byte <= mem_access_data_i[31:24]; mem_access_byte_en <= 4'b1000;
+                2'b00: 
+                begin 
+                    val_byte <= mem_access_data_i[7:0];
+                    mem_access_byte_en <= 4'b0001;
+                end
+                2'b01:
+                begin
+                    val_byte <= mem_access_data_i[15:8];
+                    mem_access_byte_en <= 4'b0010;
+                end
+                2'b10:
+                begin
+                    val_byte <= mem_access_data_i[23:16];
+                    mem_access_byte_en <= 4'b0100;
+                end
+                2'b11:
+                begin
+                    val_byte <= mem_access_data_i[31:24];
+                    mem_access_byte_en <= 4'b1000;
+                end
             endcase
         end
         `MEM_ACCESS_LENGTH_HALF:
@@ -118,12 +137,6 @@ module mm(/*autoarg*/
                                    ~mem_access_addr_i[1],
                                    ~(mem_access_addr_i[1]|mem_access_addr_i[0])
             };
-        end
-        default:
-        begin
-            val_byte <= 8'b0;
-            val_half <= 16'b0;
-            mem_access_byte_en <= 4'b1111;
         end
         endcase
     end

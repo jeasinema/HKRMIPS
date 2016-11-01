@@ -51,7 +51,7 @@ module branch_jump(/*autoarg*/
         sign_bit, sign_bit, sign_bit, sign_bit, 
         sign_bit, sign_bit, sign_bit, sign_bit,
         sign_bit, sign_bit, sign_bit, sign_bit,
-        sign_bit, sign_bit, inst[15:0], 2'b00
+        sign_bit, sign_bit, inst_code[15:0], 2'b00
     };
 
     always @(*)
@@ -59,10 +59,10 @@ module branch_jump(/*autoarg*/
         do_branch <= 1'b0;
         branch_addr <= 32'b0;
         return_addr <= pc_addr + 32'd8;
-        case (inst)
+        case (inst_code)
         `INST_BEQ: 
         begin
-            if (reg_s_val == reg_t_val) 
+            if (reg_s_value == reg_t_value) 
             begin
                 branch_addr <= current_pc_addr + sign_addr_offset_ext;
                 do_branch <= 1'b1;
@@ -70,7 +70,7 @@ module branch_jump(/*autoarg*/
         end
         `INST_BEQZ:
         begin
-            if (reg_s_val == 32'b0) 
+            if (reg_s_value == 32'b0) 
             begin
                 branch_addr <= current_pc_addr + sign_addr_offset_ext;
                 do_branch <= 1'b1;
@@ -78,7 +78,7 @@ module branch_jump(/*autoarg*/
         end
         `INST_BNE:
         begin
-            if (reg_s_val != reg_t_val) 
+            if (reg_s_value != reg_t_value) 
             begin
                 branch_addr <= current_pc_addr + sign_addr_offset_ext;
                 do_branch <= 1'b1;
@@ -86,7 +86,7 @@ module branch_jump(/*autoarg*/
         end
         `INST_BNEZ:
         begin
-            if (reg_s_val != 32'b0) 
+            if (reg_s_value != 32'b0) 
             begin
                 branch_addr <= current_pc_addr + sign_addr_offset_ext;
                 do_branch <= 1'b1;
@@ -94,7 +94,7 @@ module branch_jump(/*autoarg*/
         end
         `INST_BGTZ:  // >0 then branch
         begin
-            if (!reg_s_val[31] && reg_s_val != 32'b0) 
+            if (!reg_s_value[31] && reg_s_value != 32'b0) 
             begin
                 branch_addr <= current_pc_addr + sign_addr_offset_ext;
                 do_branch <= 1'b1;
@@ -102,7 +102,7 @@ module branch_jump(/*autoarg*/
         end
         `INST_BGEZ:  // >= 0 then branch
         begin
-            if (!reg_s_val[31]) 
+            if (!reg_s_value[31]) 
             begin
                 branch_addr <= current_pc_addr + sign_addr_offset_ext;
                 do_branch <= 1'b1;
@@ -110,7 +110,7 @@ module branch_jump(/*autoarg*/
         end
         `INST_BLTZ: // <0 then branch
         begin
-            if (reg_s_val[31]) 
+            if (reg_s_value[31]) 
             begin
                 branch_addr <= current_pc_addr + sign_addr_offset_ext;
                 do_branch <= 1'b1;
@@ -118,7 +118,7 @@ module branch_jump(/*autoarg*/
         end
         `INST_BLEZ:  // <=0 then branch
         begin
-        if (reg_s_val[31] || reg_s_val == 32'b0) 
+        if (reg_s_value[31] || reg_s_value == 32'b0) 
             begin
                 branch_addr <= current_pc_addr + sign_addr_offset_ext;
                 do_branch <= 1'b1;
@@ -133,7 +133,7 @@ module branch_jump(/*autoarg*/
         `INST_JR,
         `INST_JALR:
         begin
-            branch_addr <= reg_s_val ;
+            branch_addr <= reg_s_value ;
             do_branch <= 1'b0;
         end
         default:
