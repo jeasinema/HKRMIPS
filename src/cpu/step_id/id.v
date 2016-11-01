@@ -26,6 +26,8 @@ module id(/*autoarg*/
     
     // full 32bit inst
     input wire[31:0] inst_code;
+    // pass pc_value
+    input reg[31:0] pc_addr;
 
     // inst mark at defs.v
     output reg[7:0] inst;
