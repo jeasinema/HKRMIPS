@@ -2,7 +2,7 @@
  File Name : inst_bus.v
  Purpose : device (only sram) bus for instructions
  Creation Date : 18-10-2016
- Last Modified : Mon Oct 31 16:39:54 2016
+ Last Modified : Tue Nov  1 10:42:00 2016
  Created By :  Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __INST_BUS_V__
@@ -12,15 +12,15 @@
 
 module inst_bus(/*autoarg*/
     //Inputs
-    clk, rst_n, dev_access_addr, dev_access_read, 
-    dev_access_write, dev_access_write_data, 
+    clk, rst_n, dev_access_addr, dev_ram_byte_enable, 
+    dev_access_read, dev_access_write, dev_access_write_data, 
     ram_stall, 
 
     //Outputs
     dev_access_read_data, inst_bus_stall, 
     bootrom_addr, data_from_bootrom, ram_addr, 
     read_data_from_ram, write_data_to_ram, 
-    ram_enable, ram_read_enable, ram_write_enable
+    ram_byte_enable, ram_read_enable, ram_write_enable
 );
 
     parameter BOOT_ADDR_PREFIX = 12'h1fc;
@@ -30,6 +30,7 @@ module inst_bus(/*autoarg*/
     
     // dev access interface
     input wire[31:0] dev_access_addr;
+    input wire[3:0] dev_ram_byte_enable;
     input wire dev_access_read;
     input wire dev_access_write;
     input wire dev_access_write_data;
@@ -44,13 +45,13 @@ module inst_bus(/*autoarg*/
     output wire[23:0] ram_addr;
     output wire[31:0] read_data_from_ram;
     output wire[31:0] write_data_to_ram;
-    output wire[3:0] ram_enable;
+    output wire[3:0] ram_byte_enable;
     output wire ram_read_enable;
     output wire ram_write_enable;
     input wire ram_stall;
 
     assign bootrom_addr = mem_access_addr[12:0];
-    assign ram_enable = 4'b1111;
+    assign ram_byte_enable = 4'b1111;
     assign write_data_to_ram = dev_access_write_data;
     assign ram_addr = dev_access_addr[23:0];
     assign inst_bus_stall = ram_stall;

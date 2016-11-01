@@ -2,7 +2,7 @@
  File Name : data_bus.v
  Purpose : device bus for ram, uart, vga, etc.
  Creation Date : 31-10-2016
- Last Modified : Mon Oct 31 15:16:18 2016
+ Last Modified : Tue Nov  1 10:48:51 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __DATA_BUS_V__
@@ -12,8 +12,8 @@
 
 module data_bus(/*autoarg*/
     //Inputs
-    clk, rst_n, dev_access_addr, dev_access_read, 
-    dev_access_write, dev_access_write_data, 
+    clk, rst_n, dev_access_addr, dev_ram_byte_enable, 
+    dev_access_read, dev_access_write, dev_access_write_data, 
     read_data_from_uart, ram_stall, rom_stall, 
 
     //Outputs
@@ -26,10 +26,10 @@ module data_bus(/*autoarg*/
     gpio_read_enable, gpu_addr, write_data_to_gpu, 
     read_data_from_gpu, gpu_write_enable, 
     gpu_read_enable, ram_addr, write_data_to_ram, 
-    read_data_from_ram, ram_enable, ram_write_enable, 
-    ram_read_enable, rom_addr, write_data_to_rom, 
-    read_data_from_rom, rom_enable, rom_write_enable, 
-    rom_read_enable
+    read_data_from_ram, ram_byte_enable, 
+    ram_write_enable, ram_read_enable, rom_addr, 
+    write_data_to_rom, read_data_from_rom, 
+    rom_enable, rom_write_enable, rom_read_enable
 );
 
     parameter RAM_BASE_ADDR = 8'h00;
@@ -44,6 +44,7 @@ module data_bus(/*autoarg*/
 
     // dev access interface  
     input wire[31:0] dev_access_addr;
+    input wire[3:0] dev_ram_byte_enable;
     input wire dev_access_read;
     input wire dev_access_write;
     input wire[31:0] dev_access_write_data;
@@ -82,7 +83,7 @@ module data_bus(/*autoarg*/
     output wire[23:0] ram_addr;
     output wire[31:0] write_data_to_ram;
     output wire[31:0] read_data_from_ram;
-    output wire[3:0] ram_enable;
+    output wire[3:0] ram_byte_enable;
     output reg ram_write_enable;
     output reg ram_read_enable;
     input wire ram_stall;
@@ -108,7 +109,7 @@ module data_bus(/*autoarg*/
     assign gpu_addr = dev_access_addr[23:0];
     assign write_data_to_gpu = dev_access_write_data;
 
-    assign ram_enable = 4'b1111;
+    assign ram_byte_enable = dev_ram_byte_enable;
     assign ram_addr = dev_access_addr[23:0];
     assign write_data_to_ram = dev_access_write_data;
    
