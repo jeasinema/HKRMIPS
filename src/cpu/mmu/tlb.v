@@ -1,27 +1,53 @@
 /*-----------------------------------------------------
  File Name : tlb.v
- Purpose :
+ Purpose : tlb table
  Creation Date : 21-10-2016
- Last Modified : Fri Oct 21 16:06:23 2016
+ Last Modified : Sat Oct 22 18:49:50 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
-`ifndef __X_V__
-`define __X_V__
+`ifndef __TLB_V__
+`define __TLB_V__
 
 `timescale 1ns/1ps
 
 module tlb(/*autoarg*/
-    //inputs
-    tlb_entry0,  tlb_entry1,  tlb_entry2,  tlb_entry3,
-    tlb_entry4,  tlb_entry5,  tlb_entry6,  tlb_entry7,
-    tlb_entry8,  tlb_entry9,  tlb_entry10, tlb_entry11,
-    tlb_entry12, tlb_entry13, tlb_entry14, tlb_entry15,
+    //Inputs
+    tlb_entry0, tlb_entry1, tlb_entry2, tlb_entry3, 
+    tlb_entry4, tlb_entry5, tlb_entry6, tlb_entry7, 
+    tlb_entry8, tlb_entry9, tlb_entry10, 
+    tlb_entry11, tlb_entry12, tlb_entry13, 
+    tlb_entry14, tlb_entry15, virt_addr, 
+    asid, 
 
-    virt_addr, asid,
-
-    //output
+    //Outputs
     phy_addr, miss, valid, match_which, dirt
-    );
+);
+
+    input wire[79:0] tlb_entry0;  
+    input wire[79:0] tlb_entry1;  
+    input wire[79:0] tlb_entry2;  
+    input wire[79:0] tlb_entry3;
+    input wire[79:0] tlb_entry4;  
+    input wire[79:0] tlb_entry5;  
+    input wire[79:0] tlb_entry6;  
+    input wire[79:0] tlb_entry7;
+    input wire[79:0] tlb_entry8;  
+    input wire[79:0] tlb_entry9;  
+    input wire[79:0] tlb_entry10; 
+    input wire[79:0] tlb_entry11;
+    input wire[79:0] tlb_entry12; 
+    input wire[79:0] tlb_entry13; 
+    input wire[79:0] tlb_entry14; 
+    input wire[79:0] tlb_entry15;
+
+    input wire[31:0] virt_addr;
+    input wire[7:0] asid;
+
+    output wire[31:0] phy_addr;
+    output wire miss;
+    output wire valid;
+    output reg[3:0] match_which;
+    output wire dirt;
 
     wire[15:0] matched;
     wire[79:0] tlb_entries[0:15];

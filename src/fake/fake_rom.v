@@ -1,33 +1,32 @@
 /*-----------------------------------------------------
  File Name : fake_rom.v
- Purpose :
+ Purpose : a fake rom for test
  Creation Date : 18-10-2016
- Last Modified : Tue Oct 18 16:58:22 2016
+ Last Modified : Mon Oct 31 14:41:53 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
-`ifndef __X_V__
-`define __X_V__
+`ifndef __FAKE_ROM_V__
+`define __FAKE_ROM_V__
 
 `timescale 1ns/1ps
 
-module fake_rom(/*autoarg*/);
+module fake_rom(/*autoarg*/
+    //Inputs
+    clk, rst_n, address, 
+
+    //Outputs
+    data
+);
 
     input wire clk;
     input wire rst_n;
 
-    always @(*)
-    begin
+    input wire [31:0] address;
+    output wire [31:0] data;
 
-    end
+    reg[31:0] rom[0:2047];
 
-    always @(posedge clk or negedge rst_n)
-    begin
-        if (!rst_n)
-        begin
-
-        end
-
-    end
+    assign data = rom[address[31:2]];  // align with word
 
 endmodule
 

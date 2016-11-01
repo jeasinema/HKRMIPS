@@ -2,7 +2,7 @@
  File Name : tlb_top.v
  Purpose : top file of tlb converter
  Creation Date : 21-10-2016
- Last Modified : Fri Oct 21 16:22:31 2016
+ Last Modified : Sat Oct 22 18:51:07 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __TLB_TOP_V__
@@ -17,9 +17,9 @@ module tlb_top(/*autoarg*/
     asid, 
 
     //Outputs
-    data_addr_physic,, inst_addr_physic,, 
-    tlbp_result, data_miss, inst_miss, data_dirty, 
-    inst_dirty, inst_valid, data_valid
+    data_addr_physic, inst_addr_physic, tlbp_result, 
+    data_miss, inst_miss, data_dirty, inst_dirty, 
+    inst_valid, data_valid
 );
 
     input wire clk;
@@ -129,7 +129,7 @@ module tlb_top(/*autoarg*/
         .dirt(data_dirty)
     );
 
-    tlb conv4inst(
+    tlb for_tlbp(
         .tlb_entry0(tlb_entries[0]),
         .tlb_entry1(tlb_entries[1]),
         .tlb_entry2(tlb_entries[2]),
@@ -156,8 +156,6 @@ module tlb_top(/*autoarg*/
         .dirt()
     );
 
-
-    // TODO:@lyr tlb_converter, ref to naivemips
     always @(posedge clk or negedge rst_n)
     begin
         if (!rst_n)
