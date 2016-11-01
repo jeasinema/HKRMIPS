@@ -2,7 +2,7 @@
  File Name : hkr_mips.v
  Purpose : top file for cpu
  Creation Date : 18-10-2016
- Last Modified : Mon Oct 31 23:34:46 2016
+ Last Modified : Tue Nov  1 10:56:27 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __HKR_MIPS_V__
@@ -32,7 +32,8 @@ module hkr_mips(/*autoarg*/
 
     // inst_bus
     output wire[31:0] ibus_addr;
-    output wire ibus_read, ibus_write;
+    output wire ibus_read;
+    output wire ibus_write;
     output wire[31:0] ibus_write_data; 
     output wire ibus_uncached;          
     output wire[3:0] ibus_byte_en;
@@ -41,12 +42,13 @@ module hkr_mips(/*autoarg*/
 
     // data_bus
     output wire[31:0] dbus_addr;
-    output wire dbus_read, dbus_write;
+    output wire dbus_read;
+    output wire dbus_write;
     output wire[31:0] dbus_write_data;
     output wire dbus_uncached;           
     output wire[3:0] dbus_byte_en;
     input wire[31:0] dbus_read_data;
-    input wire[31:0] dbus_stall;
+    input wire dbus_stall;
     
     // inst_bus related assignments
     assign ibus_read = ~(if_iaddr_exp_miss | if_iaddr_exp_illegal | if_iaddr_exp_invalid);
