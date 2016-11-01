@@ -70,21 +70,23 @@ module tlb(/*autoarg*/
     assign tlb_entries[14] = tlb_entry14;
     assign tlb_entries[15] = tlb_entry15;
 
-    assign PFN[23:0] = virt_addr[12] ? tlb_entries[match_which][51:28] : tlbEntries[match_which][25:2];
-    assign dirt = virt_addr[12] ? tlb_entries[match_which][27] : tlbEntries[match_which][1];
-    assign valid = virt_addr[12] ? tlb_entries[match_which][26] : tlbEntries[match_which][0];
+    assign PFN[23:0] = virt_addr[12] ? tlb_entries[match_which][51:28] : tlb_entries[match_which][25:2];
+    assign dirt = virt_addr[12] ? tlb_entries[match_which][27] : tlb_entries[match_which][1];
+    assign valid = virt_addr[12] ? tlb_entries[match_which][26] : tlb_entries[match_which][0];
  
     assign miss = matched == 16'd0;
 
     assign phy_addr[11:0] = virt_addr[11:0];
     assign phy_addr[31:12] = PFN[19:0];
 
-    integer i;
+    genvar i;
+    generate
     for (i = 0; i < 15; i = i + 1)
     begin
         assign matched[i] = tlb_entries[i][70:52] == virt_addr[31:13] &&
                 (tlb_entries[i][79:72] == asid || tlb_entries[i][71]);
     end
+    endgenerate
 
     always @(*)
     begin

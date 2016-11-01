@@ -48,21 +48,6 @@ module hkr_mips(/*autoarg*/
     input wire[31:0] dbus_read_data;
     input wire[31:0] dbus_stall;
     
-    // inst_bus related assignments
-    assign ibus_read = ~(if_iaddr_exp_miss | if_iaddr_exp_illegal | if_iaddr_exp_invalid);
-    assign ibus_write = 1'b0;
-    assign ibus_write_data = 32'b0;
-    assign ibus_byte_en = 4'b1111;
-    assign if_inst_code = ibus_read ? ibus_read_data : 32'b0;
-    assign debugger_mem_data <= if_inst_code;
-
-    // data_bus related assignments
-    assign dbus_read = mm_mem_access_read && !flush;
-    assign dbus_write = mm_mem_access_write && !flush;
-    assign dbus_write_data = mm_mem_access_data_o;
-    assign dbus_byte_en = mm_mem_byte_en;
-    assign mm_mem_access_data_i = dbus_read_data;
-
     // for interrupts
     wire[5:0] hardware_int;
     wire[1:0] software_int;
@@ -85,15 +70,15 @@ module hkr_mips(/*autoarg*/
     assign if_asid = cp0_asid;
 
     // step_id & branch_jump_detector
-    wire[31:0] id_pc_addr;
+    reg[31:0] id_pc_addr;
     wire[31:0] id_reg_s_val_from_regs;
     wire[31:0] id_reg_t_val_from_regs;
     wire id_is_branch;
-    wire id_branch_addr;
-    wire id_is_real_inst;
-    wire id_in_delayslot;
+    wire[31:0] id_branch_addr;
+    reg id_is_real_inst;
+    reg id_in_delayslot;
     // step_id inst decode input
-    wire[31:0] id_inst_code;
+    reg[31:0] id_inst_code;
     // step_id inst decode output
     wire[31:0] id_inst;
     wire[1:0] id_inst_type;
@@ -105,30 +90,30 @@ module hkr_mips(/*autoarg*/
     wire[15:0] id_immediate; 
     wire[4:0] id_shift;
     wire[25:0] id_jump_addr; 
-    wire id_return_addr;
+    wire[31:0] id_return_addr;
     // step_id about inst mem access exp
-    wire[7:0] id_iaddr_exp_asid;
-    wire id_iaddr_exp_exl;
-    wire id_iaddr_exp_miss;
-    wire id_iaddr_exp_illegal;
-    wire id_iaddr_exp_invalid;
+    reg[7:0] id_iaddr_exp_asid;
+    reg id_iaddr_exp_exl;
+    reg id_iaddr_exp_miss;
+    reg id_iaddr_exp_illegal;
+    reg id_iaddr_exp_invalid;
 
     // step_ex & reg_hilo
-    wire[31:0] ex_pc_addr;
-    wire ex_is_real_inst; 
-    wire ex_in_delayslot;
+    reg[31:0] ex_pc_addr;
+    reg ex_is_real_inst; 
+    reg ex_in_delayslot;
     // step_ex inst ex input
-    wire[31:0] ex_inst;
-    wire[1:0] ex_inst_type;
-    wire[4:0] ex_reg_s_addr;
-    wire[4:0] ex_reg_t_addr;
-    wire[4:0] ex_reg_d_addr;
-    wire[31:0] ex_reg_s_val;
-    wire[31:0] ex_reg_t_val;
-    wire[15:0] ex_immediate;
-    wire[4:0] ex_shift;
-    wire[25:0] ex_jump_addr;
-    wire[31:0] ex_return_addr;
+    reg[31:0] ex_inst;
+    reg[1:0] ex_inst_type;
+    reg[4:0] ex_reg_s_addr;
+    reg[4:0] ex_reg_t_addr;
+    reg[4:0] ex_reg_d_addr;
+    reg[31:0] ex_reg_s_val;
+    reg[31:0] ex_reg_t_val;
+    reg[15:0] ex_immediate;
+    reg[4:0] ex_shift;
+    reg[25:0] ex_jump_addr;
+    reg[31:0] ex_return_addr;
     // step_ex inst ex output
     wire[31:0] ex_reg_val_o;
     wire[4:0] ex_bypass_reg_addr;
@@ -144,11 +129,11 @@ module hkr_mips(/*autoarg*/
     wire ex_inst_tlbwi;            
     wire ex_inst_tlbp;             
     // step_ex about inst mem access exp
-    wire[7:0] ex_iaddr_exp_asid;
-    wire ex_iaddr_exp_exl; 
-    wire ex_iaddr_exp_miss;
-    wire ex_iaddr_exp_illegal;
-    wire ex_iaddr_exp_invalid;
+    reg[7:0] ex_iaddr_exp_asid;
+    reg ex_iaddr_exp_exl; 
+    reg ex_iaddr_exp_miss;
+    reg ex_iaddr_exp_illegal;
+    reg ex_iaddr_exp_invalid;
     // step_ex about cp0
     wire[31:0] ex_reg_cp0_i;
     wire ex_cp0_write_enable;      
@@ -162,81 +147,75 @@ module hkr_mips(/*autoarg*/
     wire[63:0] hilo_val_from_reg;
     
     // step_mm
-    wire[31:0] mm_pc_addr;
-    wire mm_is_real_inst;         
-    wire mm_in_delayslot;          
+    reg[31:0] mm_pc_addr;
+    reg mm_is_real_inst;         
+    reg mm_in_delayslot;          
     // step_mm about reg
-    wire[31:0] mm_reg_val_i;
+    reg[31:0] mm_reg_val_i;
     wire[31:0] mm_reg_val_o;
-    wire[4:0] mm_reg_addr_i;
+    reg[4:0] mm_reg_addr_i;
     wire[4:0] mm_bypass_reg_addr;
     // step_mm mem access input
-    wire[1:0] mm_mem_access_type;
-    wire[2:0] mm_mem_access_size;
-    wire mm_mem_access_signed;      
-    wire[31:0] mm_mem_access_addr_i;  // virtual address from ex
+    reg[1:0] mm_mem_access_type;
+    reg[2:0] mm_mem_access_size;
+    reg mm_mem_access_signed;      
+    reg[31:0] mm_mem_access_addr_i;  // virtual address from ex
     wire[31:0] mm_mem_access_data_i;  // data read from sram 
     // step_mm mem access output
     wire[3:0] mm_mem_byte_en;
     wire mm_mem_access_read;        
-    wire mm_mem_access_write;       
+    wire mm_mem_access_write;
+    wire[3:0] mm_mem_access_byte_enable;
     wire[31:0] mm_mem_access_addr_o;  //aligned virtual address to mmu
     wire[31:0] mm_mem_access_data_o;  // data written to sram
     // step_mm about exp(data mem access exp)
-    wire mm_invalid_inst;         
-    wire mm_overflow;             
-    wire mm_is_priv_inst; 
-    wire mm_inst_syscall;         
-    wire mm_inst_eret;            
-    wire mm_inst_tlbwi;            
-    wire mm_inst_tlbp;             
+    reg mm_invalid_inst;         
+    reg mm_overflow;             
+    reg mm_is_priv_inst; 
+    reg mm_inst_syscall;         
+    reg mm_inst_eret;            
+    reg mm_inst_tlbwi;            
+    reg mm_inst_tlbp;             
     wire mm_alignment_err;          
     wire mm_daddr_exp_dirty;
     wire mm_daddr_exp_miss;   
     wire mm_daddr_exp_illegal;
     wire mm_daddr_exp_invalid;
     // step_mm about inst mem access exp
-    wire mm_iaddr_exp_exl;
-    wire[7:0] mm_iaddr_exp_asid;
-    wire mm_iaddr_exp_miss;       
-    wire mm_iaddr_exp_illegal;  
-    wire mm_iaddr_exp_invalid;   
+    reg mm_iaddr_exp_exl;
+    reg[7:0] mm_iaddr_exp_asid;
+    reg mm_iaddr_exp_miss;       
+    reg mm_iaddr_exp_illegal;  
+    reg mm_iaddr_exp_invalid;   
     // step_mm about cp0
-    wire mm_cp0_write_enable;      
-    wire[4:0] mm_cp0_write_addr;
-    wire[2:0] mm_cp0_sel;
+    reg mm_cp0_write_enable;      
+    reg[4:0] mm_cp0_write_addr;
+    reg[2:0] mm_cp0_sel;
     wire[31:0] mm_tlbp_result;
     // step_mm about hilo
-    wire[63:0] mm_reg_hilo;
-    wire mm_hilo_write_enable;              
+    reg[63:0] mm_reg_hilo;
+    reg mm_hilo_write_enable;              
 
     // step_wb
     // step_mm about reg
-    wire[31:0] wb_reg_val_i;         
+    reg[31:0] wb_reg_val_i;         
     wire[31:0] wb_reg_val_o;         
-    wire[4:0] wb_reg_addr_i;
+    reg[4:0] wb_reg_addr_i;
     wire[4:0] wb_bypass_reg_addr;
-    wire[1:0] wb_mem_access_type;  // decided wb_reg_write_enable
+    reg[1:0] wb_mem_access_type;  // decided wb_reg_write_enable
     wire wb_reg_write_enable;         
     // step_mm about exp
-    wire wb_inst_tlbp;             
-    wire wb_inst_tlbwi;            
+    reg wb_inst_tlbp;             
+    reg wb_inst_tlbwi;            
     // step_mm about cp0
-    wire wb_cp0_write_enable;      
-    wire[4:0] wb_cp0_write_addr;
-    wire[2:0] wb_cp0_sel;
-    wire[31:0] wb_tlbp_result;
+    reg wb_cp0_write_enable;      
+    reg[4:0] wb_cp0_write_addr;
+    reg[2:0] wb_cp0_sel;
+    reg[31:0] wb_tlbp_result;
     // step_mm about hilo
-    wire[63:0] wb_reg_hilo;
-    wire wb_hilo_write_enable;              
-
-    assign wb_reg_val_o = wb_reg_val_i;
-    assign wb_bypass_reg_addr = wb_reg_addr_i;
-
-    // for hilo reg bypass
-    assign ex_reg_hilo_i = mm_hilo_write_enable ? mm_reg_hilo : 
-            (wb_hilo_write_enable ? : wb_reg_hilo : hilo_val_from_reg);
-
+    reg[63:0] wb_reg_hilo;
+    reg wb_hilo_write_enable;   
+    
     // cp0
     wire cp0_allow_int;           
     wire cp0_clean_exl;
@@ -266,26 +245,10 @@ module hkr_mips(/*autoarg*/
     wire[31:0] exception_new_pc;
     assign flush = debugger_flush | exception_flush;
     // stall 
-    wire en_pc, en_ifid, en_idex, en_exmm, en_mmwb;
+    reg en_pc, en_ifid, en_idex, en_exmm, en_mmwb;
     wire debugger_stall; // stall for debug
     wire ex_stall;  // stall for div MSUB MADD
     wire mm_stall;  // stall for SB SL
-    
-    assign mm_stall = dbus_stall;
-    always @(*) begin
-        if (!rst_n) begin
-            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b11111;
-        end else if(mm_stall || debugger_stall) begin
-            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00000;
-        end else if(ex_stall) begin
-            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00001;
-        end else if(ex_mem_access_type == `MEM_ACCESS_TYPE_M2R &&   // data hazard, need to block 
-          (ex_bypass_reg_addr == id_reg_s_addr || ex_bypass_reg_addr == id_reg_t_addr)) begin
-            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00011;
-        end else begin
-            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b11111;
-        end
-    end
 
     // for debugger
     wire debugger_pc_reset;
@@ -306,6 +269,48 @@ module hkr_mips(/*autoarg*/
     wire[31:0] debugger_host_param;
     wire[31:0] debugger_host_result;
     wire debugger_host_cmd_en;
+    wire[2:0] debugger_rd_sel;
+    wire[4:0] debugger_rd_addr;
+    wire[31:0] debugger_data_o;
+    
+    // inst_bus related assignments
+    assign ibus_read = ~(if_iaddr_exp_miss | if_iaddr_exp_illegal | if_iaddr_exp_invalid);
+    assign ibus_write = 1'b0;
+    assign ibus_write_data = 32'b0;
+    assign ibus_byte_en = 4'b1111;
+    assign if_inst_code = ibus_read ? ibus_read_data : 32'b0;
+    assign debugger_mem_data = if_inst_code;
+
+    // data_bus related assignments
+    assign dbus_read = mm_mem_access_read && !flush;
+    assign dbus_write = mm_mem_access_write && !flush;
+    assign dbus_write_data = mm_mem_access_data_o;
+    assign dbus_byte_en = mm_mem_byte_en;
+    assign mm_mem_access_data_i = dbus_read_data;
+
+    assign wb_reg_val_o = wb_reg_val_i;
+    assign wb_bypass_reg_addr = wb_reg_addr_i;
+
+    // for hilo reg bypass
+    assign ex_reg_hilo_i = mm_hilo_write_enable ? mm_reg_hilo : 
+            (wb_hilo_write_enable ? wb_reg_hilo : hilo_val_from_reg);
+
+    
+    assign mm_stall = dbus_stall;
+    always @(*) begin
+        if (!rst_n) begin
+            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b11111;
+        end else if(mm_stall || debugger_stall) begin
+            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00000;
+        end else if(ex_stall) begin
+            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00001;
+        end else if(ex_mem_access_type == `MEM_ACCESS_TYPE_M2R &&   // data hazard, need to block 
+          (ex_bypass_reg_addr == id_reg_s_addr || ex_bypass_reg_addr == id_reg_t_addr)) begin
+            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00011;
+        end else begin
+            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b11111;
+        end
+    end
 
     regs main_regs(/*autoinst*/
     .clk                        (clk                                            ), // input
@@ -325,7 +330,7 @@ module hkr_mips(/*autoarg*/
     .read_val2                  (id_reg_t_val_from_regs[31:0]                ), // output
  
         // output for debugger
-    .read_addr3                 (debugger_read_addr[4:0]                ), // input
+    .read_addr3                 (debugger_rd_addr[4:0]                ), // input
     .read_val3                  (debugger_reg_val[31:0]                )  // output
     );
 
@@ -354,7 +359,7 @@ module hkr_mips(/*autoarg*/
     .data_addr_o                (dbus_addr[31:0]              ), // output
     .inst_addr_o                (ibus_addr[31:0]              ), // output
 
-    .tlbp_result                (mm_tlbp_result[31:0]                    ) // output
+    .tlbp_result                (mm_tlbp_result[31:0]                    ), // output
         // exception related
     .data_uncached              (dbus_uncached                  ), // output
     .inst_uncached              (ibus_uncached                  ), // output
@@ -828,7 +833,7 @@ module hkr_mips(/*autoarg*/
         // mem access: read or write, enable write/read operation
     .mem_access_read            (mm_mem_access_read                ), // output
     .mem_access_write           (mm_mem_access_write               ), // output
-    .mem_access_byte_en         (mm_mem_access_byte_en[3:0]              ), // output
+    .mem_access_byte_en         (mm_mem_access_byte_enable[3:0]              ), // output
         //output reg[3:0] mem_byte_en;
         // LH/SH:addr[0] != 0 LW/SW:addr[1:0] != 2'b0 
     .alignment_err              (mm_alignment_err                  )  // output
@@ -857,7 +862,7 @@ module hkr_mips(/*autoarg*/
     .overflow                   (mm_overflow                       ), // input
     .restrict_priv_inst         (mm_is_priv_inst && cp0_user_mode            ), // input
         // interrupts 
-    .interrupt_mask             (cp0_interrupt_mask[7:0]        )
+    .interrupt_mask             (cp0_interrupt_mask[7:0]        ),
     .hardware_int               (hardware_int[5:0]              ), // input
     .software_int               (software_int[1:0]              ), // input
  	

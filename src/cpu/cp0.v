@@ -41,6 +41,7 @@ module cp0(/*autoarg*/
     `define CP0_PRId {5'd15,3'd0}
     `define CP0_EBase {5'd15,3'd1}
     `define CP0_Config {5'd16,3'd0}
+    `define CP0_Config1 {5'd16,3'd1}
 
     input wire clk;
     input wire rst_n;

@@ -71,9 +71,9 @@ module tlb_top(/*autoarg*/
         tlbEntryPFN0,//[25:2]
         tlbEntryD0, tlbEntryV0, //1, 0
         tlbEntryIndex
-    } = tlbConfig;
+    } = tlb_config;
 
-    reg[79:0] tlbEntries[0:15];
+    reg[79:0] tlb_entries[0:15];
 
     tlb conv4inst(
         .tlb_entry0(tlb_entries[0]),
@@ -160,12 +160,22 @@ module tlb_top(/*autoarg*/
     begin
         if (!rst_n)
         begin 
-            integer i;
-            for (i = 0; i < 16; i = i + 1)
-            begin
-                tlb_entries[i] <= 80'd0; 
-            end
-        end
+            tlb_entries[0] <= 80'd0; 
+            tlb_entries[1] <= 80'd0; 
+            tlb_entries[2] <= 80'd0; 
+            tlb_entries[3] <= 80'd0; 
+            tlb_entries[4] <= 80'd0; 
+            tlb_entries[5] <= 80'd0; 
+            tlb_entries[6] <= 80'd0; 
+            tlb_entries[7] <= 80'd0; 
+            tlb_entries[8] <= 80'd0; 
+            tlb_entries[9] <= 80'd0; 
+            tlb_entries[10] <= 80'd0; 
+            tlb_entries[11] <= 80'd0; 
+            tlb_entries[12] <= 80'd0; 
+            tlb_entries[13] <= 80'd0; 
+            tlb_entries[14] <= 80'd0;
+            tlb_entries[15] <= 80'd0;             
         end else begin
             if (tlbwi)
             begin
