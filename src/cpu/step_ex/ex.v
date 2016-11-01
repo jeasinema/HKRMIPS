@@ -197,17 +197,6 @@ module ex(/*autoarg*/
               mulres <= hilo_temp;
   		end
   	end
-    
-    // update HILO registers from MULT/MULTU result
-    always @ (*) begin
-  		if(!rst_n) begin
-  			hilo_write_enable <= 1'b0;
-  			reg_hilo_o <= 64'h0;	
-  		end else if((inst == `INST_MULT) || (inst == `INST_MULTU)) begin
-  			hilo_write_enable <= 1'b1;
-  			reg_hilo_o <= mulres;
-  		end				
-  	end
 
     multi_cycle multi_cycle_calc(/*autoinst*/
     .clk                        (clk                            ), // input
@@ -290,6 +279,12 @@ module ex(/*autoarg*/
                 hilo_write_enable <= multi_cycle_done;
                 val_output <= 32'h0;
                 bypass_reg_addr <= 5'h0;
+            end
+            `INST_MULT,
+            `INST_MULTU:
+            begin
+                hilo_write_enable <= 1'b1;
+                reg_hilo_o <= mulres;
             end
             `INST_MUL:
             begin
@@ -501,6 +496,17 @@ module ex(/*autoarg*/
                 val_output <= reg_t_val;
                 bypass_reg_addr <= 5'b0;
             end
+            // instruction that need to put return address to specific reg, branch or jump works are done in step_id/branch_jump.v
+            `INST_JAL:
+            begin
+                val_output <= return_addr;
+                bypass_reg_addr <= 5'h31; // need to put return address into reg_31 
+            end
+            `INST_JALR:
+            begin
+                val_output <= return_addr;
+                bypass_reg_addr <= reg_d; // need to put return address into selected reg
+            end
             default:
             begin
                 val_output <= 32'h0;
@@ -508,33 +514,6 @@ module ex(/*autoarg*/
             end
             endcase
         end
-    end
-
-    // instruction that need to put return address to specific reg, branch or jump works are done in step_id/branch_jump.v
-    always @(*)
-    begin
-        case(inst)
-        // `INST_BAL:
-        // `INST_BGEZAL:
-        // `INST_BGEZALL:
-        // `INST_BLTZAL:
-        // `INST_BLTZALL:
-        `INST_JAL:
-        begin
-            val_output <= return_addr;
-            bypass_reg_addr <= 5'h31; // need to put return address into reg_31 
-        end
-        `INST_JALR:
-        begin
-            val_output <= return_addr;
-            bypass_reg_addr <= reg_d; // need to put return address into selected reg
-        end
-        default:
-        begin
-            val_output <= 32'h0;
-            bypass_reg_addr <= 5'h0;
-        end
-        endcase
     end
 
     // set mem access addr and direction

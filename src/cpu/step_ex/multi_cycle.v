@@ -103,7 +103,7 @@ module multi_cycle(/*autoarg*/
         begin
             div_stage <= 'b0;
         end
-        if (exception_flush)
+        else if (exception_flush)
         begin
             div_stage <= 'b0;
         end
@@ -119,11 +119,12 @@ module multi_cycle(/*autoarg*/
             cycle_count <= 1'b1;
         end
         // start counting 
-        else if (div_stage != 'b0)
+        else if (div_stage != 'b0) begin
             div_stage <= div_stage >> 1;
         // counter init
-        else if (inst == `INST_DIV || inst == `INST_DIVU)
+        end else if (inst == `INST_DIV || inst == `INST_DIVU) begin
             div_stage <= 'b1 << (DIV_CYCLES-1);
+        end
     end
 
 endmodule

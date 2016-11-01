@@ -211,5 +211,6 @@ module exception(/*autoarg*/
             exp_code <= 5'h00;
         end
     end
+endmodule
 
 `endif

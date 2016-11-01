@@ -14,7 +14,7 @@
 
 module id(/*autoarg*/
     //Inputs
-    clk, rst_n, inst_code,
+    clk, rst_n, inst_code, pc_addr,
 
     //Outputs
     inst, inst_type, reg_s, reg_t, reg_d, 
@@ -27,7 +27,7 @@ module id(/*autoarg*/
     // full 32bit inst
     input wire[31:0] inst_code;
     // pass pc_value
-    // input reg[31:0] pc_addr;
+    input wire[31:0] pc_addr;
 
     // inst mark at defs.v
     output reg[7:0] inst;
