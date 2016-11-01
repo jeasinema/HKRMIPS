@@ -48,8 +48,8 @@ module data_bus(/*autoarg*/
     input wire dev_access_read;
     input wire dev_access_write;
     input wire[31:0] dev_access_write_data;
-    output wire[31:0] dev_access_read_data;
-    output wire data_bus_stall;
+    output reg[31:0] dev_access_read_data;
+    output reg data_bus_stall;
 
     // uart
     output wire[3:0] uart_addr;
@@ -155,11 +155,11 @@ module data_bus(/*autoarg*/
             gpio_read_enable <= dev_access_read;
             gpio_write_enable <= dev_access_write;
             dev_access_read_data <= read_data_from_gpio;
-        end if (dev_access_addr[31:8] == PLL_BASE_ADDR) begin
+        end if (dev_access_addr[31:8] == TICKER_BASE_ADDR) begin
             ticker_read_enable <= dev_access_read;
             ticker_write_enable <= dev_access_write;
             dev_access_read_data <= read_data_from_ticker;
         end
     end
-
+endmodule
 `endif
