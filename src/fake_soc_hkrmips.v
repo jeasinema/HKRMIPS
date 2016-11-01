@@ -42,8 +42,7 @@ module fake_soc_hkrmips(/*autoarg*/
     // fake_inst_ram
     wire[23:0] inst_ram_addr;
     wire[31:0] read_data_from_inst_ram;
-    wire[31:0] write_data_to_inst_ram;
-    wire[3:0] inst_ram_enable;        
+    wire[31:0] write_data_to_inst_ram;      
     wire inst_ram_read_enable;         
     wire inst_ram_write_enable;        
     wire inst_ram_stall;                
@@ -52,7 +51,6 @@ module fake_soc_hkrmips(/*autoarg*/
     wire[23:0] data_ram_addr;
     wire[31:0] write_data_to_data_ram;
     wire[31:0] read_data_from_data_ram;
-    wire[3:0] data_ram_enable;
     wire data_ram_write_enable;           
     wire data_ram_read_enable;            
     wire data_ram_stall;                  
@@ -86,7 +84,12 @@ module fake_soc_hkrmips(/*autoarg*/
     wire[31:0] write_data_to_gpu;
     wire[31:0] read_data_from_gpu;
     wire gpu_write_enable;           
-    wire gpu_read_enable;            
+    wire gpu_read_enable;
+
+    bootrom rom0(
+        .clock(clk),
+        .address(bootrom_addr),
+        .q(data_from_bootrom));
 
     inst_bus ibus0(/*autoinst*/
     .clk                        (clk                            ), // input
@@ -108,7 +111,6 @@ module fake_soc_hkrmips(/*autoarg*/
     .ram_addr                   (inst_ram_addr[23:0]              ), // output
     .read_data_from_ram         (read_data_from_inst_ram[31:0]       ), // output
     .write_data_to_ram          (write_data_to_inst_ram[31:0]        ), // output
-    .ram_enable                 (inst_ram_enable[3:0]                ), // output
     .ram_read_enable            (inst_ram_read_enable                ), // output
     .ram_write_enable           (inst_ram_write_enable               ), // output
     .ram_stall                  (inst_ram_stall                      )  // input
@@ -158,7 +160,6 @@ module fake_soc_hkrmips(/*autoarg*/
     .ram_addr                   (data_ram_addr[23:0]                 ), // output
     .write_data_to_ram          (write_data_to_data_ram[31:0]        ), // output
     .read_data_from_ram         (read_data_from_data_ram[31:0]       ), // output
-    .ram_enable                 (data_ram_enable[3:0]                ), // output
     .ram_write_enable           (data_ram_write_enable               ), // output
     .ram_read_enable            (data_ram_read_enable                ), // output
     .ram_stall                  (data_ram_stall                      ), // input
@@ -204,7 +205,7 @@ module fake_soc_hkrmips(/*autoarg*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
 
-    .address                    (inst_ram_addr[29:0]                  ), // input
+    .address                    (inst_ram_addr[23:0]                  ), // input
     .data_i                     (write_data_to_inst_ram[31:0]                   ), // input
     .data_o                     (read_data_from_inst_ram[31:0]                   ), // output
     .rd                         (inst_ram_read_enable                             ), // input
@@ -216,7 +217,7 @@ module fake_soc_hkrmips(/*autoarg*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
 
-    .address                    (data_ram_addr[29:0]                  ), // input
+    .address                    (data_ram_addr[23:0]                  ), // input
     .data_i                     (write_data_to_data_ram[31:0]                   ), // input
     .data_o                     (read_data_from_data_ram[31:0]                   ), // output
     .rd                         (data_ram_read_enable                             ), // input
@@ -228,7 +229,7 @@ module fake_soc_hkrmips(/*autoarg*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
 
-    .address                    (rom_addr[31:0]                  ), // input
+    .address                    (rom_addr[23:0]                  ), // input
     .data                       (read_data_from_rom[31:0]                     )  // output
 );
 

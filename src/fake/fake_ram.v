@@ -29,7 +29,7 @@ module fake_ram(/*autoarg*/
     input wire wr;
     input wire [3:0] byte_enable;
 
-    reg[31:0] ram[0:(1024*1024-1)];
+    reg[31:0] ram[0:(1024*1-1)];
 
     parameter MEM_ADDR_WIDTH = 10;
 
