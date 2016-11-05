@@ -2,7 +2,7 @@
  File Name : soc_hkrmips.v
  Purpose : top file of HKRMIPS
  Creation Date : 31-10-2016
- Last Modified : Tue Nov  1 14:27:07 2016
+ Last Modified : Wed Nov  2 09:35:09 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __SOC_HKRMIPS_V__

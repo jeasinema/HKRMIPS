@@ -25,13 +25,17 @@ module hilo(
     input wire [63:0] hilo_i, // hilo_i = {hi_i, lo_i}
     output reg [63:0] hilo_o // hilo_o = {hi_o, lo_o}
     );
-    
+   
+    reg[63:0] hilo;
+
     always @ (posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            hilo_o <= 64'h0;
+            hilo <= 64'b0;
         end else if (we) begin
-            hilo_o <= hilo_i;
+            hilo <= hilo_i;
         end
     end
-    
+   
+    assign hilo_o = we ? hilo_i : hilo;
+
 endmodule
