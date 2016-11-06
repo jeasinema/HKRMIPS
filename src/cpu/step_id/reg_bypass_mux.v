@@ -2,15 +2,15 @@
  File Name : reg_bypass_mux.v
  Purpose : an mux interface for regs, used for bypass
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 21:16:41 2016
+ Last Modified : Sun Nov  6 15:59:40 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __REG_BYPASS_MUX_V__
 `define __REG_BYPASS_MUX_V__
 
-`include "..\defs.v"
+`include "../defs.v"
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module reg_bypass_mux(/*autoarg*/
     //Inputs
@@ -58,7 +58,7 @@ module reg_bypass_mux(/*autoarg*/
             val_output <= 32'b0;
         else if (reg_addr == addr_from_ex && access_type_from_ex == `MEM_ACCESS_TYPE_R2R)
             val_output <= val_from_ex;
-        else if (reg_addr == addr_from_mm && (access_type_from_mm == `MEM_ACCESS_TYPE_R2R || access_type_from_ex == `MEM_ACCESS_TYPE_M2R))
+        else if (reg_addr == addr_from_mm && (access_type_from_mm == `MEM_ACCESS_TYPE_R2R || access_type_from_mm == `MEM_ACCESS_TYPE_M2R))
             val_output <= val_from_mm;
         else if(reg_addr == addr_from_wb && write_enable_from_wb)
             val_output <= val_from_wb;

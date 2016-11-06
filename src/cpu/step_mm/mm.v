@@ -2,13 +2,13 @@
  File Name : mm.v
  Purpose : step_mm  
  Creation Date : 18-10-2016
- Last Modified : Mon Oct 31 23:30:44 2016
+ Last Modified : Sun Nov  6 23:59:33 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __MM_V__
 `define __MM_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 `include "../defs.v"
 
@@ -59,8 +59,8 @@ module mm(/*autoarg*/
     // some instruction need alignment
     reg[31:0] aligned_addr;
     // used by LB/LH LBU/LHU
-    wire[7:0] sign_byte;
-    wire[7:0] sign_half;
+    wire sign_byte;
+    wire sign_half;
     reg[7:0] val_byte; 
     reg[15:0] val_half;
     // used by MEM_ACCESS_LENGTH_LEFT/RIGHT_WORD(LWL LWR SWL SWR)
@@ -150,7 +150,7 @@ module mm(/*autoarg*/
         begin
             mem_access_read <= 1'b1;
             mem_access_write <= 1'b0;
-            aligned_addr <= mem_access_addr_i & 32'hfffffffc;  // M2R, must aligned with word
+            //aligned_addr <= mem_access_addr_i & 32'hfffffffc;  // M2R, must aligned with word
             case (mem_access_size)
             `MEM_ACCESS_LENGTH_BYTE:
                 data_o <= mem_access_signed ? {{24{sign_byte}}, val_byte} : {24'b0, val_byte};
@@ -171,7 +171,7 @@ module mm(/*autoarg*/
         begin
             mem_access_read <= 1'b0;
             mem_access_write <= 1'b1;
-            aligned_addr <= mem_access_addr_i & 32'hfffffffc;  
+            //aligned_addr <= mem_access_addr_i & 32'hfffffffc;  
             // need to keep memory word alignment
             case (mem_access_size)
             `MEM_ACCESS_LENGTH_BYTE: 

@@ -8,7 +8,7 @@
 `ifndef __MMU_TOP_V__
 `define __MMU_TOP_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module mmu_top(/*autoarg*/
     //Inputs

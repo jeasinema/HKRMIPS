@@ -2,13 +2,13 @@
  File Name : cp0.v
  Purpose : top file of cp0
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 27 13:51:01 2016
+ Last Modified : Sun Nov  6 09:50:55 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __CP0_V__
 `define __CP0_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module cp0(/*autoarg*/
     //Inputs

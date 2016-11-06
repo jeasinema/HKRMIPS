@@ -8,7 +8,7 @@
 `ifndef __CP0_REG_BYPASS_MUX_V__
 `define __CP0_REG_BYPASS_MUX_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module cp0_reg_bypass_mux(/*autoarg*/
     //Inputs

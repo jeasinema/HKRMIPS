@@ -8,7 +8,7 @@
 `ifndef __SOC_HKRMIPS_V__
 `define __SOC_HKRMIPS_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module soc_hkrmips(/*autoarg*/
     //Inputs

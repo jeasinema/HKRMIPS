@@ -8,7 +8,7 @@
 `ifndef __FAKE_RAM_V__
 `define __FAKE_RAM_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module fake_ram(/*autoarg*/
     //Inputs

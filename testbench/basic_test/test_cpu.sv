@@ -69,10 +69,12 @@ hkr_mips mips(/*autoinst*/
             .dbus_write_data(dbus_wrdata[31:0]),
             .rst_n(rst_n),
             .clk(clk),
-            .ibus_read_data(ibus_rddata_ff),
+            //.ibus_read_data(ibus_rddata_ff),
+            .ibus_read_data(ibus_rddata),
             .dbus_read_data(dbus_rddata[31:0]),
             .dbus_stall(1'b0),
-            .ibus_stall((ibus_read|ibus_write)&ibus_waitrequest),
+            //.ibus_stall((ibus_read|ibus_write)&ibus_waitrequest),
+            .ibus_stall(1'b0),
             .hardware_int_in(hardware_int));
 
 integer wait_cycle;
@@ -193,20 +195,20 @@ always begin
 end
 
 initial begin
-    unit_test("../testcase/inst_mem");
-    unit_test("../testcase/mem_endian");
-    unit_test("../testcase/inst_unalign");
-    unit_test("../testcase/inst_div");
-    unit_test("../testcase/inst_alu");
-    unit_test("../testcase/inst_move");
-    unit_test("../testcase/inst_jump");
-    unit_test("../testcase/inst_branch");
-    unit_test("../testcase/overflow_exp");
-    unit_test("../testcase/inst_syscall");
-    unit_test("../testcase/timer_int");
-    unit_test("../testcase/mem_exp");
-    unit_test("../testcase/tlb");
-    unit_test("../testcase/usermode");
+    //unit_test("../testbench/testcase/inst_mem");
+    //unit_test("../testbench/testcase/mem_endian");
+    //unit_test("../testbench/testcase/inst_unalign");
+    //unit_test("../testbench/testcase/inst_div");
+    //unit_test("../testbench/testcase/inst_alu");
+    //unit_test("../testbench/testcase/inst_move");
+    //unit_test("../testbench/testcase/inst_jump");
+    //unit_test("../testbench/testcase/inst_branch");
+    //unit_test("../testbench/testcase/overflow_exp");
+    //unit_test("../testbench/testcase/inst_syscall");
+    //unit_test("../testbench/testcase/timer_int");
+    unit_test("../testbench/testcase/mem_exp");
+    //unit_test("../testbench/testcase/tlb");
+    //unit_test("../testbench/testcase/usermode");
     $display("Unit test succeeded!");
     $stop;
 end

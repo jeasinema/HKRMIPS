@@ -8,7 +8,7 @@
 `ifndef __EXCEPTION_V__
 `define __EXCEPTION_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module exception(/*autoarg*/
     //Inputs

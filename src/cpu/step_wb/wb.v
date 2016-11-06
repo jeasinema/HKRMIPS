@@ -8,7 +8,7 @@
 `ifndef __WB_V__
 `define __WB_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 `include "../defs.v"
 

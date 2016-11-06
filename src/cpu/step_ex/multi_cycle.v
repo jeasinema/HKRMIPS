@@ -2,13 +2,13 @@
  File Name : mul_cycle.v
  Purpose : for multi_cycle inst: MUL/DIV
  Creation Date : 18-10-2016
- Last Modified : Fri Oct 28 15:15:32 2016
+ Last Modified : Sun Nov  6 20:20:56 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __MUL_CYCLE_V__
 `define __MUL_CYCLE_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 `include "../defs.v"
 
@@ -38,6 +38,7 @@ module multi_cycle(/*autoarg*/
 
     wire flag_unsigned;
     wire[31:0] abs_op1, abs_op2;
+    wire[63:0] raw_mul_result, mul_result;
     // for DIV/DIVU
     wire[31:0] raw_quotient, raw_remainder;
     wire[31:0] quotient, remainder;
@@ -49,7 +50,7 @@ module multi_cycle(/*autoarg*/
     reg cycle_count;
 
     // get operands
-    assign flag_unsigned = (inst == `INST_DIVU);
+    assign flag_unsigned = ((inst == `INST_DIVU) || (inst == `INST_MADDU) || (inst == `INST_MSUBU));
     assign abs_op1 = (flag_unsigned ||!op1[31]) ? op1 : -op1;
     assign abs_op2 = (flag_unsigned ||!op2[31]) ? op2 : -op2;
     // do multiply
@@ -57,7 +58,7 @@ module multi_cycle(/*autoarg*/
     assign mul_result = (flag_unsigned || !(op1[31]^op2[31])) ? raw_mul_result : -raw_mul_result;
     // do divide
     assign quotient = (flag_unsigned || !(op1[31]^op2[31])) ? raw_quotient : -raw_quotient;
-    assign remainder = (flag_unsigned || !(op1[31]^op2[31])) ? raw_remainder : -raw_remainder;
+    assign remainder = (flag_unsigned || !(op1[31]^raw_remainder[31])) ? raw_remainder : -raw_remainder;
 
     assign div_done = div_stage[0];
 
@@ -67,7 +68,7 @@ module multi_cycle(/*autoarg*/
         .z   ({32'h0,abs_op1}),
         .d   (abs_op2),
         .q   (raw_quotient),
-        .s   (raw_remain),
+        .s   (raw_remainder),
         .div0(),
         .ovf ()
     );
@@ -82,18 +83,22 @@ module multi_cycle(/*autoarg*/
             result <= {remainder, quotient};
         end
         `INST_MADD,
-        `INST_MADDU,
+        `INST_MADDU:
+        begin
+            result <= hilo_i + mul_result;
+            multi_cycle_done <= 1'b1;
+        end
         `INST_MSUB,
         `INST_MSUBU:
         begin
-            multi_cycle_done <= ~cycle_count;
+            result <= hilo_i - mul_result;
+            multi_cycle_done <= 1'b1;
         end
-        //`INST_MSUB:
-        //    result <= hilo_i - mul_result;
-        //`INST_MADD:
-        //    result <= hilo_i + mul_result;
         default:
+        begin
             result <= 64'b0;
+            multi_cycle_done <= 1'b1;
+        end
         endcase
     end
 
@@ -106,17 +111,6 @@ module multi_cycle(/*autoarg*/
         else if (exception_flush)
         begin
             div_stage <= 'b0;
-        end
-        // start counting 
-        else if (cycle_count != 1'b0) begin
-            cycle_count <= 1'b0;
-        end
-        // counter init
-        else if ((inst == `INST_MADD) ||
-                 (inst == `INST_MADDU) ||
-                 (inst == `INST_MSUB) ||
-                 (inst == `INST_MSUBU)) begin
-            cycle_count <= 1'b1;
         end
         // start counting 
         else if (div_stage != 'b0) begin

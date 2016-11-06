@@ -2,13 +2,13 @@
  File Name : id_i.v
  Purpose :  decode I-type instructions
  Creation Date : 18-10-2016
- Last Modified : Sat Oct 22 13:30:21 2016
+ Last Modified : Sun Nov  6 20:51:17 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __ID_I_V__
 `define __ID_I_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 `include "../defs.v"
 
@@ -41,8 +41,10 @@ module id_i(/*autoarg*/
         6'h01:
         begin
             case (inst_code[20:16])  // reg_t
-            6'h00: inst <= `INST_BLTZ;
-            6'h01: inst <= `INST_BGEZ;
+            5'h00: inst <= `INST_BLTZ;
+            5'h01: inst <= `INST_BGEZ;
+            5'h10: inst <= `INST_BLTZAL;
+            5'h11: inst <= `INST_BGEZAL;
             default: inst <= `INST_INVALID;
             endcase
         end

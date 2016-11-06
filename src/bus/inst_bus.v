@@ -8,7 +8,7 @@
 `ifndef __INST_BUS_V__
 `define __INST_BUS_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module inst_bus(/*autoarg*/
     //Inputs

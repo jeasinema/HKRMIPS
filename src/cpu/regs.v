@@ -8,7 +8,7 @@
 `ifndef __REGS_V__
 `define __REGS_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module regs(/*autoarg*/
     //Inputs

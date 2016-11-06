@@ -8,7 +8,7 @@
 `ifndef __MEM_MAP_V__
 `define __MEM_MAP_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module mem_map(/*autoarg*/
     //Inputs

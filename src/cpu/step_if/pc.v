@@ -8,7 +8,7 @@
 `ifndef __PC_V__
 `define __PC_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 module pc(/*autoarg*/
     //Inputs

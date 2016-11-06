@@ -2,13 +2,13 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Sun Oct 30 23:18:11 2016
+ Last Modified : Sun Nov  6 21:17:08 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
 `define __EX_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 `include "../defs.v"
 
@@ -240,9 +240,12 @@ module ex(/*autoarg*/
             `INST_SUB:
             begin
                 if (ov_sum == 1'b1) begin
+                    overflow <= 1'b1;
+                    val_output <= 32'b0;
                     bypass_reg_addr <= 5'h0;
                 end
                 else begin
+                    overflow <= 1'b0;
                     val_output <= result_sum;
                     bypass_reg_addr <= reg_d;
                 end
@@ -255,9 +258,12 @@ module ex(/*autoarg*/
             `INST_ADDI:
             begin
                 if (ov_sum == 1'b1) begin
+                    overflow <= 1'b1;
+                    val_output <= 32'b0;
                     bypass_reg_addr <= 5'h0;
                 end
                 else begin
+                    overflow <= 1'b0;
                     val_output <= result_sum;
                     bypass_reg_addr <= reg_t;
                 end
@@ -272,6 +278,10 @@ module ex(/*autoarg*/
                 val_output <= reg_s_val & zero_ext_immediate;
                 bypass_reg_addr <= reg_t;
             end
+            `INST_MADD,
+            `INST_MADDU,
+            `INST_MSUB,
+            `INST_MSUBU,
             `INST_DIV,
             `INST_DIVU:
             begin
@@ -285,10 +295,13 @@ module ex(/*autoarg*/
             begin
                 hilo_write_enable <= 1'b1;
                 reg_hilo_o <= mulres;
+                bypass_reg_addr <= 5'h0;
+                val_output <= 32'h0;
             end
             `INST_MUL:
             begin
                 val_output <= mulres[31:0];
+                bypass_reg_addr <= reg_d;
             end
             `INST_SLT,
             `INST_SLTU:
@@ -438,30 +451,30 @@ module ex(/*autoarg*/
                     bypass_reg_addr <= 5'h0;
                 end
             end
-            `INST_MADD,
-            `INST_MADDU:
-            begin
-                hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
-                val_output <= 32'h0;
-                bypass_reg_addr <= 5'h0;
-                if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
-                    hilo_temp_for_madd_msub <= mulres;
-                end else begin // second cycle, add hilo_temp_for_madd_msub to actual hilo
-                    reg_hilo_o <= reg_hilo_val + hilo_temp_for_madd_msub;
-                end
-            end
-            `INST_MSUB,
-            `INST_MSUBU:
-            begin
-                hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
-                val_output <= 32'h0;
-                bypass_reg_addr <= 5'h0;
-                if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
-                    hilo_temp_for_madd_msub <= mulres;
-                end else begin // second cycle, subtract hilo_temp_for_madd_msub to actual hilo
-                    reg_hilo_o <= reg_hilo_val - hilo_temp_for_madd_msub;
-                end
-            end
+            //`INST_MADD,
+            //`INST_MADDU:
+            //begin
+            //    hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
+            //    val_output <= 32'h0;
+            //    bypass_reg_addr <= 5'h0;
+            //    if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
+            //        hilo_temp_for_madd_msub <= mulres;
+            //    end else begin // second cycle, add hilo_temp_for_madd_msub to actual hilo
+            //        reg_hilo_o <= reg_hilo_val + hilo_temp_for_madd_msub;
+            //    end
+            //end
+            //`INST_MSUB,
+            //`INST_MSUBU:
+            //begin
+            //    hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
+            //    val_output <= 32'h0;
+            //    bypass_reg_addr <= 5'h0;
+            //    if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
+            //        hilo_temp_for_madd_msub <= mulres;
+            //    end else begin // second cycle, subtract hilo_temp_for_madd_msub to actual hilo
+            //        reg_hilo_o <= reg_hilo_val - hilo_temp_for_madd_msub;
+            //    end
+            //end
             `INST_SYSCALL:
             begin
 
@@ -497,10 +510,12 @@ module ex(/*autoarg*/
                 bypass_reg_addr <= 5'b0;
             end
             // instruction that need to put return address to specific reg, branch or jump works are done in step_id/branch_jump.v
+            `INST_BGEZAL,
+            `INST_BLTZAL,
             `INST_JAL:
             begin
                 val_output <= return_addr;
-                bypass_reg_addr <= 5'h31; // need to put return address into reg_31 
+                bypass_reg_addr <= 5'd31; // need to put return address into reg_31 
             end
             `INST_JALR:
             begin

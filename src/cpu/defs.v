@@ -2,13 +2,13 @@
  File Name : defs.v
  Purpose : some basic macros for cpu
  Creation Date : 18-10-2016
- Last Modified : Sat Oct 29 14:26:55 2016
+ Last Modified : Sun Nov  6 20:53:04 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __DEFS_V__
 `define __DEFS_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 // specify the instruction type
 // used for id
@@ -96,6 +96,8 @@
 `define INST_MSUB 8'd72
 `define INST_MSUBU 8'd73
 `define INST_NOP 8'd74
+`define INST_BLTZAL 8'd75
+`define INST_BGEZAL 8'd76
 
 // cache related
 //`define INST_LL 

@@ -2,13 +2,13 @@
  File Name : id_r.v
  Purpose : decode R-type inst
  Creation Date : 18-10-2016
- Last Modified : Wed Oct 19 14:26:47 2016
+ Last Modified : Sun Nov  6 20:26:07 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __ID_R_V__
 `define __ID_R_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 `include "../defs.v"
 
@@ -64,7 +64,7 @@ module id_r(/*autoarg*/
             6'h1b: inst <= `INST_DIVU;
             6'h20: inst <= `INST_ADD;
             6'h21: inst <= `INST_ADDU;
-            6'h21: inst <= `INST_SUB;
+            6'h22: inst <= `INST_SUB;
             6'h23: inst <= `INST_SUBU;
             6'h24: inst <= `INST_AND;
             6'h25: inst <= `INST_OR;
