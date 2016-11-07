@@ -1,4 +1,5 @@
 # Output products list for <blk_mem_gen_v7_3>
+_xmsgs\pn_parser.xmsgs
 blk_mem_gen_v7_3.asy
 blk_mem_gen_v7_3.gise
 blk_mem_gen_v7_3.ngc

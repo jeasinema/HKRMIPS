@@ -37,12 +37,33 @@ module soc_hkrmips(/*autoarg*/
     wire clk_uart;
     wire clk_tick;
     wire clk_uart_pll;
+	 wire locked;
+	 
+`define EXT_UART_CLK
 
 `ifdef EXT_UART_CLK
     assign clk_uart = clk_uart_in; 
 `else
     assign clk_uart = clk_uart_pll;
 `endif
+
+sys_pll unique_pll
+   (// Clock in ports
+    .CLK_IN1(clk_in),      // IN
+    // Clock out ports
+    .CLK_OUT1(clk),     // OUT
+    .CLK_OUT2(clk2x),     // OUT
+    .CLK_OUT3(clk_uart_pll),     // OUT
+    .CLK_OUT4(clk_tick),     // OUT
+    // Status and control signals
+    .RESET(!rst_in_n),// IN
+    .LOCKED(locked)
+); 
+ clk_ctrl instance_name (
+    .rst_out_n(rst_n), // output
+    .clk(clk),             // input
+    .rst_in_n(locked)    // input
+ );
 
     inout wire[31:0] base_ram_data;
     output wire[19:0] base_ram_addr;
@@ -146,6 +167,10 @@ module soc_hkrmips(/*autoarg*/
     output wire vga_vsync;
     output wire vga_hsync;
     output wire[8:0] vga_pixel;
+	 
+	 assign vga_vsync = 1'b0;
+	 assign vga_hsync = 1'b0;
+	 assign vga_pixel = 8'b0;
 
     // rom & flash
     wire[23:0] rom_addr;
@@ -268,11 +293,11 @@ module soc_hkrmips(/*autoarg*/
     .rom_stall                  (rom_stall                      )  // input
 );
 
-//    bootrom bootrom(/*autoinst*/
-//    .address                    (bootrom_addr[12:2]                  ), // input
-//    .clock                      (~clk                         ), // input
-//    .q                          (data_from_bootrom[31:0]                        )  // output
-//);
+    bootrom bootrom(/*autoinst*/
+    .address                    (bootrom_addr[12:2]                  ), // input
+    .clock                      (~clk                         ), // input
+    .q                          (data_from_bootrom[31:0]                        )  // output
+);
 
     hkr_mips cpu0(/*autoinst*/
     .clk                        (clk                            ), // input

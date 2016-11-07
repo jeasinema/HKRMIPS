@@ -1,0 +1,36 @@
+
+
+
+// Instantiate the module
+soc_hkrmips instance_name (
+    .clk_in(clk_in), 
+    .rst_in_n(rst_in_n), 
+    .clk_uart_in(clk_uart_in), 
+    .uart_rxd(uart_rxd), 
+    .base_ram_addr(base_ram_addr), 
+    .base_ram_ce_n(base_ram_ce_n), 
+    .base_ram_oe_n(base_ram_oe_n), 
+    .base_ram_we_n(base_ram_we_n), 
+    .ext_ram_addr(ext_ram_addr), 
+    .ext_ram_ce_n(ext_ram_ce_n), 
+    .ext_ram_oe_n(ext_ram_oe_n), 
+    .ext_ram_we_n(ext_ram_we_n), 
+    .uart_txd(uart_txd), 
+    .vga_vsync(vga_vsync), 
+    .vga_hsync(vga_hsync), 
+    .vga_pixel(vga_pixel), 
+    .flash_address(flash_address), 
+    .flash_we_n(flash_we_n), 
+    .flash_byte_n(flash_byte_n), 
+    .flash_oe_n(flash_oe_n), 
+    .flash_rp_n(flash_rp_n), 
+    .flash_ce(flash_ce), 
+    .flash_vpen(flash_vpen), 
+    .base_ram_data(base_ram_data), 
+    .ext_ram_data(ext_ram_data), 
+    .gpio0(gpio0), 
+    .gpio1(gpio1), 
+    .flash_data(flash_data)
+    );
+
+

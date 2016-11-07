@@ -1,0 +1,11 @@
+
+
+
+// Instantiate the module
+clk_ctrl instance_name (
+    .rst_out_n(rst_out_n), 
+    .clk(clk), 
+    .rst_in_n(rst_in_n)
+    );
+
+
