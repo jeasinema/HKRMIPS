@@ -14,13 +14,13 @@ module inst_bus(/*autoarg*/
     //Inputs
     clk, rst_n, dev_access_addr, dev_ram_byte_enable, 
     dev_access_read, dev_access_write, dev_access_write_data, 
-    ram_stall, 
+    ram_stall,read_data_from_ram,  
 
     //Outputs
     dev_access_read_data, inst_bus_stall, 
     bootrom_addr, data_from_bootrom, ram_addr, 
-    read_data_from_ram, write_data_to_ram, 
-    ram_byte_enable, ram_read_enable, ram_write_enable
+    write_data_to_ram, ram_byte_enable, 
+	 ram_read_enable, ram_write_enable
 );
 
     parameter BOOT_ADDR_PREFIX = 12'h1fc;
@@ -33,8 +33,8 @@ module inst_bus(/*autoarg*/
     input wire[3:0] dev_ram_byte_enable;
     input wire dev_access_read;
     input wire dev_access_write;
-    input wire dev_access_write_data;
-    output reg dev_access_read_data;
+    input wire[31:0] dev_access_write_data;
+    output reg[31:0] dev_access_read_data;
     output wire inst_bus_stall;
 
     // bootrom
@@ -43,7 +43,7 @@ module inst_bus(/*autoarg*/
 
     // sram
     output wire[23:0] ram_addr;
-    output wire[31:0] read_data_from_ram;
+    input wire[31:0] read_data_from_ram;
     output wire[31:0] write_data_to_ram;
     output wire[3:0] ram_byte_enable;
     output reg ram_read_enable;

@@ -15,21 +15,21 @@ module data_bus(/*autoarg*/
     clk, rst_n, dev_access_addr, dev_ram_byte_enable, 
     dev_access_read, dev_access_write, dev_access_write_data, 
     read_data_from_uart, ram_stall, rom_stall, 
+	 read_data_from_ticker,read_data_from_gpio, 
+	 read_data_from_gpu, read_data_from_ram, 
+	 read_data_from_rom, 
 
     //Outputs
     dev_access_read_data, data_bus_stall, 
     uart_addr, write_data_to_uart, uart_write_enable, 
     uart_read_enable, ticker_addr, write_data_to_ticker, 
-    read_data_from_ticker, ticker_write_enable, 
-    ticker_read_enable, gpio_addr, write_data_to_gpio, 
-    read_data_from_gpio, gpio_write_enable, 
-    gpio_read_enable, gpu_addr, write_data_to_gpu, 
-    read_data_from_gpu, gpu_write_enable, 
+    ticker_write_enable, ticker_read_enable, gpio_addr, 
+	 write_data_to_gpio, gpio_write_enable, gpio_read_enable, 
+	 gpu_addr, write_data_to_gpu, gpu_write_enable, 
     gpu_read_enable, ram_addr, write_data_to_ram, 
-    read_data_from_ram, ram_byte_enable, 
-    ram_write_enable, ram_read_enable, rom_addr, 
-    write_data_to_rom, read_data_from_rom, 
-    rom_enable, rom_write_enable, rom_read_enable
+    ram_byte_enable, ram_write_enable, ram_read_enable, 
+	 rom_addr, write_data_to_rom, rom_enable, rom_write_enable, 
+	 rom_read_enable
 );
 
     parameter RAM_BASE_ADDR = 8'h00;
@@ -61,28 +61,28 @@ module data_bus(/*autoarg*/
     // ticker
     output wire[7:0] ticker_addr;
     output wire[31:0] write_data_to_ticker;
-    output wire[31:0] read_data_from_ticker;
+    input wire[31:0] read_data_from_ticker;
     output reg ticker_write_enable;
     output reg ticker_read_enable;
 
     // gpio
     output wire[7:0] gpio_addr;
     output wire[31:0] write_data_to_gpio;
-    output wire[31:0] read_data_from_gpio;
+    input wire[31:0] read_data_from_gpio;
     output reg gpio_write_enable;
     output reg gpio_read_enable;
 
     // vga(gpu)
     output wire[23:0] gpu_addr;
     output wire[31:0] write_data_to_gpu;
-    output wire[31:0] read_data_from_gpu;
+    input wire[31:0] read_data_from_gpu;
     output reg gpu_write_enable;
     output reg gpu_read_enable;
     
     // sram 
     output wire[23:0] ram_addr;
     output wire[31:0] write_data_to_ram;
-    output wire[31:0] read_data_from_ram;
+    input wire[31:0] read_data_from_ram;
     output wire[3:0] ram_byte_enable;
     output reg ram_write_enable;
     output reg ram_read_enable;
@@ -91,7 +91,7 @@ module data_bus(/*autoarg*/
     // flash(rom)
     output wire[23:0] rom_addr;
     output wire[31:0] write_data_to_rom;
-    output wire[31:0] read_data_from_rom;
+    input wire[31:0] read_data_from_rom;
     output wire[3:0] rom_enable;
     output reg rom_write_enable;
     output reg rom_read_enable;

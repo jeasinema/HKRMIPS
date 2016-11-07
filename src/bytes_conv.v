@@ -1,26 +1,26 @@
 `default_nettype none
 module bytes_conv(/*autoarg*/
     //Inputs
-    clk,, rst_n,, byteenable_i,, address,, 
-    data_ram_rd,, data_master_wr,, read_i,, 
-    write_i,, 
+    clk, rst_n, byteenable_i, address, 
+    data_ram_rd, data_master_wr, read_i, 
+    write_i, 
 
     //Outputs
-    data_ram_wr,, stall_o,, read_o,, write_o
+    data_ram_wr, stall_o, read_o, write_o
 );
 
-input wire clk,
-input wire rst_n,
-input wire[3:0] byteenable_i,
-input wire[31:0] address,
-input wire[31:0] data_ram_rd,
-output reg[31:0] data_ram_wr,
-input wire[31:0] data_master_wr,
-output wire stall_o,
-input wire read_i,
-input wire write_i,
-output reg read_o,
-output reg write_o
+input wire clk;
+input wire rst_n;
+input wire[3:0] byteenable_i;
+input wire[31:0] address;
+input wire[31:0] data_ram_rd;
+output reg[31:0] data_ram_wr;
+input wire[31:0] data_master_wr;
+output wire stall_o;
+input wire read_i;
+input wire write_i;
+output reg read_o;
+output reg write_o;
 
 reg state;
 wire[31:0] processed_data;

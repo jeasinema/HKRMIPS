@@ -110,7 +110,6 @@ module soc_hkrmips(/*autoarg*/
     wire[3:0] ram_byte_enable;
     wire conv_ram_read_enable;
     wire conv_ram_write_enable;
-    wire[31:0] conv_write_data_to_ram;
 
     // uart
     wire[3:0] uart_addr;
@@ -172,10 +171,10 @@ module soc_hkrmips(/*autoarg*/
     assign base_ram_addr = ram_addr[21:2];
     assign base_ram_data = (~base_ram_ce_n && ~base_ram_we_n) ? write_data_to_ram : {32{1'hz}};
 
-    assign ext_ram_ce_n = ~ram_address[22];
-    assign ext_ram_oe_n = ram_rd_n;
-    assign ext_ram_we_n = ram_wr_n;
-    assign ext_ram_addr = ram_address[21:2];
+    assign ext_ram_ce_n = ~ram_addr[22];
+    assign ext_ram_oe_n = ram_read_enable;
+    assign ext_ram_we_n = ram_write_enable;
+    assign ext_ram_addr = ram_addr[21:2];
     assign ext_ram_data  = (~ext_ram_ce_n && ~ext_ram_we_n) ? write_data_to_ram : {32{1'hz}};
 
     assign read_data_from_ram = (~base_ram_ce_n) ? base_ram_data : ext_ram_data;
@@ -191,8 +190,8 @@ module soc_hkrmips(/*autoarg*/
     .dev_ram_byte_enable        (ibus_byte_enable[3:0]       ), // input
     .dev_access_read            (ibus_read                ), // input
     .dev_access_write           (ibus_write               ), // input
-    .dev_access_write_data      (ibus_write_data          ), // input
-    .dev_access_read_data       (ibus_read_data           ), // output
+    .dev_access_write_data      (ibus_write_data[31:0]          ), // input
+    .dev_access_read_data       (ibus_read_data[31:0]           ), // output
     .inst_bus_stall             (ibus_stall                 ), // output
 
         // bootrom
@@ -201,7 +200,7 @@ module soc_hkrmips(/*autoarg*/
 
         // sram
     .ram_addr                   (ibus_ram_addr[23:0]                 ), // output
-    .read_data_from_ram         (ibus_read_data_from_ram[31:0]       ), // output
+    .read_data_from_ram         (ibus_read_data_from_ram[31:0]       ), // input
     .write_data_to_ram          (ibus_write_data_to_ram[31:0]        ), // output
     .ram_byte_enable            (ibus_ram_byte_enable[3:0]           ), // output
     .ram_read_enable            (ibus_ram_read_enable                ), // output
@@ -232,28 +231,28 @@ module soc_hkrmips(/*autoarg*/
         // ticker
     .ticker_addr                (ticker_addr[7:0]               ), // output
     .write_data_to_ticker       (write_data_to_ticker[31:0]     ), // output
-    .read_data_from_ticker      (read_data_from_ticker[31:0]    ), // output
+    .read_data_from_ticker      (read_data_from_ticker[31:0]    ), // input
     .ticker_write_enable        (ticker_write_enable            ), // output
     .ticker_read_enable         (ticker_read_enable             ), // output
 
         // gpio
     .gpio_addr                  (gpio_addr[7:0]                 ), // output
     .write_data_to_gpio         (write_data_to_gpio[31:0]       ), // output
-    .read_data_from_gpio        (read_data_from_gpio[31:0]      ), // output
+    .read_data_from_gpio        (read_data_from_gpio[31:0]      ), // input
     .gpio_write_enable          (gpio_write_enable              ), // output
     .gpio_read_enable           (gpio_read_enable               ), // output
 
         // vga(gpu)
     .gpu_addr                   (gpu_addr[23:0]                 ), // output
     .write_data_to_gpu          (write_data_to_gpu[31:0]        ), // output
-    .read_data_from_gpu         (read_data_from_gpu[31:0]       ), // output
+    .read_data_from_gpu         (read_data_from_gpu[31:0]       ), // input
     .gpu_write_enable           (gpu_write_enable               ), // output
     .gpu_read_enable            (gpu_read_enable                ), // output
     
         // sram 
     .ram_addr                   (dbus_ram_addr[23:0]                 ), // output
     .write_data_to_ram          (dbus_write_data_to_ram[31:0]        ), // output
-    .read_data_from_ram         (dbus_read_data_from_ram[31:0]       ), // output
+    .read_data_from_ram         (dbus_read_data_from_ram[31:0]       ), // input
     .ram_byte_enable            (dbus_ram_byte_enable[3:0]           ), // output
     .ram_write_enable           (dbus_ram_write_enable               ), // output
     .ram_read_enable            (dbus_ram_read_enable                ), // output
@@ -262,18 +261,18 @@ module soc_hkrmips(/*autoarg*/
         // flash(rom)
     .rom_addr                   (rom_addr[23:0]                 ), // output
     .write_data_to_rom          (write_data_to_rom[31:0]        ), // output
-    .read_data_from_rom         (read_data_from_rom[31:0]       ), // output
+    .read_data_from_rom         (read_data_from_rom[31:0]       ), // input
     .rom_enable                 (rom_enable[3:0]                ), // output
     .rom_write_enable           (rom_write_enable               ), // output
     .rom_read_enable            (rom_read_enable                ), // output
     .rom_stall                  (rom_stall                      )  // input
 );
 
-    bootrom bootrom(/*autoinst*/
-    .address                    (bootrom_addr[12:2]                  ), // input
-    .clock                      (~clk                         ), // input
-    .q                          (data_from_bootrom[31:0]                        )  // output
-);
+//    bootrom bootrom(/*autoinst*/
+//    .address                    (bootrom_addr[12:2]                  ), // input
+//    .clock                      (~clk                         ), // input
+//    .q                          (data_from_bootrom[31:0]                        )  // output
+//);
 
     hkr_mips cpu0(/*autoinst*/
     .clk                        (clk                            ), // input
@@ -307,21 +306,21 @@ module soc_hkrmips(/*autoarg*/
     .rst_n                      (rst_n                          ), // input
     .clk2x                      (clk2x                          ), // input
 
-    .address1                   (ibus_ram_addr[31:0]                 ), // input
+    .address1                   (ibus_ram_addr[23:0]                 ), // input
     .wrdata1                    (ibus_write_data_to_ram[31:0]                  ), // input
     .rddata1                    (ibus_read_data_from_ram[31:0]                  ), // output
     .dataenable1                (ibus_ram_byte_enable[3:0]               ), // input
     .rd1                        (ibus_ram_read_enable                            ), // input
     .wr1                        (ibus_ram_write_enable                            ), // input
 
-    .address2                   (dbus_ram_addr[31:0]                 ), // input
+    .address2                   (dbus_ram_addr[23:0]                 ), // input
     .wrdata2                    (conv_write_data_to_ram[31:0]                  ), // input
     .rddata2                    (dbus_read_data_from_ram[31:0]                  ), // output
     .dataenable2                (dbus_ram_byte_enable[3:0]               ), // input
     .rd2                        (conv_ram_read_enable                            ), // input
     .wr2                        (conv_ram_write_enable                            ), // input
 
-    .ram_address                (ram_addr[31:0]              ), // output
+    .ram_address                (ram_addr[29:0]              ), // output
     .ram_data_i                 (read_data_from_ram[31:0]               ), // input
     .ram_data_o                 (write_data_to_ram[31:0]               ), // output
     .ram_wr_n                   (ram_write_enable                       ), // output
@@ -333,7 +332,7 @@ module soc_hkrmips(/*autoarg*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
     .byteenable_i               (dbus_ram_byte_enable[3:0]              ), // input
-    .address                    (dbus_ram_addr[31:0]                  ), // input
+    .address                    (dbus_ram_addr[23:0]                  ), // input
     .data_ram_rd                (dbus_read_data_from_ram[31:0]              ), // input
     .data_ram_wr                (conv_write_data_to_ram[31:0]              ), // output
     .data_master_wr             (dbus_write_data_to_ram[31:0]           ), // input
@@ -382,7 +381,7 @@ module soc_hkrmips(/*autoarg*/
     .flash_vpen                 (flash_vpen                     )  // output
 );
 
-    gpio_top gpio0(/*autoinst*/
+    gpio_top gpio_instance(/*autoinst*/
     .clk_bus                    (clk                        ), // input
     .rst_n                      (rst_n                          ), // input
 
@@ -411,26 +410,26 @@ module soc_hkrmips(/*autoarg*/
     .bus_write                  (ticker_write_enable                      )  // input
 );
 
-    gpu vga0(/*autoinst*/
-    .clk_bus                    (clk                        ), // input
-    .clk_pixel                  (clk_in                      ), // input
-    .rst_n                      (rst_n                          ), // input
-
-      //bus
-      //output
-    .bus_data_o                 (read_data_from_gpu[31:0]               ), // output
-      //input
-    .bus_address                (gpu_addr[23:0]              ), // input
-    .bus_data_i                 (write_data_to_gpu[31:0]               ), // input
-    .bus_read                   (gpu_read_enable                       ), // input
-    .bus_write                  (gpu_write_enable                      ), // input
-
-      //vga
-    .de                         (                             ), // output
-    .vsync                      (vga_vsync                          ), // output
-    .hsync                      (vga_hsync                          ), // output
-    .pxlData                    (vga_pixel[8:0]                   )  // output
-);
+//    gpu vga0(/*autoinst*/
+//    .clk_bus                    (clk                        ), // input
+//    .clk_pixel                  (clk_in                      ), // input
+//    .rst_n                      (rst_n                          ), // input
+//
+//      //bus
+//      //output
+//    .bus_data_o                 (read_data_from_gpu[31:0]               ), // output
+//      //input
+//    .bus_address                (gpu_addr[23:0]              ), // input
+//    .bus_data_i                 (write_data_to_gpu[31:0]               ), // input
+//    .bus_read                   (gpu_read_enable                       ), // input
+//    .bus_write                  (gpu_write_enable                      ), // input
+//
+//      //vga
+//    .de                         (                             ), // output
+//    .vsync                      (vga_vsync                          ), // output
+//    .hsync                      (vga_hsync                          ), // output
+//    .pxlData                    (vga_pixel[8:0]                   )  // output
+//);
 
 endmodule
 
