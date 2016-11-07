@@ -2,7 +2,7 @@
  File Name : soc_hkrmips.v
  Purpose : top file of HKRMIPS
  Creation Date : 31-10-2016
- Last Modified : Wed Nov  2 09:35:09 2016
+ Last Modified : Mon Nov  7 16:31:18 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __SOC_HKRMIPS_V__
@@ -300,7 +300,7 @@ module soc_hkrmips(/*autoarg*/
     .dbus_uncached              (dbus_uncached                  ), // output
     .dbus_byte_en               (dbus_byte_enable[3:0]              ), // output
     .dbus_read_data             (dbus_read_data[31:0]           ), // input
-    .dbus_stall                 (dbus_stall
+    .dbus_stall                 (dbus_stall                    ) // input
 );
     
     two_port ram(/*autoinst*/
