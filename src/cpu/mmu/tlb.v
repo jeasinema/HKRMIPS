@@ -2,7 +2,7 @@
  File Name : tlb.v
  Purpose : tlb table
  Creation Date : 21-10-2016
- Last Modified : Sat Oct 22 18:49:50 2016
+ Last Modified : Mon Nov  7 13:15:24 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __TLB_V__
@@ -79,14 +79,43 @@ module tlb(/*autoarg*/
     assign phy_addr[11:0] = virt_addr[11:0];
     assign phy_addr[31:12] = PFN[19:0];
 
-    genvar i;
-    generate
-    for (i = 0; i < 15; i = i + 1)
-    begin
-        assign matched[i] = tlb_entries[i][70:52] == virt_addr[31:13] &&
-                (tlb_entries[i][79:72] == asid || tlb_entries[i][71]);
-    end
-    endgenerate
+    assign matched[0] = tlb_entries[0][70:52] == virt_addr[31:13] &&
+     (tlb_entries[0][79:72] == asid || tlb_entries[0][71]);
+    assign matched[1] = tlb_entries[1][70:52] == virt_addr[31:13] &&
+     (tlb_entries[1][79:72] == asid || tlb_entries[1][71]);
+    assign matched[2] = tlb_entries[2][70:52] == virt_addr[31:13] &&
+     (tlb_entries[2][79:72] == asid || tlb_entries[2][71]);
+    assign matched[3] = tlb_entries[3][70:52] == virt_addr[31:13] &&
+     (tlb_entries[3][79:72] == asid || tlb_entries[3][71]);
+    assign matched[4] = tlb_entries[4][70:52] == virt_addr[31:13] &&
+     (tlb_entries[4][79:72] == asid || tlb_entries[4][71]);
+    assign matched[5] = tlb_entries[5][70:52] == virt_addr[31:13] &&
+     (tlb_entries[5][79:72] == asid || tlb_entries[5][71]);
+    assign matched[6] = tlb_entries[6][70:52] == virt_addr[31:13] &&
+     (tlb_entries[6][79:72] == asid || tlb_entries[6][71]);
+    assign matched[7] = tlb_entries[7][70:52] == virt_addr[31:13] &&
+     (tlb_entries[7][79:72] == asid || tlb_entries[7][71]);
+    assign matched[8] = tlb_entries[8][70:52] == virt_addr[31:13] &&
+     (tlb_entries[8][79:72] == asid || tlb_entries[8][71]);
+    assign matched[9] = tlb_entries[9][70:52] == virt_addr[31:13] &&
+     (tlb_entries[9][79:72] == asid || tlb_entries[9][71]);
+    assign matched[10] = tlb_entries[10][70:52] == virt_addr[31:13] &&
+     (tlb_entries[10][79:72] == asid || tlb_entries[10][71]);
+    assign matched[11] = tlb_entries[11][70:52] == virt_addr[31:13] &&
+     (tlb_entries[11][79:72] == asid || tlb_entries[11][71]);
+    assign matched[12] = tlb_entries[12][70:52] == virt_addr[31:13] &&
+     (tlb_entries[12][79:72] == asid || tlb_entries[12][71]);
+    assign matched[13] = tlb_entries[13][70:52] == virt_addr[31:13] &&
+     (tlb_entries[13][79:72] == asid || tlb_entries[13][71]);
+    assign matched[14] = tlb_entries[14][70:52] == virt_addr[31:13] &&
+     (tlb_entries[14][79:72] == asid || tlb_entries[14][71]);
+    assign matched[15] = tlb_entries[15][70:52] == virt_addr[31:13] &&
+     (tlb_entries[15][79:72] == asid || tlb_entries[15][71]);
+
+
+
+
+
 
     always @(*)
     begin

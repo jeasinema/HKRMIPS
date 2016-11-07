@@ -2,7 +2,7 @@
  File Name : tlb_top.v
  Purpose : top file of tlb converter
  Creation Date : 21-10-2016
- Last Modified : Sat Oct 22 18:51:07 2016
+ Last Modified : Mon Nov  7 14:40:46 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __TLB_TOP_V__
@@ -32,7 +32,7 @@ module tlb_top(/*autoarg*/
     // virtual address
     input wire[31:0] data_addr_virtual; 
     input wire[31:0] inst_addr_virtual;
-    input wire asid;
+    input wire[7:0] asid;
 
     // tlb-converted address output 
     output wire[31:0] data_addr_physic;
@@ -63,14 +63,14 @@ module tlb_top(/*autoarg*/
     wire tlb_entry_V1;
 
     assign {
-        tlbEntryASID, //[79:72]
-        tlbEntryG,    //71
-        tlbEntryVpn2, //[70:52]
-        tlbEntryPFN1, //[51:28]
-        tlbEntryD1, tlbEntryV1,//27,26
-        tlbEntryPFN0,//[25:2]
-        tlbEntryD0, tlbEntryV0, //1, 0
-        tlbEntryIndex
+        tlb_entry_ASID, //[79:72]
+        tlb_entry_G,    //71
+        tlb_entry_vpn2, //[70:52]
+        tlb_entry_PFN1, //[51:28]
+        tlb_entry_D1, tlb_Entry_V1,//27,26
+        tlb_entry_PFN0,//[25:2]
+        tlb_entry_D0, tlb_entry_V0, //1, 0
+        tlb_entry_index
     } = tlb_config;
 
     reg[79:0] tlb_entries[0:15];
@@ -179,7 +179,7 @@ module tlb_top(/*autoarg*/
         end else begin
             if (tlbwi)
             begin
-                tlb_entries[tlb_entry_index] <= tlb_config[83:4]; 
+                tlb_entries[tlb_entry_index] [79:0] <= tlb_config[83:4]; 
             end
         end
     end 

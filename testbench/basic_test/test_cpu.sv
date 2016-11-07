@@ -206,9 +206,9 @@ initial begin
     //unit_test("../testbench/testcase/overflow_exp");
     //unit_test("../testbench/testcase/inst_syscall");
     //unit_test("../testbench/testcase/timer_int");
-    unit_test("../testbench/testcase/mem_exp");
+    //unit_test("../testbench/testcase/mem_exp");
     //unit_test("../testbench/testcase/tlb");
-    //unit_test("../testbench/testcase/usermode");
+    unit_test("../testbench/testcase/usermode");
     $display("Unit test succeeded!");
     $stop;
 end
