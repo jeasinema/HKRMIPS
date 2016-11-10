@@ -2,7 +2,7 @@
  File Name : hkr_mips.v
  Purpose : top file for cpu
  Creation Date : 18-10-2016
- Last Modified : Sun Nov  6 15:50:26 2016
+ Last Modified : Thu Nov 10 12:48:06 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __HKR_MIPS_V__
@@ -242,9 +242,28 @@ module hkr_mips(/*autoarg*/
     // flush
     wire flush;
     wire debugger_flush;
+    reg debugger_flush_holding;
     wire exception_flush;
+    reg exception_flush_holding;
+    reg ibus_read_holding;
     wire[31:0] exception_new_pc;
-    assign flush = debugger_flush | exception_flush;
+
+    assign flush = debugger_flush | debugger_flush_holding | exception_flush | exception_flush_holding;
+    
+    always @(posedge clk or negedge rst_n) begin
+        if (!rst_n) begin
+            debugger_flush_holding <= 1'b0;
+            exception_flush_holding <= 1'b0;
+            ibus_read_holding <= 1'b0;
+        end
+        else begin
+            debugger_flush_holding <= (debugger_flush|debugger_flush_holding) & ibus_stall;
+            exception_flush_holding <= (exception_flush|exception_flush_holding) & ibus_stall;
+            if(debugger_flush|exception_flush)
+                ibus_read_holding <= ibus_read;
+        end
+    end
+
     // stall 
     reg en_pc, en_ifid, en_idex, en_exmm, en_mmwb;
     wire debugger_stall; // stall for debug
@@ -300,11 +319,13 @@ module hkr_mips(/*autoarg*/
     assign debugger_data_o = 32'b0;
 
     // inst_bus related assignments
-    assign ibus_read = ~(if_iaddr_exp_miss | if_iaddr_exp_illegal | if_iaddr_exp_invalid);
+    assign ibus_read = (debugger_flush_holding | exception_flush_holding) ?
+                ibus_read_holding :
+                ~(if_iaddr_exp_miss|if_iaddr_exp_illegal|if_iaddr_exp_invalid);
     assign ibus_write = 1'b0;
     assign ibus_write_data = 32'b0;
     assign ibus_byte_en = 4'b1111;
-    assign if_inst_code = ibus_read ? ibus_read_data : 32'b0;
+    assign if_inst_code = (if_iaddr_exp_miss|if_iaddr_exp_illegal|if_iaddr_exp_invalid) ? 32'b0 : ibus_read_data;
     assign debugger_mem_data = if_inst_code;
 
     // data_bus related assignments
@@ -332,6 +353,8 @@ module hkr_mips(/*autoarg*/
             {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00001;
         end else if(ex_mem_access_type == `MEM_ACCESS_TYPE_M2R &&   // data hazard, need to block 
           (ex_bypass_reg_addr == id_reg_s_addr || ex_bypass_reg_addr == id_reg_t_addr)) begin
+            {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00011;
+        end else if (ibus_stall) begin
             {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b00011;
         end else begin
             {en_pc,en_ifid,en_idex,en_exmm,en_mmwb} <= 5'b11111;
@@ -674,7 +697,7 @@ module hkr_mips(/*autoarg*/
     ex step_ex(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
-    .exception_flush            (exception_flush                ), // input
+    .exception_flush            (flush                ), // input
         // decoded instruction
         // inst 
     .inst                       (ex_inst[7:0]                      ), // input
@@ -747,7 +770,7 @@ module hkr_mips(/*autoarg*/
     
     always @(posedge clk or negedge rst_n) begin
         if (!rst_n) begin
-            mm_mem_access_type <= `MEM_ACCESS_TYPE_M2R;
+            mm_mem_access_type <= `MEM_ACCESS_TYPE_R2R; // when stall, should not access mem!!
             mm_mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
             mm_reg_val_i <= 32'b0;
             mm_reg_addr_i <= 5'b0;

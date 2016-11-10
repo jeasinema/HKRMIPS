@@ -2,7 +2,7 @@
  File Name : cp0.v
  Purpose : top file of cp0
  Creation Date : 18-10-2016
- Last Modified : Sun Nov  6 09:50:55 2016
+ Last Modified : Wed Nov  9 21:51:24 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __CP0_V__
@@ -280,7 +280,7 @@ module cp0(/*autoarg*/
             if(we_probe)
                 cp0_regs_Index <= probe_result;
             // exp occurs
-			if(en_exp_i) begin  
+            if(en_exp_i) begin  
                 if(exp_badv_we)
                     cp0_regs_BadVAddr <= exp_bad_vaddr;
                 cp0_regs_Context[22:4] <= exp_bad_vaddr[31:13];

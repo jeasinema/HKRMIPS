@@ -112,8 +112,8 @@ module id(/*autoarg*/
             inst <= id_r_inst;
             reg_s <= id_r_reg_s;
             reg_t <= id_r_reg_t;
-            shift <= id_r_shift;
             immediate <= 16'b0;
+            shift <= id_r_shift;
             jump_addr <= 26'b0;
         end
         `INST_TYPE_I:
@@ -122,6 +122,8 @@ module id(/*autoarg*/
             reg_s <= id_i_reg_s;
             reg_t <= id_i_reg_t;
             immediate <= id_i_immediate;
+            shift <= 5'b0;
+            jump_addr <= 26'b0;
         end
         `INST_TYPE_J:
         begin
@@ -129,6 +131,7 @@ module id(/*autoarg*/
             reg_s <= 5'b0;
             reg_t <= 5'b0;
             immediate <= 16'b0;
+            shift <= 5'b0;
             jump_addr <= id_j_addr;
         end
         default:
@@ -136,8 +139,8 @@ module id(/*autoarg*/
             inst <= `INST_INVALID;
             reg_s <= 5'b0;
             reg_t <= 5'b0;
-            shift <= 5'b0;
             immediate <= 16'b0;
+            shift <= 5'b0;
             jump_addr <= 26'b0;
         end
         endcase

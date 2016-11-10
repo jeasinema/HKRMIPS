@@ -2,7 +2,7 @@
  File Name : pc.v
  Purpose : program counter in step_if
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 27 12:27:50 2016
+ Last Modified : Wed Nov  9 15:52:35 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __PC_V__
@@ -39,7 +39,7 @@ module pc(/*autoarg*/
     input wire debug_reset;
     input wire[31:0] debug_addr;
     
-    output reg[31:0] pc_addr;
+    output reg[31:0] pc_addr = PC_INITIAL_VAL;
     
     always @(posedge clk or negedge rst_n)
     begin
@@ -68,7 +68,7 @@ module pc(/*autoarg*/
     end
     
     // for debug output
-    always @(posedge clk) $display("PC=%x", pc_addr);
+    //always @(posedge clk) $display("PC=%x", pc_addr);
 
 endmodule
 
