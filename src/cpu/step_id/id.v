@@ -112,7 +112,7 @@ module id(/*autoarg*/
             inst <= id_r_inst;
             reg_s <= id_r_reg_s;
             reg_t <= id_r_reg_t;
-            immediate <= 16'b0;
+            immediate <= id_r_shift;
             shift <= id_r_shift;
             jump_addr <= 26'b0;
         end
