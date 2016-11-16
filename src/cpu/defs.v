@@ -2,13 +2,13 @@
  File Name : defs.v
  Purpose : some basic macros for cpu
  Creation Date : 18-10-2016
- Last Modified : Sat Oct 29 14:26:55 2016
+ Last Modified : Wed Nov 16 19:46:46 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __DEFS_V__
 `define __DEFS_V__
 
-`timescale 1ns/1ps
+`timescale 1ns/1ns
 
 // specify the instruction type
 // used for id
@@ -96,19 +96,21 @@
 `define INST_MSUB 8'd72
 `define INST_MSUBU 8'd73
 `define INST_NOP 8'd74
+`define INST_BLTZAL 8'd75
+`define INST_BGEZAL 8'd76
 
 // cache related
-//`define INST_LL 
-//`define INST_SC 
-//`define INST_CACHE 
+//`define INST_LL
+//`define INST_SC
+//`define INST_CACHE
 
 `define INST_INVALID 8'hff
 
 // specify the type how an instruction accesses register and memory
 // used for mm and reg_bypass_mux
-`define MEM_ACCESS_TYPE_R2R 2'd0 // inst that set register value in EX 
-`define MEM_ACCESS_TYPE_R2M 2'd1 // inst that put register value to memory in MM 
-`define MEM_ACCESS_TYPE_M2R 2'd2 // inst that put memory value to register in MM  
+`define MEM_ACCESS_TYPE_R2R 2'd0 // inst that set register value in EX
+`define MEM_ACCESS_TYPE_R2M 2'd1 // inst that put register value to memory in MM
+`define MEM_ACCESS_TYPE_M2R 2'd2 // inst that put memory value to register in MM
 
 // specify the type how an instruction accesses memory
 // used for mm

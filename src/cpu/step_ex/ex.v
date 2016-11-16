@@ -2,29 +2,29 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Sun Oct 30 23:18:11 2016
+ Last Modified : Wed Nov 16 19:45:13 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
 `define __EX_V__
-
-`timescale 1ns/1ps
+`default_nettype none
+`timescale 1ns/1ns
 
 `include "../defs.v"
 
 module ex(/*autoarg*/
     //Inputs
-    clk, rst_n, exception_flush, inst, inst_type, 
-    reg_s, reg_t, reg_d, reg_s_val, reg_t_val, 
-    immediate, shift, jump_addr, return_addr, 
-    reg_cp0_val, reg_hilo_val, 
+    clk, rst_n, exception_flush, inst, inst_type,
+    reg_s, reg_t, reg_d, reg_s_val, reg_t_val,
+    immediate, shift, jump_addr, return_addr,
+    reg_cp0_val, reg_hilo_val,
 
     //Outputs
-    mem_access_type, mem_access_size, mem_access_signed, 
-    mem_access_addr, val_output, bypass_reg_addr, 
-    overflow, stall_for_mul_cycle, is_priv_inst, 
-    inst_syscall, inst_eret, inst_tlbwi, 
-    inst_tlbp, cp0_write_enable, cp0_write_addr, 
+    mem_access_type, mem_access_size, mem_access_signed,
+    mem_access_addr, val_output, bypass_reg_addr,
+    overflow, stall_for_mul_cycle, is_priv_inst,
+    inst_syscall, inst_eret, inst_tlbwi,
+    inst_tlbp, cp0_write_enable, cp0_write_addr,
     cp0_read_addr, cp0_sel, reg_hilo_o, hilo_write_enable
 );
 
@@ -33,7 +33,7 @@ module ex(/*autoarg*/
     input wire exception_flush;
 
     // decoded instruction
-    // inst 
+    // inst
     input wire[7:0] inst;
     input wire[1:0] inst_type;
     // operands
@@ -42,7 +42,7 @@ module ex(/*autoarg*/
     input wire[4:0] reg_d;
     input wire[31:0] reg_s_val;
     input wire[31:0] reg_t_val;
-    input wire[15:0] immediate;  
+    input wire[15:0] immediate;
     input wire[4:0] shift;
     input wire[25:0] jump_addr;
     // output by branch_jump.v, maybe need to put in reg_31 under some circumstances
@@ -60,7 +60,7 @@ module ex(/*autoarg*/
     // ex result
     output reg[31:0] val_output;
     // address of the reg(store the val of result in ex), which should be bypass to mux and mm
-    output reg[4:0] bypass_reg_addr; 
+    output reg[4:0] bypass_reg_addr;
 
     // for spec instructions
     output reg overflow;
@@ -84,10 +84,10 @@ module ex(/*autoarg*/
     // MFC0: read reg addr in CP0, passed in ex(combinantial logic)
     output reg[4:0] cp0_read_addr;
     // MF/TC0: sel for CP0, passed in ex(combinantial logic)
-    output reg[2:0] cp0_sel;    
+    output reg[2:0] cp0_sel;
     // MFC0: reg read result, passed in ex(combinantial logic)
     input wire[31:0] reg_cp0_val;
-    
+
     // for DIV/MULT(U) MF/TLO/HI, can get from mm/wb/reg, decided by we
     input wire[63:0] reg_hilo_val;
     output reg[63:0] reg_hilo_o;
@@ -99,7 +99,7 @@ module ex(/*autoarg*/
     wire sign_bit_immediate;
     // zero-extended 32bit width immediate
     wire[31:0] zero_ext_immediate;
-    // for multi_cycle_calc 
+    // for multi_cycle_calc
     wire multi_cycle_done;
     wire[63:0] multi_cycle_result;
 
@@ -125,7 +125,7 @@ module ex(/*autoarg*/
     assign inst_tlbwi = (inst == `INST_TLBWI);
     assign inst_tlbp = (inst == `INST_TLBP);
     assign sign_bit_immediate = immediate[15];
-    assign sign_ext_immediate = { 
+    assign sign_ext_immediate = {
                                 sign_bit_immediate,
                                 sign_bit_immediate,
                                 sign_bit_immediate,
@@ -145,8 +145,8 @@ module ex(/*autoarg*/
                                 immediate
                                 };
     assign zero_ext_immediate = { 16'b0, immediate};
-    
-    // assign variables for add/sub/slt 
+
+    // assign variables for add/sub/slt
     assign op1_i = reg_s_val;
     assign op2_i = ((inst == `INST_SLT) ||
                     (inst == `INST_SLTU) ||
@@ -168,35 +168,35 @@ module ex(/*autoarg*/
                         (~op2_i) + 1 : op2_i;
     assign result_sum = op1_i + op2_i_mux;
     assign ov_sum = ((!op1_i[31] && !op2_i[31]) && result_sum[31]) || ((op1_i[31] && op2_i_mux[31]) && (!result_sum[31]));
-    assign op1_lt_op2 = ((inst == `INST_SLT) || (inst == `INST_SLTI)) ? 
-                        ((op1_i[31] && !op2_i[31]) || 
+    assign op1_lt_op2 = ((inst == `INST_SLT) || (inst == `INST_SLTI)) ?
+                        ((op1_i[31] && !op2_i[31]) ||
                          (!op1_i[31] && !op2_i[31] && result_sum[31]) ||
                          (op1_i[31] && op2_i[31] && result_sum[31])) :
                         (op1_i < op2_i);
     assign op1_i_not = ~op1_i;
 
     // assign variables for mul/mult/multu
-    assign opdata1_mult = ((inst == `INST_MUL) || (inst == `INST_MULT) || 
+    assign opdata1_mult = ((inst == `INST_MUL) || (inst == `INST_MULT) ||
                            (inst == `INST_MADD) || (inst == `INST_MSUB)) && (op1_i[31] == 1'b1) ? (~op1_i + 1) : op1_i;
-    assign opdata2_mult = ((inst == `INST_MUL) || (inst == `INST_MULT) || 
+    assign opdata2_mult = ((inst == `INST_MUL) || (inst == `INST_MULT) ||
                            (inst == `INST_MADD) || (inst == `INST_MSUB)) && (op2_i[31] == 1'b1) ? (~op2_i + 1) : op2_i;
     assign hilo_temp = opdata1_mult * opdata2_mult;
-    
+
     // get MUL/MULT/MULTU result from hilo_temp;
     always @ (*) begin
-  		if(!rst_n) begin
-  			mulres <= 64'h0;
-  		end else if ((inst == `INST_MUL) || (inst == `INST_MULT) || 
+        if(!rst_n) begin
+            mulres <= 64'h0;
+        end else if ((inst == `INST_MUL) || (inst == `INST_MULT) ||
                      (inst == `INST_MADD) || (inst == `INST_MSUB)) begin
-  			if(op1_i[31] ^ op2_i[31] == 1'b1) begin
-  				mulres <= ~hilo_temp + 1;
-  			end else begin
-  			    mulres <= hilo_temp;
-  			end
-  		end else begin
+            if(op1_i[31] ^ op2_i[31] == 1'b1) begin
+                mulres <= ~hilo_temp + 1;
+            end else begin
+                mulres <= hilo_temp;
+            end
+        end else begin
               mulres <= hilo_temp;
-  		end
-  	end
+        end
+    end
 
     multi_cycle multi_cycle_calc(/*autoinst*/
     .clk                        (clk                            ), // input
@@ -219,7 +219,7 @@ module ex(/*autoarg*/
         bypass_reg_addr <= 5'h0;
         overflow <= 1'b0;  // just set it to correct val later
         cp0_write_enable <= 1'b0;
-        cp0_write_addr <= 5'b0; 
+        cp0_write_addr <= 5'b0;
         cp0_read_addr <= 5'b0;
         cp0_sel <= 3'b0;
         reg_hilo_o <= 64'b0;
@@ -240,9 +240,12 @@ module ex(/*autoarg*/
             `INST_SUB:
             begin
                 if (ov_sum == 1'b1) begin
+                    overflow <= 1'b1;
+                    val_output <= 32'b0;
                     bypass_reg_addr <= 5'h0;
                 end
                 else begin
+                    overflow <= 1'b0;
                     val_output <= result_sum;
                     bypass_reg_addr <= reg_d;
                 end
@@ -255,23 +258,30 @@ module ex(/*autoarg*/
             `INST_ADDI:
             begin
                 if (ov_sum == 1'b1) begin
+                    overflow <= 1'b1;
+                    val_output <= 32'b0;
                     bypass_reg_addr <= 5'h0;
                 end
                 else begin
+                    overflow <= 1'b0;
                     val_output <= result_sum;
                     bypass_reg_addr <= reg_t;
                 end
             end
             `INST_AND:
-            begin           
+            begin
                 val_output <= reg_s_val & reg_t_val;
-                bypass_reg_addr <= reg_d; 
+                bypass_reg_addr <= reg_d;
             end
             `INST_ANDI:
             begin
                 val_output <= reg_s_val & zero_ext_immediate;
                 bypass_reg_addr <= reg_t;
             end
+            `INST_MADD,
+            `INST_MADDU,
+            `INST_MSUB,
+            `INST_MSUBU,
             `INST_DIV,
             `INST_DIVU:
             begin
@@ -285,10 +295,13 @@ module ex(/*autoarg*/
             begin
                 hilo_write_enable <= 1'b1;
                 reg_hilo_o <= mulres;
+                bypass_reg_addr <= 5'h0;
+                val_output <= 32'h0;
             end
             `INST_MUL:
             begin
                 val_output <= mulres[31:0];
+                bypass_reg_addr <= reg_d;
             end
             `INST_SLT,
             `INST_SLTU:
@@ -306,40 +319,40 @@ module ex(/*autoarg*/
             begin
                 val_output <= op1_i[31] ? 0 : op1_i[30] ? 1 : op1_i[29] ? 2 :
                               op1_i[28] ? 3 : op1_i[27] ? 4 : op1_i[26] ? 5 :
-                              op1_i[25] ? 6 : op1_i[24] ? 7 : op1_i[23] ? 8 : 
+                              op1_i[25] ? 6 : op1_i[24] ? 7 : op1_i[23] ? 8 :
                               op1_i[22] ? 9 : op1_i[21] ? 10 : op1_i[20] ? 11 :
-                              op1_i[19] ? 12 : op1_i[18] ? 13 : op1_i[17] ? 14 : 
-                              op1_i[16] ? 15 : op1_i[15] ? 16 : op1_i[14] ? 17 : 
+                              op1_i[19] ? 12 : op1_i[18] ? 13 : op1_i[17] ? 14 :
+                              op1_i[16] ? 15 : op1_i[15] ? 16 : op1_i[14] ? 17 :
                               op1_i[13] ? 18 : op1_i[12] ? 19 : op1_i[11] ? 20 :
-                              op1_i[10] ? 21 : op1_i[9] ? 22 : op1_i[8] ? 23 : 
-                              op1_i[7] ? 24 : op1_i[6] ? 25 : op1_i[5] ? 26 : 
-                              op1_i[4] ? 27 : op1_i[3] ? 28 : op1_i[2] ? 29 : 
+                              op1_i[10] ? 21 : op1_i[9] ? 22 : op1_i[8] ? 23 :
+                              op1_i[7] ? 24 : op1_i[6] ? 25 : op1_i[5] ? 26 :
+                              op1_i[4] ? 27 : op1_i[3] ? 28 : op1_i[2] ? 29 :
                               op1_i[1] ? 30 : op1_i[0] ? 31 : 32;
-                bypass_reg_addr <= reg_d; 
+                bypass_reg_addr <= reg_d;
             end
             `INST_CLO:
             begin
                 val_output <= op1_i_not[31] ? 0 : op1_i_not[30] ? 1 : op1_i_not[29] ? 2 :
                               op1_i_not[28] ? 3 : op1_i_not[27] ? 4 : op1_i_not[26] ? 5 :
-                              op1_i_not[25] ? 6 : op1_i_not[24] ? 7 : op1_i_not[23] ? 8 : 
+                              op1_i_not[25] ? 6 : op1_i_not[24] ? 7 : op1_i_not[23] ? 8 :
                               op1_i_not[22] ? 9 : op1_i_not[21] ? 10 : op1_i_not[20] ? 11 :
-                              op1_i_not[19] ? 12 : op1_i_not[18] ? 13 : op1_i_not[17] ? 14 : 
-                              op1_i_not[16] ? 15 : op1_i_not[15] ? 16 : op1_i_not[14] ? 17 : 
+                              op1_i_not[19] ? 12 : op1_i_not[18] ? 13 : op1_i_not[17] ? 14 :
+                              op1_i_not[16] ? 15 : op1_i_not[15] ? 16 : op1_i_not[14] ? 17 :
                               op1_i_not[13] ? 18 : op1_i_not[12] ? 19 : op1_i_not[11] ? 20 :
-                              op1_i_not[10] ? 21 : op1_i_not[9] ? 22 : op1_i_not[8] ? 23 : 
-                              op1_i_not[7] ? 24 : op1_i_not[6] ? 25 : op1_i_not[5] ? 26 : 
-                              op1_i_not[4] ? 27 : op1_i_not[3] ? 28 : op1_i_not[2] ? 29 : 
+                              op1_i_not[10] ? 21 : op1_i_not[9] ? 22 : op1_i_not[8] ? 23 :
+                              op1_i_not[7] ? 24 : op1_i_not[6] ? 25 : op1_i_not[5] ? 26 :
+                              op1_i_not[4] ? 27 : op1_i_not[3] ? 28 : op1_i_not[2] ? 29 :
                               op1_i_not[1] ? 30 : op1_i_not[0] ? 31 : 32;
-                bypass_reg_addr <= reg_d; 
+                bypass_reg_addr <= reg_d;
             end
             `INST_OR:
             begin
-                val_output <= reg_s_val | reg_t_val;    
+                val_output <= reg_s_val | reg_t_val;
                 bypass_reg_addr <= reg_d;
             end
             `INST_ORI:
             begin
-                val_output <= reg_s_val ^ zero_ext_immediate;
+                val_output <= reg_s_val | zero_ext_immediate;
                 bypass_reg_addr <= reg_t;
             end
             `INST_XOR:
@@ -438,69 +451,39 @@ module ex(/*autoarg*/
                     bypass_reg_addr <= 5'h0;
                 end
             end
-            `INST_MADD,
-            `INST_MADDU:
-            begin
-                hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
-                val_output <= 32'h0;
-                bypass_reg_addr <= 5'h0;
-                if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
-                    hilo_temp_for_madd_msub <= mulres;
-                end else begin // second cycle, add hilo_temp_for_madd_msub to actual hilo
-                    reg_hilo_o <= reg_hilo_val + hilo_temp_for_madd_msub;
-                end
-            end
-            `INST_MSUB,
-            `INST_MSUBU:
-            begin
-                hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
-                val_output <= 32'h0;
-                bypass_reg_addr <= 5'h0;
-                if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
-                    hilo_temp_for_madd_msub <= mulres;
-                end else begin // second cycle, subtract hilo_temp_for_madd_msub to actual hilo
-                    reg_hilo_o <= reg_hilo_val - hilo_temp_for_madd_msub;
-                end
-            end
-            `INST_SYSCALL:
-            begin
-
-            end
-            `INST_BREAK:
-            begin
-
-            end
-            // need to put mem target register 
+            // need to put mem target register
            `INST_LB, `INST_LH, `INST_LWL, `INST_LW, `INST_LBU, `INST_LHU, `INST_LWR:   // `INST_LL
             begin
                 val_output  <= reg_t_val;
-                bypass_reg_addr <= reg_t; 
+                bypass_reg_addr <= reg_t;
             end
            `INST_SB, `INST_SH, `INST_SWL, `INST_SW, `INST_SWR:                         // `INST_SC
             begin
                 val_output  <= reg_t_val;
-                bypass_reg_addr <= reg_t; 
+                bypass_reg_addr <= reg_t;
             end
-            `INST_MFC0: 
+            `INST_MFC0:
             begin
                 cp0_read_addr <= reg_d;
-                cp0_sel <= immediate[2:0];   
+                cp0_sel <= immediate[2:0];
                 val_output <= reg_cp0_val;
                 bypass_reg_addr <= reg_t;
             end
-            `INST_MTC0: 
+            `INST_MTC0:
             begin
                 cp0_write_enable <= 1'b1;
                 cp0_write_addr <= reg_d;
-                cp0_sel <= immediate[2:0];   
+                cp0_sel <= immediate[2:0];
                 val_output <= reg_t_val;
                 bypass_reg_addr <= 5'b0;
             end
             // instruction that need to put return address to specific reg, branch or jump works are done in step_id/branch_jump.v
+            `INST_BGEZAL,
+            `INST_BLTZAL,
             `INST_JAL:
             begin
                 val_output <= return_addr;
-                bypass_reg_addr <= 5'h31; // need to put return address into reg_31 
+                bypass_reg_addr <= 5'd31; // need to put return address into reg_31
             end
             `INST_JALR:
             begin
@@ -528,7 +511,7 @@ module ex(/*autoarg*/
         `INST_LWL,
         `INST_LWR:
         begin
-            mem_access_addr <= reg_s_val + sign_ext_immediate; 
+            mem_access_addr <= reg_s_val + sign_ext_immediate;
             mem_access_type <= `MEM_ACCESS_TYPE_M2R;
         end
         `INST_SB,
@@ -537,7 +520,7 @@ module ex(/*autoarg*/
         `INST_SWL,
         `INST_SWR:
         begin
-            mem_access_addr <= reg_s_val + sign_ext_immediate; 
+            mem_access_addr <= reg_s_val + sign_ext_immediate;
             mem_access_type <= `MEM_ACCESS_TYPE_R2M;
         end
         default:
@@ -571,7 +554,7 @@ module ex(/*autoarg*/
                 mem_access_size <= `MEM_ACCESS_LENGTH_WORD;
         endcase
     end
-    
+
     // set mem access signed/unsigned (whether need to do signed-extension)
     always @(*)
     begin
@@ -580,15 +563,15 @@ module ex(/*autoarg*/
         `INST_LH,
         `INST_LW,
         `INST_LWL,
-        `INST_LWR,        
+        `INST_LWR,
         `INST_SB,
         `INST_SH,
         `INST_SW,
         `INST_SWL,
-        `INST_SWR: 
+        `INST_SWR:
             mem_access_signed <= 1'b1;
         `INST_LBU,
-        `INST_LHU: 
+        `INST_LHU:
             mem_access_signed <= 1'b0;
         default: mem_access_signed <= 1'b1;
         endcase
