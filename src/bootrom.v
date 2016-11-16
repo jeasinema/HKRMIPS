@@ -5,13 +5,13 @@ module bootrom(/*autoport*/
          address,
          clock);
 
-input wire   [12:0]  address;
+input wire   [10:0]  address;
 input wire    clock;
 output wire [31:0]  q;
 
-blk_mem_gen_v7_3 blk_mem(/*autoinst*/
+blk_mem_gen blk_mem(/*autoinst*/
            .douta(q),
            .clka(clock),
-           .addra({19'b0, address}));
+           .addra(address));
            
 endmodule

@@ -280,7 +280,7 @@ module cp0(/*autoarg*/
             if(we_probe)
                 cp0_regs_Index <= probe_result;
             // exp occurs
-			if(en_exp_i) begin  
+			   if(en_exp_i) begin  
                 if(exp_badv_we)
                     cp0_regs_BadVAddr <= exp_bad_vaddr;
                 cp0_regs_Context[22:4] <= exp_bad_vaddr[31:13];

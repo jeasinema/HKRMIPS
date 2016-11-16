@@ -8,6 +8,8 @@
 `ifndef __DATA_BUS_V__
 `define __DATA_BUS_V__
 
+`default_nettype none
+
 `timescale 1ns/1ns
 
 module data_bus(/*autoarg*/

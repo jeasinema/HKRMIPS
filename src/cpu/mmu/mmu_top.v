@@ -121,7 +121,7 @@ module mmu_top(/*autoarg*/
     .tlb_config                 (tlb_config[83:0]               ), // input
         // TLBWI TLBP
     .tlbwi                      (tlbwi                          ), // input
-	 .tlbp                       (tlbp                          ), // input
+	 .tlbp                       (tlbp                           ), // input
         // virtual address
     .data_addr_virtual          (data_addr_i[31:0]              ), // input
     .inst_addr_virtual          (inst_addr_i[31:0]              ), // input

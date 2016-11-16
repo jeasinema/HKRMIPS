@@ -112,11 +112,6 @@ module tlb(/*autoarg*/
     assign matched[15] = tlb_entries[15][70:52] == virt_addr[31:13] &&
      (tlb_entries[15][79:72] == asid || tlb_entries[15][71]);
 
-
-
-
-
-
     always @(*)
     begin
       if(matched[0]) begin

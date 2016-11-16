@@ -8,6 +8,8 @@
 `ifndef __INST_BUS_V__
 `define __INST_BUS_V__
 
+`default_nettype none
+
 `timescale 1ns/1ns
 
 module inst_bus(/*autoarg*/
@@ -39,7 +41,7 @@ module inst_bus(/*autoarg*/
 
     // bootrom
     output wire[12:0] bootrom_addr;
-    output wire[31:0] data_from_bootrom;
+    input wire[31:0] data_from_bootrom;
 
     // sram
     output wire[23:0] ram_addr;
@@ -51,7 +53,7 @@ module inst_bus(/*autoarg*/
     input wire ram_stall;
 
     assign bootrom_addr = dev_access_addr[12:0];
-    assign ram_byte_enable = 4'b1111;
+    assign ram_byte_enable = dev_ram_byte_enable;
     assign write_data_to_ram = dev_access_write_data;
     assign ram_addr = dev_access_addr[23:0];
     assign inst_bus_stall = ram_stall;
@@ -60,6 +62,7 @@ module inst_bus(/*autoarg*/
     begin
         ram_read_enable <= 1'b0;
         ram_write_enable <= 1'b0;
+		  dev_access_read_data <= 32'b0;
         if (dev_access_addr[31:24] == 8'h00) begin
             ram_read_enable <= dev_access_read;
             ram_write_enable <= dev_access_write;

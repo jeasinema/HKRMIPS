@@ -89,7 +89,7 @@ module id(/*autoarg*/
 
     .inst_code                  (inst_code[31:0]                ), // input
     .inst                       (id_j_inst[7:0]                 ), // output
-    .addr                    (id_j_addr[25:0]             )  // output
+    .addr                       (id_j_addr[25:0]                )  // output
     );  
 
     always @(*)

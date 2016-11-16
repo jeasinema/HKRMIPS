@@ -1,3 +1,4 @@
+`default_nettype none
 module uart_top(/*autoport*/
 //output
             bus_data_o,

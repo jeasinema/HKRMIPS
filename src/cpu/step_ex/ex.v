@@ -451,38 +451,6 @@ module ex(/*autoarg*/
                     bypass_reg_addr <= 5'h0;
                 end
             end
-            //`INST_MADD,
-            //`INST_MADDU:
-            //begin
-            //    hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
-            //    val_output <= 32'h0;
-            //    bypass_reg_addr <= 5'h0;
-            //    if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
-            //        hilo_temp_for_madd_msub <= mulres;
-            //    end else begin // second cycle, add hilo_temp_for_madd_msub to actual hilo
-            //        reg_hilo_o <= reg_hilo_val + hilo_temp_for_madd_msub;
-            //    end
-            //end
-            //`INST_MSUB,
-            //`INST_MSUBU:
-            //begin
-            //    hilo_write_enable <= multi_cycle_done; // only write to hilo in the second cycle
-            //    val_output <= 32'h0;
-            //    bypass_reg_addr <= 5'h0;
-            //    if (!multi_cycle_done) begin // first cycle, save MULT/MULTU result to hilo_temp_for_madd_msub
-            //        hilo_temp_for_madd_msub <= mulres;
-            //    end else begin // second cycle, subtract hilo_temp_for_madd_msub to actual hilo
-            //        reg_hilo_o <= reg_hilo_val - hilo_temp_for_madd_msub;
-            //    end
-            //end
-            `INST_SYSCALL:
-            begin
-
-            end
-            `INST_BREAK:
-            begin
-
-            end
             // need to put mem target register 
            `INST_LB, `INST_LH, `INST_LWL, `INST_LW, `INST_LBU, `INST_LHU, `INST_LWR:   // `INST_LL
             begin

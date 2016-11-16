@@ -2,22 +2,23 @@
 NET "clk_in" LOC = U26;
 NET "clk_uart_in" LOC = U25;
 NET "rst_in_n" LOC = T1;
-NET "uart_txd" LOC = N23;
-NET "uart_rxd" LOC = P26;
+# thinpad's usb-uart is damaged..
+NET "uart_txd" LOC = L3;  // pre:DIP-SW-30
+NET "uart_rxd" LOC = L4;  // pre:DIP-SW-31
 
-#VGA
-NET "vga_pixel[8]" LOC = F24;
-NET "vga_pixel[7]" LOC = G24;
-NET "vga_pixel[6]" LOC = H24;
-NET "vga_pixel[5]" LOC = E26;
-NET "vga_pixel[4]" LOC = E25;
-NET "vga_pixel[3]" LOC = E24;
-NET "vga_pixel[2]" LOC = N24;
-NET "vga_pixel[1]" LOC = N25;
-NET "vga_pixel[0]" LOC = M24;
-
-NET "vga_hsync" LOC = L23;
-NET "vga_vsync" LOC = J23;
+##VGA
+#NET "vga_pixel[8]" LOC = F24;
+#NET "vga_pixel[7]" LOC = G24;
+#NET "vga_pixel[6]" LOC = H24;
+#NET "vga_pixel[5]" LOC = E26;
+#NET "vga_pixel[4]" LOC = E25;
+#NET "vga_pixel[3]" LOC = E24;
+#NET "vga_pixel[2]" LOC = N24;
+#NET "vga_pixel[1]" LOC = N25;
+#NET "vga_pixel[0]" LOC = M24;
+#
+#NET "vga_hsync" LOC = L23;
+#NET "vga_vsync" LOC = J23;
 
 #LEDS
 NET "gpio0[0]" LOC = N26;
@@ -86,8 +87,9 @@ NET "gpio1[26]" LOC = N3;
 NET "gpio1[27]" LOC = N5;
 NET "gpio1[28]" LOC = M4;
 NET "gpio1[29]" LOC = M3;
-NET "gpio1[30]" LOC = L4;
-NET "gpio1[31]" LOC = L3;
+# thinpad's usb-uart is damaged..
+NET "gpio1[30]" LOC = C15;
+NET "gpio1[31]" LOC = C14;
 
 #NET "flash_address[0]" LOC = G3;
 NET "flash_address[0]" LOC = C8;
