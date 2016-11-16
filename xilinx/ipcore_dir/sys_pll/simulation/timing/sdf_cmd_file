@@ -1,2 +1,0 @@
-COMPILED_SDF_FILE = "../../implement/results/routed.sdf.X",
-SCOPE = sys_pll_tb.dut;
