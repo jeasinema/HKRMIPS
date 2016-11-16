@@ -1,3 +1,4 @@
+`default_nettype none
 module uart_tx(/*autoport*/
 //output
             idle,

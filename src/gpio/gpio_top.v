@@ -1,3 +1,4 @@
+`default_nettype none
 module gpio_top(/*autoport*/
 //inout
             gpio0,

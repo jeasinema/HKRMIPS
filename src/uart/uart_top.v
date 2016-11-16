@@ -1,3 +1,4 @@
+`default_nettype none
 module uart_top(/*autoport*/
 //output
             bus_data_o,
@@ -46,7 +47,7 @@ assign rx_clear = bus_read && bus_address==`REG_UART_RECV;
 assign uart_irq = (rx_data_available&rxavai_ie)|(tx_idle&txidle_ie);
 
 always @(posedge clk_bus or negedge rst_n) begin
-    if(~rst_n)begin 
+    if(~rst_n)begin
         txidle_ie <= 1'b0;
         rxavai_ie <= 1'b1;
     end
