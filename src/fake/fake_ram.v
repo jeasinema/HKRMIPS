@@ -2,7 +2,7 @@
  File Name : fake_ram.v
  Purpose : a fake ram for test
  Creation Date : 18-10-2016
- Last Modified : Mon Oct 31 14:39:10 2016
+ Last Modified : Wed Nov 16 19:47:13 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __FAKE_RAM_V__
@@ -12,8 +12,8 @@
 
 module fake_ram(/*autoarg*/
     //Inputs
-    clk, rst_n, address, data_i, rd, wr, 
-    byte_enable, 
+    clk, rst_n, address, data_i, rd, wr,
+    byte_enable,
 
     //Outputs
     data_o

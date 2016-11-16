@@ -2,7 +2,7 @@
  File Name : id_j.v
  Purpose :
  Creation Date : 18-10-2016
- Last Modified : Thu Oct 20 10:49:06 2016
+ Last Modified : Wed Nov 16 19:45:55 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __ID_J_V__
@@ -14,7 +14,7 @@
 
 module id_j(/*autoarg*/
     //Inputs
-    clk, rst_n, inst_code, 
+    clk, rst_n, inst_code,
 
     //Outputs
     inst, addr
@@ -31,7 +31,7 @@ module id_j(/*autoarg*/
 
     always @(*)
     begin
-        case (inst_code[31:26]) 
+        case (inst_code[31:26])
         6'h02: inst <= `INST_J;
         6'h03: inst <= `INST_JAL;
         default: inst <= `INST_INVALID;

@@ -2,7 +2,7 @@
  File Name : data_bus.v
  Purpose : device bus for ram, uart, vga, etc.
  Creation Date : 31-10-2016
- Last Modified : Tue Nov  1 10:48:51 2016
+ Last Modified : Wed Nov 16 19:43:20 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __DATA_BUS_V__
@@ -16,22 +16,22 @@ module data_bus(/*autoarg*/
     //Inputs
     clk, rst_n, dev_access_addr, dev_ram_byte_enable, 
     dev_access_read, dev_access_write, dev_access_write_data, 
-    read_data_from_uart, ram_stall, rom_stall, 
-	 read_data_from_ticker,read_data_from_gpio, 
-	 read_data_from_gpu, read_data_from_ram, 
-	 read_data_from_rom, 
+    read_data_from_uart, read_data_from_ticker, 
+    read_data_from_gpio, read_data_from_gpu, 
+    read_data_from_ram, ram_stall, read_data_from_rom, 
+    rom_stall, 
 
     //Outputs
     dev_access_read_data, data_bus_stall, 
     uart_addr, write_data_to_uart, uart_write_enable, 
     uart_read_enable, ticker_addr, write_data_to_ticker, 
-    ticker_write_enable, ticker_read_enable, gpio_addr, 
-	 write_data_to_gpio, gpio_write_enable, gpio_read_enable, 
-	 gpu_addr, write_data_to_gpu, gpu_write_enable, 
-    gpu_read_enable, ram_addr, write_data_to_ram, 
-    ram_byte_enable, ram_write_enable, ram_read_enable, 
-	 rom_addr, write_data_to_rom, rom_enable, rom_write_enable, 
-	 rom_read_enable
+    ticker_write_enable, ticker_read_enable, 
+    gpio_addr, write_data_to_gpio, gpio_write_enable, 
+    gpio_read_enable, gpu_addr, write_data_to_gpu, 
+    gpu_write_enable, gpu_read_enable, ram_addr, 
+    write_data_to_ram, ram_byte_enable, ram_write_enable, 
+    ram_read_enable, rom_addr, write_data_to_rom, 
+    rom_enable, rom_write_enable, rom_read_enable
 );
 
     parameter RAM_BASE_ADDR = 8'h00;
@@ -40,11 +40,11 @@ module data_bus(/*autoarg*/
     parameter GPIO_BASE_ADDR = 24'h1fd004;
     parameter TICKER_BASE_ADDR = 24'h1fd005;
     parameter ROM_BASE_ADDR = 8'h1e;
-    
+
     input wire clk;
     input wire rst_n;
 
-    // dev access interface  
+    // dev access interface
     input wire[31:0] dev_access_addr;
     input wire[3:0] dev_ram_byte_enable;
     input wire dev_access_read;
@@ -80,8 +80,8 @@ module data_bus(/*autoarg*/
     input wire[31:0] read_data_from_gpu;
     output reg gpu_write_enable;
     output reg gpu_read_enable;
-    
-    // sram 
+
+    // sram
     output wire[23:0] ram_addr;
     output wire[31:0] write_data_to_ram;
     input wire[31:0] read_data_from_ram;
@@ -89,7 +89,7 @@ module data_bus(/*autoarg*/
     output reg ram_write_enable;
     output reg ram_read_enable;
     input wire ram_stall;
-  
+
     // flash(rom)
     output wire[23:0] rom_addr;
     output wire[31:0] write_data_to_rom;
@@ -107,14 +107,14 @@ module data_bus(/*autoarg*/
 
     assign gpio_addr = dev_access_addr[7:0];
     assign write_data_to_gpio = dev_access_write_data;
-    
+
     assign gpu_addr = dev_access_addr[23:0];
     assign write_data_to_gpu = dev_access_write_data;
 
     assign ram_byte_enable = dev_ram_byte_enable;
     assign ram_addr = dev_access_addr[23:0];
     assign write_data_to_ram = dev_access_write_data;
-   
+
     assign rom_enable = 4'b1111;
     assign rom_addr = dev_access_addr[23:0];
     assign write_data_to_rom = dev_access_write_data;

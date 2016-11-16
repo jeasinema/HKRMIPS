@@ -2,7 +2,7 @@
  File Name : tlb_top.v
  Purpose : top file of tlb converter
  Creation Date : 21-10-2016
- Last Modified : Mon Nov  7 14:40:46 2016
+ Last Modified : Wed Nov 16 19:44:46 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __TLB_TOP_V__
@@ -12,32 +12,32 @@
 
 module tlb_top(/*autoarg*/
     //Inputs
-    clk, rst_n, tlb_config, tlbwi, tlbp, 
-    data_addr_virtual, inst_addr_virtual, 
-    asid, 
+    clk, rst_n, tlb_config, tlbwi, tlbp,
+    data_addr_virtual, inst_addr_virtual,
+    asid,
 
     //Outputs
-    data_addr_physic, inst_addr_physic, tlbp_result, 
-    data_miss, inst_miss, data_dirty, inst_dirty, 
+    data_addr_physic, inst_addr_physic, tlbp_result,
+    data_miss, inst_miss, data_dirty, inst_dirty,
     inst_valid, data_valid
 );
 
     input wire clk;
     input wire rst_n;
 
-    // config by cp0 
+    // config by cp0
     input wire[83:0] tlb_config;
     // TLBWI TLBP
     input wire tlbwi, tlbp;
     // virtual address
-    input wire[31:0] data_addr_virtual; 
+    input wire[31:0] data_addr_virtual;
     input wire[31:0] inst_addr_virtual;
     input wire[7:0] asid;
 
-    // tlb-converted address output 
+    // tlb-converted address output
     output wire[31:0] data_addr_physic;
     output wire[31:0] inst_addr_physic;
-   
+
     // query result for TLBP
     output wire[31:0] tlbp_result;
     // exceptions
@@ -159,30 +159,30 @@ module tlb_top(/*autoarg*/
     always @(posedge clk or negedge rst_n)
     begin
         if (!rst_n)
-        begin 
-            tlb_entries[0] <= 80'd0; 
-            tlb_entries[1] <= 80'd0; 
-            tlb_entries[2] <= 80'd0; 
-            tlb_entries[3] <= 80'd0; 
-            tlb_entries[4] <= 80'd0; 
-            tlb_entries[5] <= 80'd0; 
-            tlb_entries[6] <= 80'd0; 
-            tlb_entries[7] <= 80'd0; 
-            tlb_entries[8] <= 80'd0; 
-            tlb_entries[9] <= 80'd0; 
-            tlb_entries[10] <= 80'd0; 
-            tlb_entries[11] <= 80'd0; 
-            tlb_entries[12] <= 80'd0; 
-            tlb_entries[13] <= 80'd0; 
+        begin
+            tlb_entries[0] <= 80'd0;
+            tlb_entries[1] <= 80'd0;
+            tlb_entries[2] <= 80'd0;
+            tlb_entries[3] <= 80'd0;
+            tlb_entries[4] <= 80'd0;
+            tlb_entries[5] <= 80'd0;
+            tlb_entries[6] <= 80'd0;
+            tlb_entries[7] <= 80'd0;
+            tlb_entries[8] <= 80'd0;
+            tlb_entries[9] <= 80'd0;
+            tlb_entries[10] <= 80'd0;
+            tlb_entries[11] <= 80'd0;
+            tlb_entries[12] <= 80'd0;
+            tlb_entries[13] <= 80'd0;
             tlb_entries[14] <= 80'd0;
-            tlb_entries[15] <= 80'd0;             
+            tlb_entries[15] <= 80'd0;
         end else begin
             if (tlbwi)
             begin
-                tlb_entries[tlb_entry_index] [79:0] <= tlb_config[83:4]; 
+                tlb_entries[tlb_entry_index] [79:0] <= tlb_config[83:4];
             end
         end
-    end 
+    end
 
 endmodule
 
