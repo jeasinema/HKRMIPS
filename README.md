@@ -12,9 +12,9 @@ use these constraints files:
 - `./xilinx/HKRMIPS/soc_hkrmips.ucf` or `./xilinx/HKRMIPS/soc_hkrmips_usb_serial.ucf` if usb-seial on your board works well.
 - `./xilinx/HKRMIPS/io_timing.ucf`
 
-#### for new version thinpad
+#### for new version thinpad(since 2016 fall semester)
 
-use these constraints file followed:
+use these constraints files:
 - `./xilinx/HKRMIPS/soc_hkrmips_new_thinpad.ucf`
 - `./xilinx/HKRMIPS/io_timing.ucf`
 
@@ -23,7 +23,7 @@ use these constraints file followed:
 ### ucore
 
 use this version of ucore:
-(ucore-thumips)[https://git.net9.org/jeasinema/ucore-thumips.git]
+[ucore-thumips](https://git.net9.org/jeasinema/ucore-thumips.git)
 
 ## TODO
 
