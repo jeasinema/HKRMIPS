@@ -2,7 +2,7 @@
  File Name : mul_cycle.v
  Purpose : for multi_cycle inst: MUL/DIV
  Creation Date : 18-10-2016
- Last Modified : Sun Nov  6 20:20:56 2016
+ Last Modified : Wed Nov 16 19:45:22 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __MUL_CYCLE_V__
@@ -14,8 +14,8 @@
 
 module multi_cycle(/*autoarg*/
     //Inputs
-    clk, rst_n, exception_flush, inst, op1, 
-    op2, hilo_i, 
+    clk, rst_n, exception_flush, inst, op1,
+    op2, hilo_i,
 
     //Outputs
     result, multi_cycle_done
@@ -27,7 +27,7 @@ module multi_cycle(/*autoarg*/
     input wire clk;
     input wire rst_n;
     input wire exception_flush;
-    
+
     input wire[7:0] inst;
     input wire[31:0] op1;
     input wire[31:0] op2;
@@ -45,7 +45,7 @@ module multi_cycle(/*autoarg*/
 
     reg[DIV_CYCLES:0] div_stage;
     wire div_done;
-    
+
     // for MADD/MADDU/MSUB/MSUBU
     reg cycle_count;
 
@@ -112,7 +112,7 @@ module multi_cycle(/*autoarg*/
         begin
             div_stage <= 'b0;
         end
-        // start counting 
+        // start counting
         else if (div_stage != 'b0) begin
             div_stage <= div_stage >> 1;
         // counter init

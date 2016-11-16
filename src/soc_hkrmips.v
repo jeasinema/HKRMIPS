@@ -2,7 +2,7 @@
  File Name : soc_hkrmips.v
  Purpose : top file of HKRMIPS
  Creation Date : 31-10-2016
- Last Modified : Mon Nov  7 16:31:18 2016
+ Last Modified : Wed Nov 16 19:49:36 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __SOC_HKRMIPS_V__
@@ -14,18 +14,18 @@
 
 module soc_hkrmips(/*autoarg*/
     //Inputs
-    clk_in, rst_in_n, clk_uart_in, uart_rxd, 
+    clk_in, rst_in_n, clk_uart_in, uart_rxd,
 
     //Outputs
-    base_ram_addr, base_ram_ce_n, base_ram_oe_n, 
-    base_ram_we_n, ext_ram_addr, ext_ram_ce_n, 
-    ext_ram_oe_n, ext_ram_we_n, uart_txd, 
-    vga_vsync, vga_hsync, vga_pixel, flash_address, 
-    flash_we_n, flash_byte_n, flash_oe_n, 
-    flash_rp_n, flash_ce, flash_vpen, 
+    base_ram_addr, base_ram_ce_n, base_ram_oe_n,
+    base_ram_we_n, ext_ram_addr, ext_ram_ce_n,
+    ext_ram_oe_n, ext_ram_we_n, uart_txd,
+    vga_vsync, vga_hsync, vga_pixel, flash_address,
+    flash_we_n, flash_byte_n, flash_oe_n,
+    flash_rp_n, flash_ce, flash_vpen,
 
     //Inouts
-    base_ram_data, ext_ram_data, gpio0, gpio1, 
+    base_ram_data, ext_ram_data, gpio0, gpio1,
     flash_data
 );
 
@@ -39,12 +39,12 @@ module soc_hkrmips(/*autoarg*/
     wire clk_uart;
     wire clk_tick;
     wire clk_uart_pll;
-	 wire locked;
-	 
+     wire locked;
+
 `define EXT_UART_CLK
 
 `ifdef EXT_UART_CLK
-    assign clk_uart = clk_uart_in; 
+    assign clk_uart = clk_uart_in;
 `else
     assign clk_uart = clk_uart_pll;
 `endif
@@ -60,7 +60,7 @@ sys_pll unique_pll
     // Status and control signals
     .RESET(!rst_in_n),         // IN
     .LOCKED(locked)
-); 
+);
 
  clk_ctrl clk_ctrl_instance (
     .rst_out_n(rst_n),     // output
@@ -90,7 +90,7 @@ sys_pll unique_pll
     wire[31:0] ibus_write_data;
     wire[31:0] ibus_read_data;
     wire ibus_stall;
-    wire ibus_uncached;         
+    wire ibus_uncached;
 
     // data_bus
     wire[31:0] dbus_addr;
@@ -100,12 +100,12 @@ sys_pll unique_pll
     wire[31:0] dbus_write_data;
     wire[31:0] dbus_read_data;
     wire dbus_stall;
-    wire dbus_uncached;         
+    wire dbus_uncached;
 
     // bootrom
     wire[12:0] bootrom_addr;
     wire[31:0] data_from_bootrom;
-    
+
     // sram: inst_bus
     wire[23:0] ibus_ram_addr;
     wire[31:0] ibus_read_data_from_ram;
@@ -127,8 +127,8 @@ sys_pll unique_pll
 
     // sram: 2sram
     wire[31:0] ram_addr;
-    wire ram_write_enable;             
-    wire ram_read_enable;           
+    wire ram_write_enable;
+    wire ram_read_enable;
     wire[31:0] read_data_from_ram;
     wire[31:0] write_data_to_ram;
     wire[3:0] ram_byte_enable;
@@ -170,10 +170,10 @@ sys_pll unique_pll
     output wire vga_vsync;
     output wire vga_hsync;
     output wire[8:0] vga_pixel;
-	 
-	 assign vga_vsync = 1'b0;
-	 assign vga_hsync = 1'b0;
-	 assign vga_pixel = 8'b0;
+
+     assign vga_vsync = 1'b0;
+     assign vga_hsync = 1'b0;
+     assign vga_pixel = 8'b0;
 
     // rom & flash
     wire[23:0] rom_addr;
@@ -212,15 +212,15 @@ sys_pll unique_pll
     inst_bus ibus0(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
-    
+
         // dev access interface
-    .dev_access_addr            (ibus_addr[31:0]          		 ), // input
-    .dev_ram_byte_enable        (ibus_byte_enable[3:0]       	 ), // input
-    .dev_access_read            (ibus_read                		 ), // input
-    .dev_access_write           (ibus_write               		 ), // input
+    .dev_access_addr            (ibus_addr[31:0]                ), // input
+    .dev_ram_byte_enable        (ibus_byte_enable[3:0]          ), // input
+    .dev_access_read            (ibus_read                      ), // input
+    .dev_access_write           (ibus_write                     ), // input
     .dev_access_write_data      (ibus_write_data[31:0]          ), // input
     .dev_access_read_data       (ibus_read_data[31:0]           ), // output
-    .inst_bus_stall             (ibus_stall                 	 ), // output
+    .inst_bus_stall             (ibus_stall                     ), // output
 
         // bootrom
     .bootrom_addr               (bootrom_addr[12:0]             ), // output
@@ -240,14 +240,14 @@ sys_pll unique_pll
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
 
-        // dev access interface  
-    .dev_access_addr            (dbus_addr[31:0]          		 ), // input
+        // dev access interface
+    .dev_access_addr            (dbus_addr[31:0]                ), // input
     .dev_ram_byte_enable        (dbus_byte_enable[3:0]          ), // input
-    .dev_access_read            (dbus_read                		 ), // input
-    .dev_access_write           (dbus_write               		 ), // input
-    .dev_access_write_data      (dbus_write_data[31:0]    		 ), // input
-    .dev_access_read_data       (dbus_read_data[31:0]     		 ), // output
-    .data_bus_stall             (dbus_stall                 	 ), // output
+    .dev_access_read            (dbus_read                      ), // input
+    .dev_access_write           (dbus_write                     ), // input
+    .dev_access_write_data      (dbus_write_data[31:0]          ), // input
+    .dev_access_read_data       (dbus_read_data[31:0]           ), // output
+    .data_bus_stall             (dbus_stall                     ), // output
 
         // uart
     .uart_addr                  (uart_addr[3:0]                 ), // output
@@ -276,8 +276,8 @@ sys_pll unique_pll
     .read_data_from_gpu         (read_data_from_gpu[31:0]       ), // input
     .gpu_write_enable           (gpu_write_enable               ), // output
     .gpu_read_enable            (gpu_read_enable                ), // output
-    
-        // sram 
+
+        // sram
     .ram_addr                   (dbus_ram_addr[23:0]            ), // output
     .write_data_to_ram          (dbus_write_data_to_ram[31:0]   ), // output
     .read_data_from_ram         (dbus_read_data_from_ram[31:0]  ), // input
@@ -285,7 +285,7 @@ sys_pll unique_pll
     .ram_write_enable           (dbus_ram_write_enable          ), // output
     .ram_read_enable            (dbus_ram_read_enable           ), // output
     .ram_stall                  (dbus_ram_stall                 ), // input
-  
+
         // flash(rom)
     .rom_addr                   (rom_addr[23:0]                 ), // output
     .write_data_to_rom          (write_data_to_rom[31:0]        ), // output
@@ -305,8 +305,8 @@ sys_pll unique_pll
     hkr_mips cpu0(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
-    
-        // external interrupts input 
+
+        // external interrupts input
     .hardware_int_in            (irq_line[4:0]                  ), // input
 
         // inst_bus
@@ -329,7 +329,7 @@ sys_pll unique_pll
     .dbus_read_data             (dbus_read_data[31:0]           ), // input
     .dbus_stall                 (dbus_stall                     ) // input
 );
-    
+
     two_port ram(/*autoinst*/
     .rst_n                      (rst_n                          ), // input
     .clk2x                      (clk2x                          ), // input
@@ -348,14 +348,14 @@ sys_pll unique_pll
     .rd2                        (conv_ram_read_enable           ), // input
     .wr2                        (conv_ram_write_enable          ), // input
 
-    .ram_address                (ram_addr[29:0]              	 ), // output
+    .ram_address                (ram_addr[29:0]     ), // output
     .ram_data_i                 (read_data_from_ram[31:0]       ), // input
     .ram_data_o                 (write_data_to_ram[31:0]        ), // output
     .ram_wr_n                   (ram_write_enable               ), // output
     .ram_rd_n                   (ram_read_enable                ), // output
     .dataenable                 (ram_byte_enable[3:0]           )  // output
 );
-    
+
     bytes_conv mem_conv(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
@@ -372,11 +372,11 @@ sys_pll unique_pll
 );
 
     uart_top uart0(/*autoinst*/
-    .clk_bus                    (clk                        	 ), // input
+    .clk_bus                    (clk                            ), // input
     .clk_uart                   (clk_uart                       ), // input
     .rst_n                      (rst_n                          ), // input
 
-    .bus_address                (uart_addr[3:0]               	 ), // input
+    .bus_address                (uart_addr[3:0]     ), // input
     .bus_data_i                 (write_data_to_uart[31:0]       ), // input
     .bus_data_o                 (read_data_from_uart[31:0]      ), // output
     .bus_read                   (uart_read_enable               ), // input
@@ -389,10 +389,10 @@ sys_pll unique_pll
 );
 
     flash_top disk0(/*autoinst*/
-    .clk_bus                    (clk                        	 ), // input
+    .clk_bus                    (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
 
-    .bus_address                (rom_addr[23:0]              	 ), // input
+    .bus_address                (rom_addr[23:0]                 ), // input
     .bus_data_i                 (write_data_to_rom[31:0]        ), // input
     .bus_data_o                 (read_data_from_rom[31:0]       ), // output
     .bus_read                   (rom_read_enable                ), // input
@@ -410,10 +410,10 @@ sys_pll unique_pll
 );
 
     gpio_top gpio_instance(/*autoinst*/
-    .clk_bus                    (clk                        	 ), // input
+    .clk_bus                    (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
 
-    .bus_address                (gpio_addr[7:0]               	 ), // input
+    .bus_address                (gpio_addr[7:0]                 ), // input
     .bus_data_i                 (write_data_to_gpio[31:0]       ), // input
     .bus_data_o                 (read_data_from_gpio[31:0]      ), // output
     .bus_read                   (gpio_read_enable               ), // input

@@ -2,7 +2,7 @@
  File Name : id_r.v
  Purpose : decode R-type inst
  Creation Date : 18-10-2016
- Last Modified : Sun Nov  6 20:26:07 2016
+ Last Modified : Wed Nov 16 19:46:01 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __ID_R_V__
@@ -14,7 +14,7 @@
 
 module id_r(/*autoarg*/
     //Inputs
-    clk, rst_n, inst_code, 
+    clk, rst_n, inst_code,
 
     //Outputs
     inst, reg_s, reg_t, reg_d, shift
@@ -22,15 +22,15 @@ module id_r(/*autoarg*/
 
     input wire clk;
     input wire rst_n;
-    
+
     input wire[31:0] inst_code;
     output reg[7:0] inst;
     output wire[4:0] reg_s;
     output wire[4:0] reg_t;
     output wire[4:0] reg_d;
     output wire[4:0] shift;
-    
-    // decode the 32-bit width inst code     
+
+    // decode the 32-bit width inst code
     assign reg_s = inst_code[25:21];
     assign reg_t = inst_code[20:16];
     assign reg_d = inst_code[15:11];
@@ -39,12 +39,12 @@ module id_r(/*autoarg*/
     always @(*)
     begin
         // R-Type:SPECIAL
-        if (inst_code[31:26] == 6'b000000) 
+        if (inst_code[31:26] == 6'b000000)
         begin
             case (inst_code[5:0])
-            6'h00: inst <= `INST_SLL; 
-            6'h02: inst <= `INST_SRL; 
-            6'h03: inst <= `INST_SRA; 
+            6'h00: inst <= `INST_SLL;
+            6'h02: inst <= `INST_SRL;
+            6'h03: inst <= `INST_SRA;
             6'h04: inst <= `INST_SLLV;
             6'h06: inst <= `INST_SRLV;
             6'h07: inst <= `INST_SRAV;
@@ -71,12 +71,12 @@ module id_r(/*autoarg*/
             6'h26: inst <= `INST_XOR;
             6'h27: inst <= `INST_NOR;
             6'h2a: inst <= `INST_SLT;
-            6'h2b: inst <= `INST_SLTU;  
-            default: inst <= `INST_INVALID; 
+            6'h2b: inst <= `INST_SLTU;
+            default: inst <= `INST_INVALID;
             endcase
         end
         // R-Type:SPECIAL2
-        else if (inst_code[31:26] == 6'b011100)  
+        else if (inst_code[31:26] == 6'b011100)
         begin
             case (inst_code[5:0])
             6'h00: inst <= `INST_MADD;
@@ -86,10 +86,10 @@ module id_r(/*autoarg*/
             6'h05: inst <= `INST_MSUBU;
             6'h20: inst <= `INST_CLZ;
             6'h21: inst <= `INST_CLO;
-            default: inst <= `INST_INVALID; 
+            default: inst <= `INST_INVALID;
             endcase
-        end   
-        else 
+        end
+        else
             inst <= `INST_INVALID;
     end
 

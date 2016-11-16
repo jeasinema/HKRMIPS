@@ -13,5 +13,5 @@ blk_mem_gen blk_mem(/*autoinst*/
            .douta(q),
            .clka(clock),
            .addra(address));
-           
+
 endmodule

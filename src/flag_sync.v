@@ -43,7 +43,7 @@ initial begin
     clkB=0;
     clkA=0;
     FlagToggle_clkA=0;
-    SyncA_clkB=0;    
+    SyncA_clkB=0;
     FlagIn_clkA=0;
     @(negedge clkA);
     FlagIn_clkA=1;

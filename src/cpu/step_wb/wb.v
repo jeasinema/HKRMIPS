@@ -1,8 +1,8 @@
 /*-----------------------------------------------------
  File Name : wb.v
- Purpose : step_wb 
+ Purpose : step_wb
  Creation Date : 18-10-2016
- Last Modified : Fri Oct 28 20:56:34 2016
+ Last Modified : Wed Nov 16 19:46:52 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __WB_V__
@@ -14,8 +14,8 @@
 
 module wb(/*autoarg*/
     //Inputs
-    clk, rst_n, mem_access_type, data_i, 
-    bypass_reg_addr_wb, 
+    clk, rst_n, mem_access_type, data_i,
+    bypass_reg_addr_wb,
 
     //Outputs
     reg_write_enable
@@ -23,7 +23,7 @@ module wb(/*autoarg*/
 
     input wire clk;
     input wire rst_n;
-    
+
     // mem_access_type in mm.v, but 1 clock late
     input wire[1:0] mem_access_type;
     // data_o in mm
@@ -33,7 +33,7 @@ module wb(/*autoarg*/
 
     // for regs
     output wire reg_write_enable;
-    
+
     assign reg_write_enable = (mem_access_type == `MEM_ACCESS_TYPE_M2R) || (mem_access_type == `MEM_ACCESS_TYPE_R2R);
 
 endmodule

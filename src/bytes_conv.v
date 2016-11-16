@@ -1,9 +1,9 @@
 `default_nettype none
 module bytes_conv(/*autoarg*/
     //Inputs
-    clk, rst_n, byteenable_i, address, 
-    data_ram_rd, data_master_wr, read_i, 
-    write_i, 
+    clk, rst_n, byteenable_i, address,
+    data_ram_rd, data_master_wr, read_i,
+    write_i,
 
     //Outputs
     data_ram_wr, stall_o, read_o, write_o

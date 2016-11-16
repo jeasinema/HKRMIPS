@@ -2,7 +2,7 @@
  File Name : tlb.v
  Purpose : tlb table
  Creation Date : 21-10-2016
- Last Modified : Mon Nov  7 13:15:24 2016
+ Last Modified : Wed Nov 16 19:44:38 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __TLB_V__
@@ -12,32 +12,32 @@
 
 module tlb(/*autoarg*/
     //Inputs
-    tlb_entry0, tlb_entry1, tlb_entry2, tlb_entry3, 
-    tlb_entry4, tlb_entry5, tlb_entry6, tlb_entry7, 
-    tlb_entry8, tlb_entry9, tlb_entry10, 
-    tlb_entry11, tlb_entry12, tlb_entry13, 
-    tlb_entry14, tlb_entry15, virt_addr, 
-    asid, 
+    tlb_entry0, tlb_entry1, tlb_entry2, tlb_entry3,
+    tlb_entry4, tlb_entry5, tlb_entry6, tlb_entry7,
+    tlb_entry8, tlb_entry9, tlb_entry10,
+    tlb_entry11, tlb_entry12, tlb_entry13,
+    tlb_entry14, tlb_entry15, virt_addr,
+    asid,
 
     //Outputs
     phy_addr, miss, valid, match_which, dirt
 );
 
-    input wire[79:0] tlb_entry0;  
-    input wire[79:0] tlb_entry1;  
-    input wire[79:0] tlb_entry2;  
+    input wire[79:0] tlb_entry0;
+    input wire[79:0] tlb_entry1;
+    input wire[79:0] tlb_entry2;
     input wire[79:0] tlb_entry3;
-    input wire[79:0] tlb_entry4;  
-    input wire[79:0] tlb_entry5;  
-    input wire[79:0] tlb_entry6;  
+    input wire[79:0] tlb_entry4;
+    input wire[79:0] tlb_entry5;
+    input wire[79:0] tlb_entry6;
     input wire[79:0] tlb_entry7;
-    input wire[79:0] tlb_entry8;  
-    input wire[79:0] tlb_entry9;  
-    input wire[79:0] tlb_entry10; 
+    input wire[79:0] tlb_entry8;
+    input wire[79:0] tlb_entry9;
+    input wire[79:0] tlb_entry10;
     input wire[79:0] tlb_entry11;
-    input wire[79:0] tlb_entry12; 
-    input wire[79:0] tlb_entry13; 
-    input wire[79:0] tlb_entry14; 
+    input wire[79:0] tlb_entry12;
+    input wire[79:0] tlb_entry13;
+    input wire[79:0] tlb_entry14;
     input wire[79:0] tlb_entry15;
 
     input wire[31:0] virt_addr;
@@ -73,7 +73,7 @@ module tlb(/*autoarg*/
     assign PFN[23:0] = virt_addr[12] ? tlb_entries[match_which][51:28] : tlb_entries[match_which][25:2];
     assign dirt = virt_addr[12] ? tlb_entries[match_which][27] : tlb_entries[match_which][1];
     assign valid = virt_addr[12] ? tlb_entries[match_which][26] : tlb_entries[match_which][0];
- 
+
     assign miss = matched == 16'd0;
 
     assign phy_addr[11:0] = virt_addr[11:0];
