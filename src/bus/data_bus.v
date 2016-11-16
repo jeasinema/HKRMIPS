@@ -115,7 +115,7 @@ module data_bus(/*autoarg*/
     assign ram_addr = dev_access_addr[23:0];
     assign write_data_to_ram = dev_access_write_data;
 
-    assign rom_enable = 4'b1111;
+    assign rom_enable = 4'b1111;  // maybe dev_ram_byte_enable
     assign rom_addr = dev_access_addr[23:0];
     assign write_data_to_rom = dev_access_write_data;
 
