@@ -7,7 +7,7 @@
 -----------------------------------------------------*/
 `ifndef __ID_J_V__
 `define __ID_J_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 `include "../defs.v"

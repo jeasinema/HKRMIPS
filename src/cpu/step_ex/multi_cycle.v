@@ -7,7 +7,7 @@
 -----------------------------------------------------*/
 `ifndef __MUL_CYCLE_V__
 `define __MUL_CYCLE_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 `include "../defs.v"

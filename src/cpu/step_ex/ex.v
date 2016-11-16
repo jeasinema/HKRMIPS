@@ -2,12 +2,12 @@
  File Name : ex.v
  Purpose : step_ex, exec instructions
  Creation Date : 18-10-2016
- Last Modified : Sat Nov 12 00:30:26 2016
+ Last Modified : Sun Nov  6 21:17:08 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __EX_V__
 `define __EX_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 `include "../defs.v"
@@ -184,7 +184,7 @@ module ex(/*autoarg*/
     
     // get MUL/MULT/MULTU result from hilo_temp;
     always @ (*) begin
-  		if(!rst_n) begin  // async reset, should be avoided
+  		if(!rst_n) begin
   			mulres <= 64'h0;
   		end else if ((inst == `INST_MUL) || (inst == `INST_MULT) || 
                      (inst == `INST_MADD) || (inst == `INST_MSUB)) begin
@@ -225,7 +225,7 @@ module ex(/*autoarg*/
         reg_hilo_o <= 64'b0;
         hilo_write_enable <= 1'b0;
         stall_for_mul_cycle <= !multi_cycle_done;
-        if (!rst_n) begin  // async reset, should be avoided
+        if (!rst_n) begin
             val_output <= 32'h0;
             bypass_reg_addr <= 5'h0;
         end else begin
@@ -352,7 +352,7 @@ module ex(/*autoarg*/
             end
             `INST_ORI:
             begin
-                val_output <= reg_s_val | zero_ext_immediate; // BUG@20161112
+                val_output <= reg_s_val | zero_ext_immediate;
                 bypass_reg_addr <= reg_t;
             end
             `INST_XOR:

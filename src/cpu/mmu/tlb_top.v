@@ -7,7 +7,7 @@
 -----------------------------------------------------*/
 `ifndef __TLB_TOP_V__
 `define __TLB_TOP_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 module tlb_top(/*autoarg*/
@@ -67,7 +67,7 @@ module tlb_top(/*autoarg*/
         tlb_entry_G,    //71
         tlb_entry_vpn2, //[70:52]
         tlb_entry_PFN1, //[51:28]
-        tlb_entry_D1, tlb_Entry_V1,//27,26
+        tlb_entry_D1, tlb_entry_V1,//27,26
         tlb_entry_PFN0,//[25:2]
         tlb_entry_D0, tlb_entry_V0, //1, 0
         tlb_entry_index

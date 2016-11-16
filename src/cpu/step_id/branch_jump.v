@@ -2,12 +2,12 @@
  File Name : branch_jump.v
  Purpose : ex jump/branch instructor in advance
  Creation Date : 20-10-2016
- Last Modified : Wed Nov  9 16:43:32 2016
+ Last Modified : Sun Nov  6 20:52:13 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __BRANCH_JUMP_V__
 `define __BRANCH_JUMP_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 `include "../defs.v"
@@ -60,92 +60,92 @@ module branch_jump(/*autoarg*/
         do_branch <= 1'b0;
         branch_addr <= 32'b0;
         return_addr <= pc_addr + 32'd8;
-        //case (inst)
-        //`INST_BEQ: 
-        //begin
-        //    if (reg_s_value == reg_t_value) 
-        //    begin
-        //        branch_addr <= current_pc_addr + sign_addr_offset_ext;
-        //        do_branch <= 1'b1;
-        //    end
-        //end
-        //`INST_BEQZ:
-        //begin
-        //    if (reg_s_value == 32'b0) 
-        //    begin
-        //        branch_addr <= current_pc_addr + sign_addr_offset_ext;
-        //        do_branch <= 1'b1;
-        //    end
-        //end
-        //`INST_BNE:
-        //begin
-        //    if (reg_s_value != reg_t_value) 
-        //    begin
-        //        branch_addr <= current_pc_addr + sign_addr_offset_ext;
-        //        do_branch <= 1'b1;
-        //    end
-        //end
-        //`INST_BNEZ:
-        //begin
-        //    if (reg_s_value != 32'b0) 
-        //    begin
-        //        branch_addr <= current_pc_addr + sign_addr_offset_ext;
-        //        do_branch <= 1'b1;
-        //    end
-        //end
-        //`INST_BGTZ:  // >0 then branch
-        //begin
-        //    if (!reg_s_value[31] && reg_s_value != 32'b0) 
-        //    begin
-        //        branch_addr <= current_pc_addr + sign_addr_offset_ext;
-        //        do_branch <= 1'b1;
-        //    end
-        //end
-        //`INST_BGEZ,  // >= 0 then branch
-        //`INST_BGEZAL:
-        //begin
-        //    if (!reg_s_value[31]) 
-        //    begin
-        //        branch_addr <= current_pc_addr + sign_addr_offset_ext;
-        //        do_branch <= 1'b1;
-        //    end
-        //end
-        //`INST_BLTZ, // <0 then branch
-        //`INST_BLTZAL:
-        //begin
-        //    if (reg_s_value[31]) 
-        //    begin
-        //        branch_addr <= current_pc_addr + sign_addr_offset_ext;
-        //        do_branch <= 1'b1;
-        //    end
-        //end
-        //`INST_BLEZ:  // <=0 then branch
-        //begin
-        //if (reg_s_value[31] || reg_s_value == 32'b0) 
-        //    begin
-        //        branch_addr <= current_pc_addr + sign_addr_offset_ext;
-        //        do_branch <= 1'b1;
-        //    end
-        //end
-        //`INST_J,
-        //`INST_JAL:
-        //begin
-        //    branch_addr <= {current_pc_addr[31:28], inst_code[25:0], 2'b00};
-        //    do_branch <= 1'b1;
-        //end
-        //`INST_JR,
-        //`INST_JALR:
-        //begin
-        //    branch_addr <= reg_s_value ;
-        //    do_branch <= 1'b1;
-        //end
-        //default:
-        //begin
-        //    branch_addr <= 32'b0;
-        //    do_branch <= 1'b0;
-        //    return_addr <= pc_addr + 32'd8;
-        //end
-        //endcase 
+//        case (inst)
+//        `INST_BEQ: 
+//        begin
+//            if (reg_s_value == reg_t_value) 
+//            begin
+//                branch_addr <= current_pc_addr + sign_addr_offset_ext;
+//                do_branch <= 1'b1;
+//            end
+//        end
+//        `INST_BEQZ:
+//        begin
+//            if (reg_s_value == 32'b0) 
+//            begin
+//                branch_addr <= current_pc_addr + sign_addr_offset_ext;
+//                do_branch <= 1'b1;
+//            end
+//        end
+//        `INST_BNE:
+//        begin
+//            if (reg_s_value != reg_t_value) 
+//            begin
+//                branch_addr <= current_pc_addr + sign_addr_offset_ext;
+//                do_branch <= 1'b1;
+//            end
+//        end
+//        `INST_BNEZ:
+//        begin
+//            if (reg_s_value != 32'b0) 
+//            begin
+//                branch_addr <= current_pc_addr + sign_addr_offset_ext;
+//                do_branch <= 1'b1;
+//            end
+//        end
+//        `INST_BGTZ:  // >0 then branch
+//        begin
+//            if (!reg_s_value[31] && reg_s_value != 32'b0) 
+//            begin
+//                branch_addr <= current_pc_addr + sign_addr_offset_ext;
+//                do_branch <= 1'b1;
+//            end
+//        end
+//        `INST_BGEZ,  // >= 0 then branch
+//        `INST_BGEZAL:
+//        begin
+//            if (!reg_s_value[31]) 
+//            begin
+//                branch_addr <= current_pc_addr + sign_addr_offset_ext;
+//                do_branch <= 1'b1;
+//            end
+//        end
+//        `INST_BLTZ, // <0 then branch
+//        `INST_BLTZAL:
+//        begin
+//            if (reg_s_value[31]) 
+//            begin
+//                branch_addr <= current_pc_addr + sign_addr_offset_ext;
+//                do_branch <= 1'b1;
+//            end
+//        end
+//        `INST_BLEZ:  // <=0 then branch
+//        begin
+//        if (reg_s_value[31] || reg_s_value == 32'b0) 
+//            begin
+//                branch_addr <= current_pc_addr + sign_addr_offset_ext;
+//                do_branch <= 1'b1;
+//            end
+//        end
+//        `INST_J,
+//        `INST_JAL:
+//        begin
+//            branch_addr <= {current_pc_addr[31:28], inst_code[25:0], 2'b00};
+//            do_branch <= 1'b1;
+//        end
+//        `INST_JR,
+//        `INST_JALR:
+//        begin
+//            branch_addr <= reg_s_value ;
+//            do_branch <= 1'b1;
+//        end
+//        default:
+//        begin
+//            branch_addr <= 32'b0;
+//            do_branch <= 1'b0;
+//            return_addr <= pc_addr + 32'd8;
+//        end
+//        endcase 
         case(inst_code[31:26])
         6'h0: begin
             case(inst_code[5:0])

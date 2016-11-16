@@ -7,7 +7,7 @@
 -----------------------------------------------------*/
 `ifndef __REG_BYPASS_MUX_V__
 `define __REG_BYPASS_MUX_V__
-
+`default_nettype none
 `include "../defs.v"
 
 `timescale 1ns/1ns

@@ -7,7 +7,7 @@
 -----------------------------------------------------*/
 `ifndef __WB_V__
 `define __WB_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 `include "../defs.v"

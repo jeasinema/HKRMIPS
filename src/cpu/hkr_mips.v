@@ -2,12 +2,13 @@
  File Name : hkr_mips.v
  Purpose : top file for cpu
  Creation Date : 18-10-2016
- Last Modified : Thu Nov 10 23:17:17 2016
+ Last Modified : Thu Nov 10 12:48:06 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __HKR_MIPS_V__
 `define __HKR_MIPS_V__
 
+`default_nettype none
 `timescale 1ns/1ns
 
 `include "defs.v"
@@ -424,13 +425,14 @@ module hkr_mips(/*autoarg*/
     cp0 unique_cp0(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
+
         // reg read info, passed in ex
     .rd_addr                    (ex_cp0_read_addr[4:0]                   ), // input
     .rd_sel                     (ex_cp0_sel[2:0]                    ), // input
         // read cp0 reg val, directly pass to ex
     .data_o                     (ex_reg_cp0_i[31:0]                   ), // output
         // reg wirte info, passed in wb
-    .we                         (wb_cp0_write_enable                     ), // input
+    .we                         (wb_cp0_write_enable                             ), // input
     .wr_addr                    (wb_cp0_write_addr[4:0]                   ), // input
     .wr_sel                     (wb_cp0_sel[2:0]                    ), // input
     .data_i                     (wb_reg_val_o[31:0]                   ), // input
@@ -891,44 +893,61 @@ module hkr_mips(/*autoarg*/
     exception exception_detector(/*autoinst*/
     .clk                        (clk                            ), // input
     .rst_n                      (rst_n                          ), // input
+
+        // exp about memory access
+        // illegal -> access kernel mode addr. invalid-> tlb error
+        // occurs@if by mmu
     .iaddr_exp_miss             (mm_iaddr_exp_miss                 ), // input
     .iaddr_exp_invalid          (mm_iaddr_exp_invalid              ), // input
-    .iaddr_exp_illegal          (mm_iaddr_exp_illegal || (mm_pc_addr[1:0] != 2'b00)), // input
+    .iaddr_exp_illegal          (mm_iaddr_exp_illegal || (mm_pc_addr[1:0] != 2'b00)   ), // input
+        // occurs@mm by mmu  
     .daddr_exp_miss             (mm_daddr_exp_miss                 ), // input
     .daddr_exp_invalid          (mm_daddr_exp_invalid              ), // input
-    .daddr_exp_illegal          (mm_daddr_exp_illegal || mm_alignment_err), // input
+    .daddr_exp_illegal          (mm_daddr_exp_illegal || mm_alignment_err             ), // input
     .daddr_exp_dirty            (mm_mem_access_write & ~mm_daddr_exp_dirty ), // input
-    .data_we                    (mm_mem_access_write                  ), // input
+    	// common exp
+    .data_we                    (mm_mem_access_write                        ), // input
     .invalid_inst               (mm_invalid_inst                   ), // input
     .syscall                    (mm_inst_syscall                        ), // input
     .eret                       (mm_inst_eret                           ), // input
     .overflow                   (mm_overflow                       ), // input
-    .restrict_priv_inst         (mm_is_priv_inst && cp0_user_mode      ), // input
+    .restrict_priv_inst         (mm_is_priv_inst && cp0_user_mode            ), // input
+        // interrupts 
     .interrupt_mask             (cp0_interrupt_mask[7:0]        ),
     .hardware_int               (hardware_int[5:0]              ), // input
     .software_int               (software_int[1:0]              ), // input
+ 	
+    	// for calculate return addr
     .pc_value                   (mm_pc_addr[31:0]                 ), // input
     .in_delayslot               (mm_in_delayslot                   ), // input
+    	// enable/diable interrupts
     .allow_int                  (cp0_allow_int                      ), // input
     .is_real_inst               (mm_is_real_inst                   ), // input
+
+    	// about mem access exp, some need to be stored in CP0_BadVAddr/Context/EntryHi
     .mem_access_vaddr           (mm_mem_access_addr_o[31:0]         ), // input
-    .if_asid                    (mm_iaddr_exp_asid[7:0]                   ), // input
+    .if_asid                    (mm_iaddr_exp_asid[7:0]                   ), // input   // inst/data memory exp use different asid/exl in different pipeline step 
     .mm_asid                    (cp0_asid[7:0]                   ), // input
+
+        // for calculate exp new pc
     .ebase_in                   (cp0_ebase[19:0]                 ), // input
     .epc_in                     (cp0_epc[31:0]                   ), // input
     .special_int_vec            (cp0_special_int_vec                ), // input
     .boot_exp_vec               (cp0_boot_exp_vec                   ), // input
     .if_exl                     (mm_iaddr_exp_exl                         ), // input
     .mm_exl                     (cp0_in_exl                         ), // input
+
     .flush                      (exception_flush                          ), // output
     .cp0_in_exp                 (cp0_exp_en                    ), // output
     .cp0_clean_exl              (cp0_clean_exl                  ), // output
     .exp_epc                    (cp0_exp_epc[31:0]                  ), // output
     .exp_code                   (cp0_exp_code[4:0]                  ), // output
+        // 2cp0, about mem access exp, need to be written in cp0 regs
     .exp_bad_vaddr              (cp0_exp_badv[31:0]            ), // output
     .cp0_badv_we                (cp0_badv_we                    ), // output
     .exp_asid                   (cp0_exp_asid[7:0]                  ), // output
     .cp0_exp_asid_we            (cp0_exp_asid_we                ), // output
+
     .exception_new_pc           (exception_new_pc[31:0]         )  // output
     );
     assign cp0_exp_bd = mm_in_delayslot;

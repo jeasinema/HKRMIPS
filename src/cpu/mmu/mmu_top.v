@@ -2,12 +2,12 @@
  File Name : mmu_top.v
  Purpose : top file of mmu
  Creation Date : 21-10-2016
- Last Modified : Thu Nov 10 14:52:01 2016
+ Last Modified : Sun Oct 30 00:39:30 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __MMU_TOP_V__
 `define __MMU_TOP_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 module mmu_top(/*autoarg*/
@@ -121,7 +121,7 @@ module mmu_top(/*autoarg*/
     .tlb_config                 (tlb_config[83:0]               ), // input
         // TLBWI TLBP
     .tlbwi                      (tlbwi                          ), // input
-	.tlbp                       (tlbp                          ), // input
+	 .tlbp                       (tlbp                          ), // input
         // virtual address
     .data_addr_virtual          (data_addr_i[31:0]              ), // input
     .inst_addr_virtual          (inst_addr_i[31:0]              ), // input

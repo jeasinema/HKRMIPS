@@ -2,12 +2,12 @@
  File Name : tlb.v
  Purpose : tlb table
  Creation Date : 21-10-2016
- Last Modified : Thu Nov 10 15:26:31 2016
+ Last Modified : Mon Nov  7 13:15:24 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __TLB_V__
 `define __TLB_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 module tlb(/*autoarg*/
@@ -111,6 +111,11 @@ module tlb(/*autoarg*/
      (tlb_entries[14][79:72] == asid || tlb_entries[14][71]);
     assign matched[15] = tlb_entries[15][70:52] == virt_addr[31:13] &&
      (tlb_entries[15][79:72] == asid || tlb_entries[15][71]);
+
+
+
+
+
 
     always @(*)
     begin

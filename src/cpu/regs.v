@@ -7,7 +7,7 @@
 -----------------------------------------------------*/
 `ifndef __REGS_V__
 `define __REGS_V__
-
+`default_nettype none
 `timescale 1ns/1ns
 
 module regs(/*autoarg*/
