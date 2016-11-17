@@ -2,7 +2,7 @@
  File Name : soc_hkrmips.v
  Purpose : top file of HKRMIPS
  Creation Date : 31-10-2016
- Last Modified : Wed Nov 16 19:49:36 2016
+ Last Modified : Thu Nov 17 23:36:59 2016
  Created By : Jeasine Ma [jeasinema[at]gmail[dot]com]
 -----------------------------------------------------*/
 `ifndef __SOC_HKRMIPS_V__
@@ -169,11 +169,11 @@ sys_pll unique_pll
     wire gpu_read_enable;
     output wire vga_vsync;
     output wire vga_hsync;
-    output wire[8:0] vga_pixel;
+    output wire[7:0] vga_pixel;
 
-     assign vga_vsync = 1'b0;
-     assign vga_hsync = 1'b0;
-     assign vga_pixel = 8'b0;
+    assign vga_vsync = 1'b0;
+    assign vga_hsync = 1'b0;
+    assign vga_pixel = 8'b0;
 
     // rom & flash
     wire[23:0] rom_addr;
