@@ -39,7 +39,7 @@ module soc_hkrmips(/*autoarg*/
     wire clk_uart;
     wire clk_tick;
     wire clk_uart_pll;
-     wire locked;
+    wire locked;
 
 `define EXT_UART_CLK
 
@@ -169,7 +169,7 @@ sys_pll unique_pll
     wire gpu_read_enable;
     output wire vga_vsync;
     output wire vga_hsync;
-    output wire[7:0] vga_pixel;
+    output wire[8:0] vga_pixel;
 
     assign vga_vsync = 1'b0;
     assign vga_hsync = 1'b0;
