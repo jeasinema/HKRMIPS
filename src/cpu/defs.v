@@ -98,6 +98,10 @@
 `define INST_NOP 8'd74
 `define INST_BLTZAL 8'd75
 `define INST_BGEZAL 8'd76
+`define INST_CACHE 8'd77
+`define INST_PREF 8'd78
+`define INST_SYNC 8'd79
+`define INST_TLBR 8'd80 
 
 // cache related
 //`define INST_LL

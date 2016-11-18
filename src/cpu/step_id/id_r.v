@@ -54,6 +54,7 @@ module id_r(/*autoarg*/
             6'h0b: inst <= `INST_MOVN;
             6'h0c: inst <= `INST_SYSCALL;
             6'h0d: inst <= `INST_BREAK;
+            6'h0f: inst <= `INST_SYNC;
             6'h10: inst <= `INST_MFHI;
             6'h11: inst <= `INST_MTHI;
             6'h12: inst <= `INST_MFLO;

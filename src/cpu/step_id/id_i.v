@@ -71,6 +71,7 @@ module id_i(/*autoarg*/
             else if (inst_code[25] == 1'b1)
             begin
                 case (inst_code[5:0])
+					 6'h01: inst <= `INST_TLBR;
                 6'h02: inst <= `INST_TLBWI;
                 6'h08: inst <= `INST_TLBP;
                 6'h18: inst <= `INST_ERET;
@@ -93,6 +94,8 @@ module id_i(/*autoarg*/
         6'h2a: inst <= `INST_SWL;
         6'h2b: inst <= `INST_SW;
         6'h2e: inst <= `INST_SWR;
+        6'h2f: inst <= `INST_CACHE;
+        6'h33: inst <= `INST_PREF;
         default: inst <= `INST_INVALID;
         endcase
     end
