@@ -169,11 +169,11 @@ sys_pll unique_pll
     wire gpu_read_enable;
     output wire vga_vsync;
     output wire vga_hsync;
-    output wire[7:0] vga_pixel;
+    output wire[8:0] vga_pixel;
 
     assign vga_vsync = 1'b0;
     assign vga_hsync = 1'b0;
-    assign vga_pixel = 8'b0;
+    assign vga_pixel = 9'b0;
 
     // rom & flash
     wire[23:0] rom_addr;
