@@ -173,7 +173,7 @@ sys_pll unique_pll
 
     assign vga_vsync = 1'b0;
     assign vga_hsync = 1'b0;
-    assign vga_pixel = 8'b0;
+    assign vga_pixel = 9'b0;
 
     // rom & flash
     wire[23:0] rom_addr;
